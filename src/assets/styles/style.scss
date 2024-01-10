@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+
+::selection {
+  @apply bg-zinc-700 text-zinc-200;
+}
+input {
+  @apply outline-none caret-lime-500;
+}
+html {
+  &::-webkit-scrollbar {
+    @apply w-0 h-0;
+  }
+  scroll-behavior: smooth !important;
+}
+svg {
+  @apply w-auto h-auto aspect-square shrink-0;
+}
+:not(html) {
+  ::-webkit-scrollbar {
+    @apply w-2 h-2 bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-zinc-600 rounded-full;
+  }
+}
+input,
+textarea,
+button,
+a {
+  @apply outline outline-0 focus-visible:outline-2 outline-lime-500 focus-visible:duration-100;
+}
+code {
+  @apply font-[unset];
+}
+[data-radix-popper-content-wrapper] > * {
+  &[data-side="top"] {
+    animation: smoothAppearTop 0.2s ease-out forwards;
+    @keyframes smoothAppearTop {
+      from {
+        opacity: 0;
+        translate: 0;
+      }
+      to {
+        opacity: 1;
+        translate: 0 -0.25rem;
+      }
+    }
+  }
+  &[data-side="bottom"] {
+    animation: smoothAppearBottom 0.2s ease-out forwards;
+    @keyframes smoothAppearBottom {
+      from {
+        opacity: 0;
+        translate: 0 -0.25rem;
+      }
+      to {
+        opacity: 1;
+        translate: 0rem;
+      }
+    }
+  }
+}
