@@ -6,6 +6,6 @@ import { useRouter } from 'next/navigation'
 export default function KeyActions() {
   const router = useRouter()
 
-  useKey([['h', 'H'], () => router.push('/')])
+  useKey([[['h', 'H'], () => router.push('/')]])
   return null
 }

@@ -1,9 +1,17 @@
-import { TSearchPage, stringToReact } from '.'
 import '@/assets/styles/search.scss'
-import Backlinks from './backlinks'
 import { JSDOM } from 'jsdom'
-import RuchFulltext from './ruch-fulltext'
-import KeyActions from './key-actions'
+import { TResultProps, TSearchPage, stringToReact } from './(private)'
+import KeyActions from './(private)/key-actions'
+import RuchFulltext from './(private)/ruch-fulltext'
+import Search from '@/components/search'
+import { TResult, determineSearchResult } from '@/search'
+import { ReactNode } from 'react'
+import Word from './(private)/(results)/word'
+import Words from './(private)/(results)/words'
+import SuggestFromPinyin from './(private)/(results)/suggest-from-pinyin'
+import SuggestFromRu from './(private)/(results)/suggest-from-ru'
+import PinyinNotFound from './(private)/(results)/pinyin-not-found'
+import SearchError from './(private)/(results)/search-error'
 
 export default async function SearchPage({ params }: TSearchPage) {
   const res = await fetch(`https://bkrs.info/slovo.php?ch=${params.slug}`)
@@ -12,39 +20,23 @@ export default async function SearchPage({ params }: TSearchPage) {
   const d = doc.querySelector('#ajax_search .margin_left')
   if (!d) return
 
-  d.querySelectorAll('a').forEach((el) => {
-    el.setAttribute('href', `/search/${el.textContent ?? data.character}`)
-    console.log('A', el)
-  })
+  const result = determineSearchResult(d)
 
-  const untouched = {
-    translations: d.querySelector('.ru')?.innerHTML,
-  }
-
-  const backlinks = d.querySelector('#backlinks')
-  const ruchFulltext = d.querySelector('#ruch_fulltext')
-
-  const data = {
-    character: d.querySelector('#ch')?.textContent ?? '',
-    pinyin: d.querySelector('.py')?.textContent ?? '',
-    ruchFulltext:
-      ruchFulltext &&
-      Array.from(ruchFulltext.querySelectorAll('#ruch_fulltext > *')).map((ch) => ({
-        heading: ch.children[0].textContent,
-        content: ch.children[1].outerHTML,
-      })),
-    backlinks: backlinks && Array.from(backlinks.querySelectorAll('a')).map((a) => a.textContent!),
-  }
+  const Result = (
+    {
+      word: Word,
+      words: Words,
+      'suggest-from-pinyin': SuggestFromPinyin,
+      'pinyin-not-found': PinyinNotFound,
+      'suggest-from-ru': SuggestFromRu,
+      error: SearchError,
+    } satisfies Record<TResult, (props: TResultProps) => ReactNode>
+  )[result]
 
   return (
     <>
-      <main id='ch-page'>
-        <h1 className='text-4xl mb-2 text-zinc-200'>{data.character}</h1>
-        <h2 className='text-xl mb-6 text-zinc-300 italic'>{data.pinyin}</h2>
-        {untouched.translations && <ul className='mb-12'>{stringToReact(untouched.translations)}</ul>}
-        {data.ruchFulltext && <RuchFulltext pairs={data.ruchFulltext} className='mb-12' />}
-        {data.backlinks && <Backlinks links={data.backlinks} />}
-      </main>
+      <Search />
+      <Result d={d} />
       <KeyActions />
     </>
   )
