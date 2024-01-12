@@ -1,9 +1,10 @@
 import Link from 'next/link'
 import { TbLink } from 'react-icons/tb'
-import { TResultProps, stringToReact } from '..'
+import { stringToReact } from '..'
 import RuchFulltext from '../ruch-fulltext'
+import { TResultProps } from '@/search'
 
-export default function Word({ d }: TResultProps) {
+export default function ChWord({ el: d }: TResultProps) {
   const untouched = {
     translations: d.querySelector('.ru')?.innerHTML,
   }

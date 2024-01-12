@@ -35,7 +35,6 @@ export default function Toasts() {
           <Toast key={toast.id} toast={toast} />
         ))}
       </AnimatePresence>
-      <FfmpegConvertingToast />
       <RToast.Viewport className='fixed inset-0 z-[1000] pointer-events-none flex items-end justify-start p-4 flex-col-reverse gap-2' />
     </RToast.Provider>
   )
@@ -81,34 +80,3 @@ export const Toast = forwardRef<HTMLDivElement, { toast: TToast }>(({ toast }, r
 })
 
 Toast.displayName = 'Toast'
-
-function FfmpegConvertingToast() {
-  const storeSnap = useStoreSnapshot()
-  const songsConverting = storeSnap.songs.filter((s) => s.converting).map((s) => s.converting!)
-  const totalProgress = songsConverting.reduce((prev, next) => prev + next.progress, 0) / songsConverting.length
-
-  return (
-    <AnimatePresence>
-      {songsConverting.length && (
-        <Toast
-          key={'songs-converting-toast'}
-          toast={{
-            id: crypto.randomUUID(),
-            type: 'warning',
-            title: 'Files are converting...',
-            description: ref(() => (
-              <div>
-                <p className='mb-1'>
-                  Wait as your <code className='text-orange-400'>{songsConverting.length}</code> files are converting to <code className='text-orange-400'>.ogg</code>
-                </p>
-                <div className='h-2 rounded-full bg-zinc-700 overflow-hidden'>
-                  <div className='h-full bg-orange-400 origin-left' style={{ scale: `${totalProgress} 1` }} />
-                </div>
-              </div>
-            )),
-          }}
-        />
-      )}
-    </AnimatePresence>
-  )
-}

@@ -3,9 +3,7 @@
 import { devtools } from 'valtio/utils'
 import { proxy, ref, useSnapshot } from 'valtio'
 
-const defaultStore = {
-  search: '',
-}
+const defaultStore = {}
 
 export const store = proxy(defaultStore)
 
