@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { stringToReact } from '.'
 
-export default function RuchFulltext(props: React.ComponentProps<'section'> & { pairs: { heading: string | null; content: string }[] }) {
+export default function RuchFulltext(props: React.ComponentProps<'section'> & { pairs: { heading: string | null; content: string | null }[] }) {
   const { pairs, ...htmlProps } = props
   return (
     <section {...htmlProps}>
@@ -11,7 +11,7 @@ export default function RuchFulltext(props: React.ComponentProps<'section'> & { 
             <Link href={`/search/${pair.heading}`} className='self-start' data-custom>
               {pair.heading}
             </Link>
-            <>{stringToReact(pair.content)}</>
+            {pair.content && <>{stringToReact(pair.content)}</>}
           </li>
         ))}
       </ul>

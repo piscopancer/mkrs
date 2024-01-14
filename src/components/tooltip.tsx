@@ -15,11 +15,9 @@ export function Tooltip({ children, content, arrow, delay, open, ...htmlProps }:
     <RTooltip.Provider delayDuration={delay || 100} disableHoverableContent>
       <RTooltip.Root open={open}>
         <RTooltip.Trigger asChild>{children}</RTooltip.Trigger>
-        <RTooltip.Content {...htmlProps} className='relative z-[2] rounded-md border-2 border-zinc-800 bg-zinc-900 px-3 py-1 text-sm text-zinc-200'>
-          <div className='absolute top-[-2px] inset-x-2 h-[2px] bg-gradient-to-r from-transparent via-zinc-600 to-transparent' />
-          <div className='absolute bottom-[-2px] inset-x-2 h-[2px] bg-gradient-to-r from-transparent via-zinc-600 to-transparent' />
+        <RTooltip.Content {...htmlProps} className='z-[2] rounded-lg border-2 border-stone-700 bg-stone-800 px-3 py-1 text-sm text-stone-200'>
           {content}
-          {(arrow === undefined || arrow) && <RTooltip.Arrow className='fill-zinc-600' />}
+          {(arrow === undefined || arrow) && <RTooltip.Arrow className='fill-stone-700' />}
         </RTooltip.Content>
       </RTooltip.Root>
     </RTooltip.Provider>

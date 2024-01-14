@@ -17,10 +17,15 @@ export default function ChWord({ el: d }: TResultProps) {
     pinyin: d.querySelector('.py')?.textContent ?? '',
     ruchFulltext:
       ruchFulltext &&
-      Array.from(ruchFulltext.querySelectorAll('#ruch_fulltext > *')).map((ch) => ({
-        heading: ch.children[0].textContent,
-        content: ch.children[1].outerHTML,
-      })),
+      Array.from(ruchFulltext.querySelectorAll('#ruch_fulltext > *')).map((ch) => {
+        if (Array.from(ch.children).length) {
+          return {
+            heading: ch.children[0]?.textContent,
+            content: ch.children[1]?.outerHTML,
+          }
+        }
+        return { heading: null, content: null }
+      }),
     backlinks: backlinks && Array.from(backlinks.querySelectorAll('a')).map((a) => a.textContent!),
   }
 

@@ -3,11 +3,13 @@
 @tailwind utilities;
 @tailwind variants;
 
+@import "./search";
+
 ::selection {
-  @apply bg-zinc-700 text-zinc-200;
+  @apply bg-stone-700 text-stone-200;
 }
 input {
-  @apply outline-none caret-lime-500;
+  @apply outline-none caret-pink-500;
 }
 html {
   &::-webkit-scrollbar {
@@ -23,14 +25,14 @@ svg {
     @apply w-2 h-2 bg-transparent;
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-zinc-600 rounded-full;
+    @apply bg-stone-600 rounded-full;
   }
 }
 input,
 textarea,
 button,
 a {
-  @apply outline outline-0 focus-visible:outline-2 outline-lime-500 focus-visible:duration-100;
+  @apply outline outline-0 focus-visible:outline-2 outline-pink-500 focus-visible:duration-100;
 }
 code {
   @apply font-[unset];
@@ -58,7 +60,20 @@ code {
       }
       to {
         opacity: 1;
-        translate: 0rem;
+        translate: 0;
+      }
+    }
+  }
+  &[data-side="right"] {
+    animation: smoothAppearBottom 0.2s ease-out forwards;
+    @keyframes smoothAppearBottom {
+      from {
+        opacity: 0;
+        translate: 0;
+      }
+      to {
+        opacity: 1;
+        translate: 0.25rem 0;
       }
     }
   }

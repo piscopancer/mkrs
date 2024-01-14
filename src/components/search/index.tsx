@@ -21,15 +21,22 @@ import { searchStore } from './store'
 export default function Search(props: React.ComponentProps<'search'>) {
   const searchSnap = useSnapshot(searchStore)
   const inputRef = useRef<HTMLInputElement>(null!)
+  const selfRef = useRef<HTMLElement>(null!)
 
   const router = useRouter()
   useKey([['s'], () => inputRef.current.focus()], !searchSnap.focused || undefined)
-  useKey([['Escape'], () => (searchStore.focused = false)])
+  useKey([
+    ['Escape'],
+    () => {
+      searchStore.focused = false
+      searchStore.showSuggestion = false
+    },
+  ])
   useKey([
     ['Enter'],
     () => {
-      if (searchSnap.focused && searchSnap.search && searchSnap.selectedSuggestion === -1) {
-        router.push(`/search/${searchSnap.search}`)
+      if (searchStore.focused && searchStore.search && (searchStore.selectedSuggestion === -1 || (['ch-word', 'ru-word', 'words'] as (TResult | undefined)[]).includes(searchStore.suggestion))) {
+        router.push(`/search/${searchStore.search}`)
         searchStore.focused = false
       }
     },
@@ -37,33 +44,43 @@ export default function Search(props: React.ComponentProps<'search'>) {
 
   useEffect(() => {
     searchStore.focused = true
+    function hideOnClickOutside(e: MouseEvent) {
+      if (!selfRef.current.contains(e.target as Node)) {
+        console.log('outside')
+        searchStore.showSuggestion = false
+      }
+    }
+    addEventListener('click', hideOnClickOutside)
   }, [])
 
   useEffect(() => {
-    searchSnap.focused ? inputRef.current.focus() : inputRef.current.blur()
+    if (searchStore.focused) {
+      inputRef.current.focus()
+      if (searchStore.suggestion) searchStore.showSuggestion = true
+    } else {
+      inputRef.current.blur()
+    }
   }, [searchSnap.focused])
 
   useEffect(() => {
-    inputRef.current.value = searchSnap.search
+    inputRef.current.value = searchStore.search
   }, [searchSnap.search])
 
   useEffect(() => {
-    if (searchSnap.search) {
-      queryCharacter(searchSnap.search).then((text) => {
+    if (searchStore.search) {
+      queryCharacter(searchStore.search).then((text) => {
         searchStore.resText = text
         const el = document.createElement('div')
         el.innerHTML = text
         searchStore.suggestion = determineSearchResult(el)
+        searchStore.showSuggestion = true
         el.remove()
       })
     } else {
       searchStore.suggestion = undefined
+      searchStore.showSuggestion = false
     }
   }, [searchSnap.search])
-
-  function onInput(e: React.ChangeEvent<HTMLInputElement>) {
-    searchStore.search = e.target.value
-  }
 
   function Suggestion(props: { suggestion: TResult }) {
     return (
@@ -80,8 +97,8 @@ export default function Search(props: React.ComponentProps<'search'>) {
   }
 
   return (
-    <search {...props}>
-      <div className='relative flex items-center mb-2'>
+    <search {...props} ref={selfRef} className={classes(props.className)}>
+      <div className='relative flex items-center mb-2 bg-gradient-to-r from-pink-500 to-rose-500 p-0.5 rounded-full'>
         <input
           ref={inputRef}
           defaultValue={searchSnap.search}
@@ -89,15 +106,17 @@ export default function Search(props: React.ComponentProps<'search'>) {
           onBlur={() => (searchStore.focused = false)}
           spellCheck={false}
           type='text'
-          onChange={onInput}
-          className='pl-4 pr-20 rounded-xl py-4 bg-transparent border-2 border-zinc-800 focus-visible:bg-zinc-950 duration-100 w-full focus-visible:outline-0'
+          onChange={(e) => {
+            searchStore.search = e.target.value
+          }}
+          className='pl-6 pr-20 rounded-full py-4 bg-stone-800 duration-100 w-full focus-visible:outline-4 outline-rose-500/50'
         />
-        <Link href={searchSnap.search ? `/search/${searchSnap.search}` : '/'} className='text-zinc-500 hover:text-lime-500 focus-visible:text-lime-500 absolute right-0 h-full aspect-square flex items-center justify-center rounded-xl group duration-100'>
+        <Link href={searchSnap.search ? `/search/${searchSnap.search}` : '/'} className='text-stone-400 hover:text-rose-500 focus-visible:text-rose-500 focus-visible:outline-0 absolute right-0 h-full aspect-square flex items-center justify-center rounded-full group duration-100'>
           <TbSearch className='group-hover:scale-125 duration-100 group-focus-visible:scale-125' />
         </Link>
-        {searchSnap.focused && searchSnap.suggestion && (
-          <aside className='absolute inset-x-0 top-full mt-2 bg-zinc-800 p-4 rounded-lg z-[1]'>
-            <output className='text-xs mb-4 block text-zinc-500'>{resultsDescriptions[searchSnap.suggestion]}</output>
+        {searchSnap.showSuggestion && searchSnap.suggestion && (
+          <aside className='absolute inset-x-0 top-full mt-2 bg-stone-800 p-4 rounded-lg z-[1]'>
+            <output className='text-xs mb-4 block text-stone-500'>{resultsDescriptions[searchSnap.suggestion]}</output>
             <Suggestion suggestion={searchSnap.suggestion} />
           </aside>
         )}
@@ -105,13 +124,13 @@ export default function Search(props: React.ComponentProps<'search'>) {
       <ul className='flex items-center gap-4 justify-end'>
         {(
           [
-            { key: 's', text: '— Искать' },
-            { key: 'Enter', text: '➔' },
+            { key: 's', text: 'Фокус' },
+            { key: 'Enter', text: 'Поиск' },
           ] as { key: string; text: string }[]
         ).map(({ key, text }) => (
-          <li key={key}>
-            <kbd className={classes(fonts.mono, 'rounded-md border text-sm text-zinc-500 px-1.5 border-b-2 border-zinc-800 mr-1')}>{key}</kbd>
-            <span className='italic text-zinc-600'>{text}</span>
+          <li key={key} className='rounded-full text-sm border-2 border-stone-800 overflow-hidden flex items-center'>
+            <kbd className={classes(fonts.mono, 'text-stone-400 px-1.5 bg-stone-800 mr-2')}>{key}</kbd>
+            <span className='text-stone-500 mr-2'>{text}</span>
           </li>
         ))}
       </ul>

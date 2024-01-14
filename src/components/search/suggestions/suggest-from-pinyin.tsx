@@ -4,21 +4,29 @@ import { useSnapshot } from 'valtio'
 import { searchStore } from '../store'
 import useKey from '@/hooks/use-key'
 import { useRouter } from 'next/navigation'
+import { parseSuggestFromPinyin } from '@/search'
 
 export default function SuggestFromPinyin() {
   const maxResults = 5
   const searchSnap = useSnapshot(searchStore)
   const router = useRouter()
 
+  useKey([['ArrowUp'], () => moveSelection(-1)], true)
+  useKey([['ArrowDown'], () => moveSelection(1)], true)
+  useKey([
+    ['Enter'],
+    () => {
+      console.log(searchSnap.selectedSuggestion)
+      if (searchSnap.selectedSuggestion !== -1) {
+        const ch = results[searchSnap.selectedSuggestion].ch
+        selectSuggestion(ch)
+      }
+    },
+  ])
+
   const el = document.createElement('div')
   el.innerHTML = searchSnap.resText
-  const results = Array.from(el.querySelectorAll('#py_table > tbody > tr'))
-    .slice(0, maxResults)
-    .map((row) => ({
-      ch: row.querySelector('a')?.textContent || '',
-      py: row.querySelector('td.py_py')?.textContent || '',
-      ru: row.querySelector('td.py_ru')?.textContent || '',
-    }))
+  const results = parseSuggestFromPinyin(el, maxResults)
 
   function moveSelection(by: -1 | 1) {
     const current = searchStore.selectedSuggestion
@@ -35,40 +43,30 @@ export default function SuggestFromPinyin() {
     }
   }
 
-  useKey([['ArrowUp'], () => moveSelection(-1)], true)
-  useKey([['ArrowDown'], () => moveSelection(1)], true)
-  useKey([
-    ['Enter'],
-    () => {
-      console.log(searchSnap.selectedSuggestion)
-      if (searchSnap.selectedSuggestion !== -1) {
-        searchStore.search = results[searchSnap.selectedSuggestion].ch
-        router.push(`/search/${searchStore.search}`)
-        searchStore.focused = false
-      }
-    },
-  ])
+  function selectSuggestion(ch: string) {
+    router.push(`/search/${ch}`)
+    searchStore.focused = false
+    searchStore.showSuggestion = false
+  }
 
   return (
     <>
-      <ul className='gap-x-4 gap-y-2'>
+      <ul>
         {results.map((res, i) => {
           const isSelected = searchSnap.selectedSuggestion === i
           return (
-            <Link
-              href={`/search/${res.ch}`}
+            <button
               key={i}
-              // onClick={(e) => {
-              //   e.preventDefault()
-              //   e.stopPropagation()
-              // }}
-              className={classes(isSelected && 'bg-zinc-700', 'flex items-center gap-4 rounded-md px-2 py-1')}
+              onMouseDown={() => {
+                selectSuggestion(res.ch)
+              }}
+              className={classes(isSelected && '!bg-zinc-700', 'flex items-center gap-4 rounded-md px-2 py-1 hover:bg-zinc-700/50 w-full')}
             >
               <output className='bg-zinc-900 text-zinc-500 rounded-full shrink-0 flex items-center justify-center w-4 h-4 text-xs'>{i + 1}</output>
               <span className='text-zinc-200 text-nowrap font-bold px-1 rounded-sm hover:scale-105 duration-100 inline-block'>{res.ch}</span>
               <span className='text-sm text-nowrap'>{res.py}</span>
-              <span className='text-sm text-nowrap grow-[3] overflow-hidden text-ellipsis'>{res.ru}</span>
-            </Link>
+              <span className='text-sm text-nowrap grow-[3] overflow-hidden text-ellipsis text-left'>{res.ru}</span>
+            </button>
           )
         })}
       </ul>

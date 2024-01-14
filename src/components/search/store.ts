@@ -6,5 +6,6 @@ export const searchStore = proxy({
   resText: '' as string,
   focused: false as boolean,
   selectedSuggestion: -1 as number,
+  showSuggestion: false,
   suggestion: undefined as TResult | undefined,
 })

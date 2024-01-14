@@ -20,7 +20,7 @@
     "open-cli": "^8.0.0",
     "react": "^18",
     "react-dom": "^18",
-    "react-icons": "^5.0.0",
+    "react-icons": "^5.0.1",
     "sass": "^1.69.7",
     "valtio": "^1.13.0"
   },

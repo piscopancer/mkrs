@@ -5,8 +5,8 @@ export type TResult = 'words' | 'ru-word' | 'ch-word' | 'suggest-from-pinyin' | 
 export type TResultProps = { el: Element }
 
 export function determineSearchResult(el: Element): TResult {
+  if (el.querySelector('#ch') && el.querySelector('.py')) return 'ch-word'
   if (el.querySelector('.tbl_bywords')) return 'words'
-  if (el.querySelector('#ch')) return 'ch-word'
   if (el.querySelector('#py_table')) return 'suggest-from-pinyin'
   if (el.querySelector('#py_search_py') && el.querySelector('#no-such-word')) return 'pinyin-not-found'
   if (el.querySelector('#ru_ru') && el.querySelector('#no-such-word')) return 'suggest-from-ru'
@@ -35,4 +35,30 @@ export async function queryCharacter(ch: string) {
 
   const res = await axios.get<string>(`${host}/api/search`, { params: { ch } })
   return res.data
+}
+
+export function parseWords(el: Element) {
+  return Array.from(el.querySelectorAll('.tbl_bywords'))
+    .map((table) => {
+      const results: { ch: string; py: string; ru: string[] }[] = []
+      for (let i = 0; i < 4; i++) {
+        results.push({
+          ch: table.querySelector(`tr:nth-child(1) td:nth-child(${i + 1})`)?.textContent ?? '',
+          py: table.querySelector(`tr:nth-child(2) td:nth-child(${i + 1}) > :nth-child(1)`)?.textContent ?? '',
+          ru: Array.from(table.querySelectorAll(`tr:nth-child(2) td:nth-child(${i + 1}) > :nth-child(n + 2)`)).map((el) => el.outerHTML),
+        })
+      }
+      return results
+    })
+    .flat(1)
+}
+
+export function parseSuggestFromPinyin(el: Element, maxResults: number) {
+  return Array.from(el.querySelectorAll('#py_table > tbody > tr'))
+    .slice(0, maxResults)
+    .map((row) => ({
+      ch: row.querySelector('a')?.textContent || '',
+      py: row.querySelector('td.py_py')?.textContent || '',
+      ru: row.querySelector('td.py_ru')?.textContent || '',
+    }))
 }

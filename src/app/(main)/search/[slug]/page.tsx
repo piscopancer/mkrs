@@ -1,4 +1,3 @@
-import '@/assets/styles/search.scss'
 import { TResult, TResultProps, determineSearchResult, queryCharacter } from '@/search'
 import { JSDOM } from 'jsdom'
 import { ReactNode } from 'react'
