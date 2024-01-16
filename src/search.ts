@@ -16,10 +16,10 @@ export function determineSearchResult(el: Element): TResult {
 
 export const resultsDescriptions: Record<TResult, string> = {
   words: 'Выбор слова',
-  'ru-word': 'Слово',
-  'ch-word': '词语',
-  'suggest-from-pinyin': 'Поиск по 拼音',
-  'pinyin-not-found': '拼音 не найден',
+  'ru-word': 'Слово на русском',
+  'ch-word': 'Слово на китайскогм',
+  'suggest-from-pinyin': 'Поиск по пининю',
+  'pinyin-not-found': 'Пининь не найден',
   'suggest-from-ru': 'Поиск на русском',
   error: 'Ошибка',
 }
@@ -53,12 +53,20 @@ export function parseWords(el: Element) {
     .flat(1)
 }
 
-export function parseSuggestFromPinyin(el: Element, maxResults: number) {
+export function parseSuggestFromPinyin(el: Element, max?: number) {
   return Array.from(el.querySelectorAll('#py_table > tbody > tr'))
-    .slice(0, maxResults)
+    .slice(0, max ?? Infinity)
     .map((row) => ({
       ch: row.querySelector('a')?.textContent || '',
       py: row.querySelector('td.py_py')?.textContent || '',
       ru: row.querySelector('td.py_ru')?.textContent || '',
     }))
+}
+
+export function parseSuggestFromRu(el: Element, max?: number) {
+  return Array.from(el.querySelectorAll('#ru_from a'))
+    .map((a) => ({
+      startsWith: a?.textContent ?? '',
+    }))
+    .slice(0, max ?? Infinity)
 }

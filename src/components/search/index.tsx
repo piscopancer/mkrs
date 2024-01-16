@@ -12,8 +12,8 @@ import ChWord from './suggestions/ch-word'
 import PinyinNotFound from './suggestions/pinyin-not-found'
 import RuWord from './suggestions/ru-word'
 import SearchError from './suggestions/search-error'
-import SuggestFromPinyin from './suggestions/suggest-from-pinyin'
-import SuggestFromRu from './suggestions/suggest-from-ru'
+import SuggestFromPinyin from './suggestions/suggest/from-pinyin'
+import SuggestFromRu from './suggestions/suggest/from-ru'
 import Words from './suggestions/words'
 import { ref, useSnapshot } from 'valtio'
 import { searchStore } from './store'
@@ -98,7 +98,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
 
   return (
     <search {...props} ref={selfRef} className={classes(props.className)}>
-      <div className='relative flex items-center mb-2 bg-gradient-to-r from-pink-500 to-rose-500 p-0.5 rounded-full'>
+      <div className='relative flex items-center mb-3 bg-gradient-to-r from-pink-500 to-rose-500 p-0.5 rounded-full'>
         <input
           ref={inputRef}
           defaultValue={searchSnap.search}
@@ -109,29 +109,33 @@ export default function Search(props: React.ComponentProps<'search'>) {
           onChange={(e) => {
             searchStore.search = e.target.value
           }}
-          className='pl-6 pr-20 rounded-full py-4 bg-stone-800 duration-100 w-full focus-visible:outline-4 outline-rose-500/50'
+          className='pl-6 pr-20 rounded-full py-4 bg-zinc-800 duration-100 w-full focus-visible:outline-4 outline-rose-500/50'
         />
-        <Link href={searchSnap.search ? `/search/${searchSnap.search}` : '/'} className='text-stone-400 hover:text-rose-500 focus-visible:text-rose-500 focus-visible:outline-0 absolute right-0 h-full aspect-square flex items-center justify-center rounded-full group duration-100'>
+        <Link href={searchSnap.search ? `/search/${searchSnap.search}` : '/'} className='text-zinc-400 hover:text-rose-500 focus-visible:text-rose-500 focus-visible:outline-0 absolute right-0 h-full aspect-square flex items-center justify-center rounded-full group duration-100'>
           <TbSearch className='group-hover:scale-125 duration-100 group-focus-visible:scale-125' />
         </Link>
         {searchSnap.showSuggestion && searchSnap.suggestion && (
-          <aside className='absolute inset-x-0 top-full mt-2 bg-stone-800 p-4 rounded-lg z-[1]'>
-            <output className='text-xs mb-4 block text-stone-500'>{resultsDescriptions[searchSnap.suggestion]}</output>
+          <aside className='absolute inset-x-0 top-full mt-2 bg-zinc-800 p-4 rounded-lg z-[1]'>
+            <output className='text-xs mb-4 block text-zinc-500'>{resultsDescriptions[searchSnap.suggestion]}</output>
             <Suggestion suggestion={searchSnap.suggestion} />
           </aside>
         )}
       </div>
-      <ul className='flex items-center gap-4 justify-end'>
+      <ul className='flex items-center gap-6 justify-end'>
         {(
           [
             { key: 's', text: 'Фокус' },
             { key: 'Enter', text: 'Поиск' },
           ] as { key: string; text: string }[]
         ).map(({ key, text }) => (
-          <li key={key} className='rounded-full text-sm border-2 border-stone-800 overflow-hidden flex items-center'>
-            <kbd className={classes(fonts.mono, 'text-stone-400 px-1.5 bg-stone-800 mr-2')}>{key}</kbd>
-            <span className='text-stone-500 mr-2'>{text}</span>
+          <li key={key} className='text-xs flex'>
+            <kbd className={classes(fonts.mono, 'text-zinc-400 mr-2 px-2 shadow-[0_1px_0_2px_theme(colors.zinc.700)] rounded-md')}>{key}</kbd>
+            <span className='text-zinc-500'>{text}</span>
           </li>
+          // <li key={key} className='rounded-full text-xs border-2 border-zinc-800 overflow-hidden flex items-center leading-relaxed'>
+          //   <kbd className={classes(fonts.mono, 'text-zinc-400 px-2.5 bg-zinc-800 mr-2.5')}>{key}</kbd>
+          //   <span className='text-zinc-500 mr-2.5'>{text}</span>
+          // </li>
         ))}
       </ul>
     </search>

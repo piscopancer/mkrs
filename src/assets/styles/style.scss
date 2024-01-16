@@ -6,7 +6,7 @@
 @import "./search";
 
 ::selection {
-  @apply bg-stone-700 text-stone-200;
+  @apply bg-zinc-700 text-zinc-200;
 }
 input {
   @apply outline-none caret-pink-500;
@@ -20,13 +20,17 @@ html {
 svg {
   @apply w-auto h-auto aspect-square shrink-0;
 }
-:not(html) {
-  ::-webkit-scrollbar {
-    @apply w-2 h-2 bg-transparent;
-  }
-  ::-webkit-scrollbar-thumb {
-    @apply bg-stone-600 rounded-full;
-  }
+::-webkit-scrollbar {
+  @apply h-5 w-5;
+}
+::-webkit-scrollbar-thumb {
+  @apply rounded-full border-[0.5rem] border-solid border-transparent bg-zinc-700 bg-clip-padding hover:bg-zinc-600;
+}
+::-webkit-scrollbar-corner {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
 }
 input,
 textarea,
