@@ -1,11 +1,12 @@
-import { parseSuggestFromRu } from '@/search'
+// import { parseSuggestFromRu } from '@/search'
 import { classes } from '@/utils'
-import Suggest from '.'
+import Suggestions from '.'
+import { TSearchProps } from '@/search'
 
-export default function SuggestFromRu() {
+export default function ChSuggestions(props: TSearchProps<'ch'>) {
   return (
     <>
-      <Suggest
+      {/* <Suggest
         suggestions={5}
         parse={parseSuggestFromRu}
         button={({ isSelected, i, parsed, ...htmlProps }) => (
@@ -15,7 +16,7 @@ export default function SuggestFromRu() {
           </button>
         )}
         get={(parsed) => parsed.startsWith}
-      />
+      /> */}
     </>
   )
 }

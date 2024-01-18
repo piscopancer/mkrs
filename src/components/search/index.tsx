@@ -7,24 +7,21 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { TbSearch } from 'react-icons/tb'
-import { TResult, TResultProps, determineSearchResult, queryCharacter, resultsDescriptions } from '@/search'
-import ChWord from './suggestions/ch-word'
-import PinyinNotFound from './suggestions/pinyin-not-found'
-import RuWord from './suggestions/ru-word'
-import SearchError from './suggestions/search-error'
-import SuggestFromPinyin from './suggestions/suggest/from-pinyin'
-import SuggestFromRu from './suggestions/suggest/from-ru'
-import Words from './suggestions/words'
+import { TSearchProps, TSearchType, determineSearchType, parse, queryCharacter, resultsDescriptions } from '@/search'
 import { ref, useSnapshot } from 'valtio'
 import { searchStore } from './store'
+import RuSuggestions from './suggestions/ru'
+import PySuggestions from './suggestions/py'
+import SearchError from './suggestions/search-error'
+import ChSuggestions from './suggestions/ch'
 
 export default function Search(props: React.ComponentProps<'search'>) {
   const searchSnap = useSnapshot(searchStore)
   const inputRef = useRef<HTMLInputElement>(null!)
   const selfRef = useRef<HTMLElement>(null!)
-
   const router = useRouter()
-  useKey([['s'], () => inputRef.current.focus()], !searchSnap.focused || undefined)
+
+  useKey([['s', 'ы'], () => inputRef.current.focus()], !searchSnap.focused || undefined)
   useKey([
     ['Escape'],
     () => {
@@ -35,7 +32,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
   useKey([
     ['Enter'],
     () => {
-      if (searchStore.focused && searchStore.search && (searchStore.selectedSuggestion === -1 || (['ch-word', 'ru-word', 'words'] as (TResult | undefined)[]).includes(searchStore.suggestion))) {
+      if (searchStore.focused && searchStore.search && searchStore.selectedSuggestion === -1) {
         router.push(`/search/${searchStore.search}`)
         searchStore.focused = false
       }
@@ -72,7 +69,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
         searchStore.resText = text
         const el = document.createElement('div')
         el.innerHTML = text
-        searchStore.suggestion = determineSearchResult(el)
+        searchStore.suggestion = parse(el, determineSearchType(el))
         searchStore.showSuggestion = true
         el.remove()
       })
@@ -82,18 +79,15 @@ export default function Search(props: React.ComponentProps<'search'>) {
     }
   }, [searchSnap.search])
 
-  function Suggestion(props: { suggestion: TResult }) {
-    return (
-      {
-        'ch-word': ChWord,
-        'ru-word': RuWord,
-        'suggest-from-pinyin': SuggestFromPinyin,
-        'pinyin-not-found': PinyinNotFound,
-        'suggest-from-ru': SuggestFromRu,
-        words: Words,
-        error: SearchError,
-      } satisfies Record<TResult, () => ReactNode>
-    )[props.suggestion]()
+  const suggestions = {
+    ch: ChSuggestions,
+    ru: RuSuggestions,
+    py: PySuggestions,
+    error: SearchError,
+  } satisfies { [T in TSearchType]: (props: TSearchProps<T>) => ReactNode }
+
+  function Suggestion<T extends TSearchType>(props: ReturnType<typeof useSnapshot<TSearchProps<T>>>) {
+    return suggestions[props.search.type](props as never)
   }
 
   return (
@@ -116,8 +110,8 @@ export default function Search(props: React.ComponentProps<'search'>) {
         </Link>
         {searchSnap.showSuggestion && searchSnap.suggestion && (
           <aside className='absolute inset-x-0 top-full mt-2 bg-zinc-800 p-4 rounded-lg z-[1]'>
-            <output className='text-xs mb-4 block text-zinc-500'>{resultsDescriptions[searchSnap.suggestion]}</output>
-            <Suggestion suggestion={searchSnap.suggestion} />
+            <output className='text-xs mb-4 block text-zinc-500'>{resultsDescriptions[searchSnap.suggestion.type]}</output>
+            <Suggestion search={searchSnap.suggestion} />
           </aside>
         )}
       </div>

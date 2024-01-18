@@ -1,12 +1,12 @@
 import { classes } from '@/utils'
 import Link from 'next/link'
 import { useSnapshot } from 'valtio'
-import { searchStore } from '../../store'
+import { searchStore } from '../store'
 import useKey from '@/hooks/use-key'
 import { useRouter } from 'next/navigation'
-import { parseSuggestFromPinyin } from '@/search'
+import { TSearchProps, parseWordsFromPinyin } from '@/search'
 
-export default function SuggestFromPinyin() {
+export default function PySuggestions(props: TSearchProps<'py'>) {
   const searchSnap = useSnapshot(searchStore)
   const router = useRouter()
 
@@ -25,7 +25,7 @@ export default function SuggestFromPinyin() {
 
   const el = document.createElement('div')
   el.innerHTML = searchSnap.resText
-  const results = parseSuggestFromPinyin(el, 5)
+  const results = parseWordsFromPinyin(el, 5)
 
   function moveSelection(by: -1 | 1) {
     const current = searchStore.selectedSuggestion

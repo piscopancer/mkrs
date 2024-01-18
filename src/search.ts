@@ -1,26 +1,78 @@
 import axios from 'axios'
 import { project } from './project'
 
-export type TResult = 'words' | 'ru-word' | 'ch-word' | 'suggest-from-pinyin' | 'pinyin-not-found' | 'suggest-from-ru' | 'error'
-export type TResultProps = { el: Element }
+type TWord = Partial<{
+  ch: string
+  py: string
+  ru: string
+}>
 
-export function determineSearchResult(el: Element): TResult {
-  if (el.querySelector('#ch') && el.querySelector('.py')) return 'ch-word'
-  if (el.querySelector('.tbl_bywords')) return 'words'
-  if (el.querySelector('#py_table')) return 'suggest-from-pinyin'
-  if (el.querySelector('#py_search_py') && el.querySelector('#no-such-word')) return 'pinyin-not-found'
-  if (el.querySelector('#ru_ru') && el.querySelector('#no-such-word')) return 'suggest-from-ru'
-  if (el.querySelector('#ru_ru')) return 'ru-word'
+export type TSearchType = 'ch' | 'ru' | 'py' | 'error'
+
+type TSearchBase<T extends TSearchType, O extends object> = { type: T } & O
+
+type TSearchResults = Partial<{
+  tr: string // .ch_ru | .ru
+  startWith: string[] // #ru_from | #ch_from
+  wordsWith: string[] // #words_start_with
+  inRu: string[] // #ruch_fullsearch
+  inCh: string[] // #xinsheng_fullsearch
+  synonyms: string[] // #synonyms_ru | #synonyms
+  examples: string // #examples
+}>
+
+export type TSearches =
+  | TSearchBase<
+      'ch',
+      TSearchResults &
+        Partial<{
+          byWords: TWord[] // .tbl_bywords
+          backlinks: string[] // #backlinks
+        }>
+    >
+  | TSearchBase<'ru', TSearchResults>
+  | TSearchBase<'py', Partial<{ found: true; words: TWord[] } | { found: false }>>
+  | TSearchBase<'error', {}>
+
+export type TSearch<T extends TSearchType> = TSearches & { type: T }
+
+export type TSearchProps<T extends TSearchType> = { search: TSearch<T> }
+
+export function determineSearchType(el: Element): TSearchType {
+  if (el.querySelector('#py_search_py')) return 'py'
+  if (el.querySelector('#ru_ru')) return 'ru'
+  if (el.querySelector('#ch') && el.querySelector('.py')) return 'ch'
   return 'error'
 }
 
-export const resultsDescriptions: Record<TResult, string> = {
-  words: 'Выбор слова',
-  'ru-word': 'Слово на русском',
-  'ch-word': 'Слово на китайскогм',
-  'suggest-from-pinyin': 'Поиск по пининю',
-  'pinyin-not-found': 'Пининь не найден',
-  'suggest-from-ru': 'Поиск на русском',
+export function parse(el: Element, type: TSearchType): TSearches {
+  return (
+    {
+      ch: {
+        type: 'ch',
+        tr: el.querySelector('.ru')?.outerHTML ?? undefined,
+        startWith: Array.from(el.querySelectorAll('#ch_from a')).map((a) => a.textContent ?? '') ?? undefined,
+      },
+      ru: {
+        type: 'ru',
+        tr: el.querySelector('.ch_ru')?.outerHTML ?? undefined,
+        startWith: el.querySelector('#ru_from') ? Array.from(el.querySelectorAll('#ru_from a')).map((a) => a.textContent ?? '') : undefined,
+        wordsWith: el.querySelector('#words_start_with') ? Array.from(el.querySelectorAll('#words_start_with a')).map((a) => a.textContent ?? '') : undefined,
+      },
+      py: {
+        type: 'py',
+        words: parseWordsFromPinyin(el),
+        found: !!el.querySelector('#py_table'),
+      },
+      error: { type: 'error' },
+    } satisfies Record<TSearchType, TSearches>
+  )[type]
+}
+
+export const resultsDescriptions: Record<TSearches['type'], string> = {
+  ch: 'Поиск по китайскому',
+  py: 'Поиск по пининю',
+  ru: 'Поиск по русскому',
   error: 'Ошибка',
 }
 
@@ -53,13 +105,13 @@ export function parseWords(el: Element) {
     .flat(1)
 }
 
-export function parseSuggestFromPinyin(el: Element, max?: number) {
+export function parseWordsFromPinyin(el: Element, max?: number): TWord[] {
   return Array.from(el.querySelectorAll('#py_table > tbody > tr'))
     .slice(0, max ?? Infinity)
     .map((row) => ({
-      ch: row.querySelector('a')?.textContent || '',
-      py: row.querySelector('td.py_py')?.textContent || '',
-      ru: row.querySelector('td.py_ru')?.textContent || '',
+      ch: row.querySelector('a')?.textContent ?? '',
+      py: row.querySelector('td.py_py')?.textContent ?? '',
+      ru: row.querySelector('td.py_ru')?.textContent ?? '',
     }))
 }
 

@@ -1,4 +1,4 @@
-import { TResult } from '@/search'
+import { TSearches } from '@/search'
 import { proxy, ref } from 'valtio'
 
 export const searchStore = proxy({
@@ -7,5 +7,5 @@ export const searchStore = proxy({
   focused: false as boolean,
   selectedSuggestion: -1 as number,
   showSuggestion: false,
-  suggestion: undefined as TResult | undefined,
+  suggestion: undefined as TSearches | undefined,
 })

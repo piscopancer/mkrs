@@ -1,8 +1,8 @@
-import { TResultProps, parseSuggestFromPinyin } from '@/search'
+import { TResultProps, parseWordsFromPinyin } from '@/search'
 import Link from 'next/link'
 
 export default function SuggestFromPinyin(props: TResultProps) {
-  const results = parseSuggestFromPinyin(props.el)
+  const results = parseWordsFromPinyin(props.el)
 
   return (
     <>
