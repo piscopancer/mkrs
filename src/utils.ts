@@ -1,3 +1,5 @@
+import { domToReact, htmlToDOM } from 'html-react-parser'
+
 export type TNextPage<ParamsAlias extends string | never = never, SearchParams extends string[] = []> = {
   params: ParamsAlias extends never ? never : Record<ParamsAlias, string>
   searchParams: Record<SearchParams[number], string | null>
@@ -40,4 +42,8 @@ export function cutStart(whole: string, length: number) {
   let firstPart = whole.slice(0, length)
   let secondPart = whole.slice(length)
   return [firstPart, secondPart] as const
+}
+
+export function stringToReact(str: string) {
+  return domToReact(htmlToDOM(str))
 }

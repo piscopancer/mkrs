@@ -1,5 +1,4 @@
-import { TResultProps, parseWords } from '@/search'
-import { stringToReact } from '..'
+import { stringToReact } from '@/utils'
 import Link from 'next/link'
 
 export default function Words({ el }: TResultProps) {

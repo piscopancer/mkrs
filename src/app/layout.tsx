@@ -6,7 +6,8 @@ import { project } from '@/project'
 import { classes } from '@/utils'
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import { TbBookmarks, TbHistory, TbKeyboard } from 'react-icons/tb'
+import { TbBookmarks, TbDeviceFloppy, TbHistory, TbKeyboard } from 'react-icons/tb'
+import Logo from './(private)/logo'
 
 export const metadata: Metadata = {
   title: project.name,
@@ -19,7 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={classes(fonts.sans, 'text-zinc-200 bg-zinc-900')}>
         <div className='grid grid-cols-[min-content,1fr] grid-rows-[min-content,1fr] h-screen'>
           <div className='grid [grid-template-areas:"stack"] w-20 h-20'>
-            <Image src={girlDancing} alt='s' className='[grid-area:stack] place-self-center w-12 aspect-square rounded-full saturate-0 hover:saturate-100 duration-100 hover:scale-110' />
+            <Logo className='[grid-area:stack] place-self-center' />
             <div className='h-1/3 w-[2px] bg-zinc-700 [grid-area:stack] justify-self-end self-center' />
           </div>
           <h1 className={classes(fonts.display, 'self-center ml-4')}>
@@ -29,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <ul className='flex flex-col gap-2'>
               <Tooltip content='Сохраненные' side='right' sideOffset={6}>
                 <button className='hover:bg-zinc-800 rounded-full py-2 flex justify-center'>
-                  <TbBookmarks className='h-6' />
+                  <TbDeviceFloppy className='h-6' />
                 </button>
               </Tooltip>
               <Tooltip content='История' side='right' sideOffset={6}>
@@ -45,7 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </Tooltip>
             </ul>
           </aside>
-          <section className='border-2 border-zinc-800 mr-3 mb-3 rounded-lg overflow-y-auto'>{children}</section>
+          <section className='border-2 border-zinc-800 px-4 mr-3 mb-3 rounded-lg overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable]'>{children}</section>
         </div>
       </body>
     </html>

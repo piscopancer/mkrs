@@ -1,20 +1,23 @@
+import { fonts } from '@/assets/fonts'
+import { TExample } from '@/search'
+import { classes, stringToReact } from '@/utils'
 import Link from 'next/link'
-import { stringToReact } from '.'
 
-export default function RuchFulltext(props: React.ComponentProps<'section'> & { pairs: { heading: string | null; content: string | null }[] }) {
-  const { pairs, ...htmlProps } = props
+export default function RuchFulltext(props: React.ComponentProps<'section'> & { examples: TExample[] }) {
+  const { examples, ...htmlProps } = props
   return (
-    <section {...htmlProps}>
-      <ul className='flex-col gap-2 text-sm grid grid-cols-[auto_1fr] gap-x-8 gap-y-2'>
-        {pairs.map((pair, i) => (
-          <li key={i} className='contents'>
-            <Link href={`/search/${pair.heading}`} className='self-start' data-custom>
-              {pair.heading}
+    <article {...htmlProps} className='mb-12'>
+      <h1 className={classes(fonts.display, 'uppercase text-zinc-200 mb-8 text-sm')}>в русских словах</h1>
+      <ul className='flex-col gap-2 grid grid-cols-[auto_1fr] gap-x-8 gap-y-2'>
+        {examples.map((ex, i) => (
+          <li key={i} className='contents text-zinc-400'>
+            <Link href={`/search/${ex.heading}`} className='self-start' data-custom>
+              {ex.heading}
             </Link>
-            {pair.content && <>{stringToReact(pair.content)}</>}
+            {ex.content && <>{stringToReact(ex.content)}</>}
           </li>
         ))}
       </ul>
-    </section>
+    </article>
   )
 }

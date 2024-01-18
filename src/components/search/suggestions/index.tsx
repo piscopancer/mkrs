@@ -5,13 +5,14 @@ import { useRouter } from 'next/navigation'
 import { useSnapshot } from 'valtio'
 import { searchStore } from '../store'
 import { ReactElement, ReactNode, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 
 export default function Suggestions<T extends TSearchType, S extends TSearch<T>, Display extends unknown>(props: {
-  button: (props: React.ComponentProps<'button'> & { isSelected: boolean; i: number; display: Display }) => ReactNode
   suggestions: number
   search: S
   get: (search: S) => string[]
   display: (search: S) => Display[]
+  button: (props: React.ComponentProps<'button'> & { isSelected: boolean; i: number; display: Display }) => ReactNode
 }) {
   const searchSnap = useSnapshot(searchStore)
   const router = useRouter()

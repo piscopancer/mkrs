@@ -1,7 +1,4 @@
-#ch-page {
-  #ch {
-    @apply text-4xl mb-1 text-zinc-200;
-  }
+[data-search] {
   .py {
     @apply mb-4;
   }
@@ -24,11 +21,11 @@
     @apply my-4 border-zinc-800 rounded-full;
   }
   a {
-    @apply text-pink-500 hover:text-pink-400 px-1 rounded-sm bg-pink-950 hover:bg-pink-900 hover:scale-105 duration-100 inline-block;
+    @apply text-pink-500 hover:text-pink-300 px-2 w-fit rounded-sm bg-pink-500/10 hover:bg-pink-500/15 hover:-translate-y-px duration-100 inline-block;
   }
-  #backlinks {
-    @apply bg-zinc-800 text-sm py-2 px-4;
-  }
+  // #backlinks {
+  //   @apply bg-zinc-800 text-sm py-2 px-4;
+  // }
   #synonyms {
   }
   #examples {
@@ -41,7 +38,7 @@
       }
     }
   }
-  #ch_from {
-    @apply text-sm;
-  }
+  // #ch_from {
+  //   @apply text-sm;
+  // }
 }

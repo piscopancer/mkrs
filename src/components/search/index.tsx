@@ -14,6 +14,7 @@ import RuSuggestions from './suggestions/ru'
 import PySuggestions from './suggestions/py'
 import SearchError from './suggestions/search-error'
 import ChSuggestions from './suggestions/ch'
+import { AnimatePresence, motion } from 'framer-motion'
 
 export default function Search(props: React.ComponentProps<'search'>) {
   const searchSnap = useSnapshot(searchStore)
@@ -21,7 +22,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
   const selfRef = useRef<HTMLElement>(null!)
   const router = useRouter()
 
-  useKey([['s', 'ы'], () => inputRef.current.focus()], !searchSnap.focused || undefined)
+  useKey([['f', 'а'], () => inputRef.current.focus()], !searchSnap.focused || undefined)
   useKey([
     ['Escape'],
     () => {
@@ -92,7 +93,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
 
   return (
     <search {...props} ref={selfRef} className={classes(props.className)}>
-      <div className='relative flex items-center mb-3 bg-gradient-to-r from-pink-500 to-rose-500 p-0.5 rounded-full'>
+      <div className='relative flex items-center mb-3 bg-gradient-to-r from-pink-400 to-pink-600 p-0.5 rounded-full'>
         <input
           ref={inputRef}
           defaultValue={searchSnap.search}
@@ -103,22 +104,24 @@ export default function Search(props: React.ComponentProps<'search'>) {
           onChange={(e) => {
             searchStore.search = e.target.value
           }}
-          className='pl-6 pr-20 rounded-full py-4 bg-zinc-800 duration-100 w-full focus-visible:outline-4 outline-rose-500/50'
+          className='pl-6 pr-20 rounded-full py-4 bg-zinc-800 duration-100 w-full focus-visible:outline-4 outline-pink-500/50'
         />
         <Link href={searchSnap.search ? `/search/${searchSnap.search}` : '/'} className='text-zinc-400 hover:text-rose-500 focus-visible:text-rose-500 focus-visible:outline-0 absolute right-0 h-full aspect-square flex items-center justify-center rounded-full group duration-100'>
           <TbSearch className='group-hover:scale-125 duration-100 group-focus-visible:scale-125' />
         </Link>
-        {searchSnap.showSuggestion && searchSnap.suggestion && (
-          <aside className='absolute inset-x-0 top-full mt-2 bg-zinc-800 p-4 rounded-lg z-[1]'>
-            <output className='text-xs mb-4 block text-zinc-500'>{resultsDescriptions[searchSnap.suggestion.type]}</output>
-            <Suggestion search={searchSnap.suggestion} />
-          </aside>
-        )}
+        <AnimatePresence>
+          {searchSnap.showSuggestion && searchSnap.suggestion && (
+            <motion.aside initial={{ opacity: 0.5, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 5 }} className='absolute inset-x-0 top-full mt-2 bg-zinc-800 p-4 rounded-3xl z-[1]'>
+              <output className='text-xs mb-4 block text-zinc-500'>{resultsDescriptions[searchSnap.suggestion.type]}</output>
+              <Suggestion search={searchSnap.suggestion} />
+            </motion.aside>
+          )}
+        </AnimatePresence>
       </div>
       <ul className='flex items-center gap-6 justify-end'>
         {(
           [
-            { key: 's', text: 'Фокус' },
+            { key: 'f', text: 'Фокус' },
             { key: 'Enter', text: 'Поиск' },
           ] as { key: string; text: string }[]
         ).map(({ key, text }) => (

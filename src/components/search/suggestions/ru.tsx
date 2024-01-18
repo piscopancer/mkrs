@@ -1,6 +1,8 @@
 import { TSearchProps } from '@/search'
 import { classes } from '@/utils'
+import { AnimatePresence, motion } from 'framer-motion'
 import Suggestions from '.'
+import SuggestionSelection from './selection'
 
 export default function RuSuggestions(props: TSearchProps<'ru'>) {
   return (
@@ -12,7 +14,8 @@ export default function RuSuggestions(props: TSearchProps<'ru'>) {
         display={(search) => search.startWith ?? search.wordsWith ?? []}
         button={({ isSelected, i, display, ...htmlProps }) => {
           return (
-            <button key={i} {...htmlProps} className={classes(isSelected && '!bg-zinc-700', 'flex items-center gap-4 rounded-md px-3 py-1 hover:bg-zinc-700/50 w-full')}>
+            <button key={i} {...htmlProps} className={classes('flex items-center gap-4 rounded-full px-3 py-1 hover:bg-zinc-700/50 w-full relative')}>
+              <SuggestionSelection isSelected={isSelected} />
               <output className='text-zinc-500 text-sm'>{i + 1}</output>
               <span className='text-zinc-200 text-nowrap'>{display}</span>
             </button>

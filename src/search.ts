@@ -1,11 +1,13 @@
 import axios from 'axios'
 import { project } from './project'
 
-type TWord = Partial<{
+export type TWord = Partial<{
   ch: string
   py: string
   ru: string
 }>
+
+export type TExample = { heading: string; content: string }
 
 export type TSearchType = 'ch' | 'ru' | 'py' | 'error'
 
@@ -14,8 +16,8 @@ type TSearchBase<T extends TSearchType, O extends object> = { type: T } & O
 type TSearchResults = Partial<{
   tr: string // .ch_ru | .ru
   startWith: string[] // #ru_from | #ch_from
-  wordsWith: string[] // #words_start_with
-  inRu: string[] // #ruch_fullsearch
+  wordsWith: string[] // #words_start_with | #starting_container, #frequency_words_here
+  inRu: TExample[] // #ruch_fulltext
   inCh: string[] // #xinsheng_fullsearch
   synonyms: string[] // #synonyms_ru | #synonyms
   examples: string // #examples
@@ -26,11 +28,19 @@ export type TSearches =
       'ch',
       TSearchResults &
         Partial<{
+          ch: string // #ch
+          py: string // .py
           byWords: TWord[] // .tbl_bywords
           backlinks: string[] // #backlinks
         }>
     >
-  | TSearchBase<'ru', TSearchResults>
+  | TSearchBase<
+      'ru',
+      TSearchResults &
+        Partial<{
+          ru: string // #ru_ru
+        }>
+    >
   | TSearchBase<'py', Partial<{ found: true; words: TWord[] } | { found: false }>>
   | TSearchBase<'error', {}>
 
@@ -50,12 +60,26 @@ export function parse(el: Element, type: TSearchType): TSearches {
     {
       ch: {
         type: 'ch',
-        tr: el.querySelector('.ru')?.outerHTML ?? undefined,
-        startWith: Array.from(el.querySelectorAll('#ch_from a')).map((a) => a.textContent ?? '') ?? undefined,
+        ch: el.querySelector('#ch')?.innerHTML ?? undefined,
+        py: el.querySelector('.py')?.textContent ?? undefined,
+        tr: el.querySelector('.ru')?.innerHTML ?? undefined,
+        startWith: el.querySelector('#ch_from') ? Array.from(el.querySelectorAll('#ch_from a')).map((a) => a.textContent ?? '') : undefined,
+        wordsWith: el.querySelector('#starting_container') ? Array.from(el.querySelectorAll('#starting_container a')).map((a) => a.textContent ?? '') : el.querySelector('#frequency_words_here') ? Array.from(el.querySelectorAll('#frequency_words_here a')).map((a) => a.textContent ?? '') : undefined,
+        inRu: el.querySelector('#ruch_fulltext')
+          ? Array.from(el.querySelectorAll('#ruch_fulltext > *')).map((ch) => {
+              if (Array.from(ch.children).length) {
+                return {
+                  heading: ch.children[0]?.textContent ?? '',
+                  content: ch.children[1]?.outerHTML ?? '',
+                }
+              } else return { content: '', heading: '' }
+            })
+          : [],
       },
       ru: {
         type: 'ru',
-        tr: el.querySelector('.ch_ru')?.outerHTML ?? undefined,
+        ru: el.querySelector('#ru_ru')?.innerHTML ?? undefined,
+        tr: el.querySelector('.ch_ru')?.innerHTML ?? undefined,
         startWith: el.querySelector('#ru_from') ? Array.from(el.querySelectorAll('#ru_from a')).map((a) => a.textContent ?? '') : undefined,
         wordsWith: el.querySelector('#words_start_with') ? Array.from(el.querySelectorAll('#words_start_with a')).map((a) => a.textContent ?? '') : undefined,
       },
