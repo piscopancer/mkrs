@@ -16,6 +16,6 @@ export const project = {
   links: {
     github: 'https://github.com/piscopancer/mkrs',
   },
-  url: 'https://mkrs.beta.vercel.app',
+  url: 'https://mkrs-beta.vercel.app',
   keywords: ['bkrs', 'chinese', 'learning', 'mkrs'],
 } as const
