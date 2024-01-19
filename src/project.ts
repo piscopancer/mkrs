@@ -14,7 +14,7 @@ export const project = {
     },
   },
   links: {
-    // github: 'https://github.com/piscopancer/mkrs',
+    github: 'https://github.com/piscopancer/mkrs',
   },
   url: 'https://mkrs.vercel.app',
   keywords: ['bkrs', 'chinese', 'learning', 'mkrs'],

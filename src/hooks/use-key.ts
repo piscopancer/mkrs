@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 
-type TKeyAction = [keys: string[], callback: (key: string) => void]
+type TKeyAction<Keys extends string[]> = [keys: Keys, callback: (key: Keys[number]) => void]
 
-export default function useKey(keyAction: TKeyAction, prevent?: true) {
+export default function useKey<Keys extends string[]>(keyAction: TKeyAction<Keys>, prevent?: true) {
   useEffect(() => {
     function registerEventListeners(e: KeyboardEvent) {
       if (keyAction[0].includes(e.key)) {

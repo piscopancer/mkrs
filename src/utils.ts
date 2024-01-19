@@ -1,4 +1,5 @@
 import { domToReact, htmlToDOM } from 'html-react-parser'
+import { ComponentProps } from 'react'
 
 export type TNextPage<ParamsAlias extends string | never = never, SearchParams extends string[] = []> = {
   params: ParamsAlias extends never ? never : Record<ParamsAlias, string>
@@ -46,4 +47,9 @@ export function cutStart(whole: string, length: number) {
 
 export function stringToReact(str: string) {
   return domToReact(htmlToDOM(str))
+}
+
+export type TComponentProps<E extends keyof JSX.IntrinsicElements, P extends object> = {
+  cProps: ComponentProps<E>
+  props: P
 }
