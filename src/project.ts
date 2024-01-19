@@ -1,6 +1,6 @@
 export const project = {
   name: 'МКРС',
-  description: 'Малый китайско-русский словарь. Альтернативная версия БКРС',
+  description: 'Малый китайско-русский словарь. Прокси сайта bkrs.info (БКРС). МКРС не претендует на интеллектуальную собственность БКРС. Название является пародией.',
   creator: {
     nickname: 'piscopancer',
     name: 'Игорь Быстрицкий',
@@ -16,6 +16,6 @@ export const project = {
   links: {
     github: 'https://github.com/piscopancer/mkrs',
   },
-  url: 'https://mkrs.vercel.app',
+  url: 'https://mkrs.beta.vercel.app',
   keywords: ['bkrs', 'chinese', 'learning', 'mkrs'],
 } as const
