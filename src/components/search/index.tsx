@@ -15,6 +15,7 @@ import PySuggestions from './suggestions/py'
 import SearchError from './suggestions/search-error'
 import ChSuggestions from './suggestions/ch'
 import { AnimatePresence, motion } from 'framer-motion'
+import { shortcuts } from '@/shortcuts'
 
 export default function Search(props: React.ComponentProps<'search'>) {
   const searchSnap = useSnapshot(searchStore)
@@ -22,7 +23,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
   const selfRef = useRef<HTMLElement>(null!)
   const router = useRouter()
 
-  useKey([['f', 'а'], () => inputRef.current.focus()], !searchSnap.focused || undefined)
+  useKey([shortcuts.focus.keys, () => inputRef.current.focus()], !searchSnap.focused || undefined)
   useKey([
     ['Escape'],
     () => {
@@ -31,7 +32,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
     },
   ])
   useKey([
-    ['Enter'],
+    shortcuts.search.keys,
     () => {
       if (searchStore.focused && searchStore.search && searchStore.selectedSuggestion === -1) {
         router.push(`/search/${searchStore.search}`)
@@ -106,7 +107,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
           }}
           className='pl-6 pr-20 rounded-full py-4 bg-zinc-800 duration-100 w-full focus-visible:outline-4 outline-pink-500/50'
         />
-        <Link href={searchSnap.search ? `/search/${searchSnap.search}` : '/'} className='text-zinc-400 hover:text-rose-500 focus-visible:text-rose-500 focus-visible:outline-0 absolute right-0 h-full aspect-square flex items-center justify-center rounded-full group duration-100'>
+        <Link href={searchSnap.search ? `/search/${searchSnap.search}` : '/'} className='text-zinc-400 hover:text-pink-500 focus-visible:text-pink-500 focus-visible:outline-0 absolute right-0 h-full aspect-square flex items-center justify-center rounded-full group duration-100'>
           <TbSearch className='group-hover:scale-125 duration-100 group-focus-visible:scale-125' />
         </Link>
         <AnimatePresence>
@@ -119,20 +120,11 @@ export default function Search(props: React.ComponentProps<'search'>) {
         </AnimatePresence>
       </div>
       <ul className='flex items-center gap-6 justify-end'>
-        {(
-          [
-            { key: 'f', text: 'Фокус' },
-            { key: 'Enter', text: 'Поиск' },
-          ] as { key: string; text: string }[]
-        ).map(({ key, text }) => (
-          <li key={key} className='text-xs flex'>
-            <kbd className={classes(fonts.mono, 'text-zinc-400 mr-2 px-2 shadow-[0_1px_0_2px_theme(colors.zinc.700)] rounded-md')}>{key}</kbd>
-            <span className='text-zinc-500'>{text}</span>
+        {[shortcuts.focus, shortcuts.search].map(({ name, display }) => (
+          <li key={name} className='text-xs flex'>
+            <kbd className={classes(fonts.mono, 'text-zinc-400 mr-2 px-2 shadow-[0_1px_0_2px_theme(colors.zinc.700)] rounded-md')}>{display[0]}</kbd>
+            <span className='text-zinc-500'>{name}</span>
           </li>
-          // <li key={key} className='rounded-full text-xs border-2 border-zinc-800 overflow-hidden flex items-center leading-relaxed'>
-          //   <kbd className={classes(fonts.mono, 'text-zinc-400 px-2.5 bg-zinc-800 mr-2.5')}>{key}</kbd>
-          //   <span className='text-zinc-500 mr-2.5'>{text}</span>
-          // </li>
         ))}
       </ul>
     </search>

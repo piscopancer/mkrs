@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 
-type TKeyAction<Keys extends string[]> = [keys: Keys, callback: (key: Keys[number]) => void]
+type TShortcut<Keys extends string[]> = [keys: Keys, callback: (key: Keys[number]) => void]
 
-export default function useKey<Keys extends string[]>(keyAction: TKeyAction<Keys>, prevent?: true) {
+export default function useKey<Keys extends string[]>(keyAction: TShortcut<Keys>, prevent?: true) {
   useEffect(() => {
     function registerEventListeners(e: KeyboardEvent) {
       if (keyAction[0].includes(e.key)) {

@@ -9,6 +9,7 @@ import Image from 'next/image'
 import { TbBookmarks, TbBrandGithub, TbDeviceFloppy, TbHistory, TbKeyboard } from 'react-icons/tb'
 import Logo from './(private)/logo'
 import Link from 'next/link'
+import PageSelector from './(private)/page-selector'
 
 export const metadata: Metadata = {
   title: project.name,
@@ -24,28 +25,33 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Logo className='[grid-area:stack] place-self-center' />
           </div>
           <h1 className={classes(fonts.display, 'self-center ml-4')}>
-            МКРС <span className='text-xs text-zinc-600 ml-4'>// БКРС ПРОКСИ</span>
+            МКРС <span className='text-xs text-zinc-600 ml-4'>{'//'} БКРС ПРОКСИ</span>
           </h1>
           <aside className='px-3 flex flex-col justify-between py-6'>
             <Tooltip content='Главная' side='right' sideOffset={6}>
-              <button className='hover:bg-zinc-800 rounded-full py-2 flex justify-center font-bold'>小</button>
+              <Link href={'/'} className='hover:bg-zinc-800 rounded-full py-2 flex justify-center font-bold relative'>
+                <PageSelector route='/' />小
+              </Link>
             </Tooltip>
             <ul className='flex flex-col gap-2'>
               <Tooltip content='Сохраненные' side='right' sideOffset={6}>
-                <button className='hover:bg-zinc-800 rounded-full py-2 flex justify-center'>
+                <Link href={'/saved'} className='hover:bg-zinc-800 rounded-full py-2 flex justify-center relative'>
+                  <PageSelector route='/saved' />
                   <TbDeviceFloppy className='h-6' />
-                </button>
+                </Link>
               </Tooltip>
-              <Tooltip content='История' side='right' sideOffset={6}>
-                <button className='hover:bg-zinc-800 rounded-full py-2 flex justify-center'>
+              <Tooltip content='Недавние' side='right' sideOffset={6}>
+                <Link href={'/recent'} className='hover:bg-zinc-800 rounded-full py-2 flex justify-center relative'>
+                  <PageSelector route='/recent' />
                   <TbHistory className='h-6' />
-                </button>
+                </Link>
               </Tooltip>
               <div className='bg-zinc-800 my-2 h-1.5 w-1.5 mx-auto rounded-full' />
               <Tooltip content='Горячие клавиши' side='right' sideOffset={6}>
-                <button className='hover:bg-zinc-800 rounded-full py-2 flex justify-center'>
+                <Link href={'/shortcuts'} className='hover:bg-zinc-800 rounded-full py-2 flex justify-center relative'>
                   <TbKeyboard className='h-6' />
-                </button>
+                  <PageSelector route='/shortcuts' />
+                </Link>
               </Tooltip>
             </ul>
             <Tooltip

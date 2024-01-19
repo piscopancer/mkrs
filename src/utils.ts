@@ -48,8 +48,3 @@ export function cutStart(whole: string, length: number) {
 export function stringToReact(str: string) {
   return domToReact(htmlToDOM(str))
 }
-
-export type TComponentProps<E extends keyof JSX.IntrinsicElements, P extends object> = {
-  cProps: ComponentProps<E>
-  props: P
-}

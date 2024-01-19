@@ -10,6 +10,7 @@ import { useSnapshot } from 'valtio'
 import { zinc } from 'tailwindcss/colors'
 import useKey from '@/hooks/use-key'
 import { searchStore } from '@/components/search/store'
+import { shortcuts } from '@/shortcuts'
 
 export default function Save({ ch, ...htmlProps }: React.ComponentProps<'div'> & { ch: string }) {
   const savedSnap = useSnapshot(savedStore)
@@ -20,7 +21,7 @@ export default function Save({ ch, ...htmlProps }: React.ComponentProps<'div'> &
   const star1Anim = useAnimation()
   const star2Anim = useAnimation()
 
-  useKey([['s', 'ы'], () => !searchStore.focused && onClick()])
+  useKey([shortcuts.save.keys, () => !searchStore.focused && onClick()])
 
   function onClick() {
     if (!isSaved) {
