@@ -1,11 +1,9 @@
 import useKey from '@/hooks/use-key'
-import { parseWordsFromPinyin, parseSuggestFromRu, TSearchProps, TSearchType, TSearches, TSearch } from '@/search'
-import { classes } from '@/utils'
+import { TSearch, TSearchType } from '@/search'
 import { useRouter } from 'next/navigation'
+import { ReactNode } from 'react'
 import { useSnapshot } from 'valtio'
 import { searchStore } from '../store'
-import { ReactElement, ReactNode, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
 
 export default function Suggestions<T extends TSearchType, S extends TSearch<T>, Display extends unknown>(props: {
   suggestions: number

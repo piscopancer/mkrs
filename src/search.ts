@@ -101,33 +101,25 @@ export const resultsDescriptions: Record<TSearches['type'], string> = {
 }
 
 export async function queryCharacter(ch: string) {
-  const isServer = typeof window === 'undefined'
-  const serverHost: Record<typeof process.env.NODE_ENV, string> = {
-    development: 'http://localhost:3000',
-    production: project.url,
-    test: 'http://localhost:3000',
-  }
-  const host = isServer ? serverHost[process.env.NODE_ENV] : 'http://localhost:3000'
-
-  const res = await axios.get<string>(`${host}/api/search`, { params: { ch } })
+  const res = await axios.get<string>(`${process.env.NEXT_PUBLIC_URL}/api/search`, { params: { ch } })
   return res.data
 }
 
-export function parseWords(el: Element) {
-  return Array.from(el.querySelectorAll('.tbl_bywords'))
-    .map((table) => {
-      const results: { ch: string; py: string; ru: string[] }[] = []
-      for (let i = 0; i < 4; i++) {
-        results.push({
-          ch: table.querySelector(`tr:nth-child(1) td:nth-child(${i + 1})`)?.textContent ?? '',
-          py: table.querySelector(`tr:nth-child(2) td:nth-child(${i + 1}) > :nth-child(1)`)?.textContent ?? '',
-          ru: Array.from(table.querySelectorAll(`tr:nth-child(2) td:nth-child(${i + 1}) > :nth-child(n + 2)`)).map((el) => el.outerHTML),
-        })
-      }
-      return results
-    })
-    .flat(1)
-}
+// export function parseWords(el: Element) {
+//   return Array.from(el.querySelectorAll('.tbl_bywords'))
+//     .map((table) => {
+//       const results: { ch: string; py: string; ru: string[] }[] = []
+//       for (let i = 0; i < 4; i++) {
+//         results.push({
+//           ch: table.querySelector(`tr:nth-child(1) td:nth-child(${i + 1})`)?.textContent ?? '',
+//           py: table.querySelector(`tr:nth-child(2) td:nth-child(${i + 1}) > :nth-child(1)`)?.textContent ?? '',
+//           ru: Array.from(table.querySelectorAll(`tr:nth-child(2) td:nth-child(${i + 1}) > :nth-child(n + 2)`)).map((el) => el.outerHTML),
+//         })
+//       }
+//       return results
+//     })
+//     .flat(1)
+// }
 
 export function parseWordsFromPinyin(el: Element, max?: number): TWord[] {
   return Array.from(el.querySelectorAll('#py_table > tbody > tr'))
@@ -139,10 +131,10 @@ export function parseWordsFromPinyin(el: Element, max?: number): TWord[] {
     }))
 }
 
-export function parseSuggestFromRu(el: Element, max?: number) {
-  return Array.from(el.querySelectorAll('#ru_from a'))
-    .map((a) => ({
-      startsWith: a?.textContent ?? '',
-    }))
-    .slice(0, max ?? Infinity)
-}
+// export function parseSuggestFromRu(el: Element, max?: number) {
+//   return Array.from(el.querySelectorAll('#ru_from a'))
+//     .map((a) => ({
+//       startsWith: a?.textContent ?? '',
+//     }))
+//     .slice(0, max ?? Infinity)
+// }
