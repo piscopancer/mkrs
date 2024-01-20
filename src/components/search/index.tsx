@@ -1,27 +1,35 @@
 'use client'
 
-import { fonts } from '@/assets/fonts'
 import useKey from '@/hooks/use-key'
+import { TSearchProps, TSearchType, abortController, determineSearchType, parse, queryCharacter, resultsDescriptions } from '@/search'
+import { shortcuts } from '@/shortcuts'
 import { classes } from '@/utils'
+import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ReactNode, useEffect, useRef, useState } from 'react'
+import { GiCat } from 'react-icons/gi'
 import { TbSearch } from 'react-icons/tb'
-import { TSearchProps, TSearchType, determineSearchType, parse, queryCharacter, resultsDescriptions } from '@/search'
-import { ref, useSnapshot } from 'valtio'
+import { useSnapshot } from 'valtio'
 import { searchStore } from './store'
-import RuSuggestions from './suggestions/ru'
-import PySuggestions from './suggestions/py'
-import SearchError from './suggestions/search-error'
 import ChSuggestions from './suggestions/ch'
-import { AnimatePresence, motion } from 'framer-motion'
-import { shortcuts } from '@/shortcuts'
+import ChLongSuggestions from './suggestions/ch-long'
+import PySuggestions from './suggestions/py'
+import RuSuggestions from './suggestions/ru'
+import SearchError from './suggestions/search-error'
+import { Tooltip } from '../tooltip'
+import ExactFound from './exact-found'
+import { findExact, selectSuggestion } from './utils'
 
 export default function Search(props: React.ComponentProps<'search'>) {
   const searchSnap = useSnapshot(searchStore)
   const inputRef = useRef<HTMLInputElement>(null!)
   const selfRef = useRef<HTMLElement>(null!)
   const router = useRouter()
+
+  const catChance = 0.01
+  const [showCat, setShowCat] = useState(false)
+  useEffect(() => setShowCat(+Math.random().toFixed(2) < catChance), [])
 
   useKey([shortcuts.focus.keys, () => inputRef.current.focus()], !searchSnap.focused || undefined)
   useKey([
@@ -35,8 +43,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
     shortcuts.search.keys,
     () => {
       if (searchStore.focused && searchStore.search && searchStore.selectedSuggestion === -1) {
-        router.push(`/search/${searchStore.search}`)
-        searchStore.focused = false
+        selectSuggestion(router, searchStore.search)
       }
     },
   ])
@@ -45,7 +52,6 @@ export default function Search(props: React.ComponentProps<'search'>) {
     searchStore.focused = true
     function hideOnClickOutside(e: MouseEvent) {
       if (!selfRef.current.contains(e.target as Node)) {
-        console.log('outside')
         searchStore.showSuggestion = false
       }
     }
@@ -67,6 +73,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
 
   useEffect(() => {
     if (searchStore.search) {
+      abortController?.abort('new query')
       queryCharacter(searchStore.search).then((text) => {
         searchStore.resText = text
         const el = document.createElement('div')
@@ -85,6 +92,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
     ch: ChSuggestions,
     ru: RuSuggestions,
     py: PySuggestions,
+    'ch-long': ChLongSuggestions,
     error: SearchError,
   } satisfies { [T in TSearchType]: (props: TSearchProps<T>) => ReactNode }
 
@@ -92,8 +100,10 @@ export default function Search(props: React.ComponentProps<'search'>) {
     return suggestions[props.search.type](props as never)
   }
 
+  const exact = searchSnap.suggestion && findExact(searchSnap.suggestion)
+
   return (
-    <search {...props} ref={selfRef} className={classes(props.className)}>
+    <search {...props} ref={selfRef} className={classes(props.className, 'relative')}>
       <div className='relative flex items-center mb-3 bg-gradient-to-r from-pink-400 to-pink-600 p-0.5 rounded-full'>
         <input
           ref={inputRef}
@@ -104,6 +114,10 @@ export default function Search(props: React.ComponentProps<'search'>) {
           type='text'
           onChange={(e) => {
             searchStore.search = e.target.value
+            if (!e.target.value.trim()) {
+              searchStore.suggestion = undefined
+              searchStore.showSuggestion = false
+            }
           }}
           className='pl-6 pr-20 rounded-full py-4 bg-zinc-800 duration-100 w-full focus-visible:outline-4 outline-pink-500/50'
         />
@@ -122,11 +136,19 @@ export default function Search(props: React.ComponentProps<'search'>) {
       <ul className='flex items-center gap-6 justify-end'>
         {[shortcuts.focus, shortcuts.search].map(({ name, display }) => (
           <li key={name} className='text-xs flex'>
-            <kbd className={classes(fonts.mono, 'text-zinc-400 mr-2 px-2 shadow-[0_1px_0_2px_theme(colors.zinc.700)] rounded-md')}>{display[0]}</kbd>
+            <kbd className='font-mono text-zinc-400 mr-2 px-2 shadow-[0_1px_0_2px_theme(colors.zinc.700)] rounded-md'>{display[0]}</kbd>
             <span className='text-zinc-500'>{name}</span>
           </li>
         ))}
       </ul>
+      {showCat && (
+        <Tooltip content='💋'>
+          <motion.button disabled className='absolute bottom-[90%] left-[10%]'>
+            <GiCat className='h-10' />
+          </motion.button>
+        </Tooltip>
+      )}
+      <AnimatePresence>{exact && searchSnap.showSuggestion && <ExactFound key={'exact'} found={exact} className='absolute bottom-[calc(100%+0.5rem)] w-full' />}</AnimatePresence>
     </search>
   )
 }

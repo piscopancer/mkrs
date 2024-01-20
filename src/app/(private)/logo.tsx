@@ -1,11 +1,19 @@
 'use client'
 
-import gif0 from '@/assets/girl-dance-0.gif'
-import gif1 from '@/assets/girl-dance-1.gif'
-import gif2 from '@/assets/girl-dance-2.gif'
-import gif3 from '@/assets/girl-dance-3.gif'
-import gif4 from '@/assets/girl-dance-4.gif'
-import gif5 from '@/assets/girl-dance-5.gif'
+import gif0 from '@/assets/girls/0.gif'
+import gif1 from '@/assets/girls/1.gif'
+import gif2 from '@/assets/girls/2.gif'
+import gif3 from '@/assets/girls/3.gif'
+import gif4 from '@/assets/girls/4.gif'
+import gif5 from '@/assets/girls/5.gif'
+import gif6 from '@/assets/girls/6.gif'
+import gif7 from '@/assets/girls/7.gif'
+import gif8 from '@/assets/girls/8.gif'
+import gif9 from '@/assets/girls/9.gif'
+import gif10 from '@/assets/girls/10.gif'
+import gif11 from '@/assets/girls/11.gif'
+import gif12 from '@/assets/girls/12.gif'
+
 import { searchStore } from '@/components/search/store'
 import useKey from '@/hooks/use-key'
 import { classes, randomFromArray } from '@/utils'
@@ -15,33 +23,35 @@ import { ComponentProps, useEffect, useRef, useState } from 'react'
 import { GiCompactDisc } from 'react-icons/gi'
 import { useSnapshot } from 'valtio'
 
+const gifs = [gif0, gif1, gif2, gif3, gif4, gif5, gif6, gif7, gif8, gif9, gif10, gif11, gif12]
+
 export default function Logo(props: ComponentProps<'div'>) {
   const [full, setFull] = useState(false)
   const [gif, setGif] = useState<null | StaticImageData>(null!)
   const searchSnap = useSnapshot(searchStore)
   const bigGifRef = useRef<HTMLDivElement | null>(null)
 
-  const maxPxFromGif = 500
-  const maxGifPxMovement = 20
+  const maxPxFromGif = 1000
+  const maxGifPxMovement = 50
 
-  const _pxXFromGif = useMotionValue(0)
-  const _pxYFromGif = useMotionValue(0)
+  const pxXFromGif = useSpring(0)
+  const pxYFromGif = useSpring(0)
 
-  const bigGifGlassX = useSpring(useTransform(_pxXFromGif, [-maxPxFromGif, maxPxFromGif], [-maxGifPxMovement, maxGifPxMovement]))
-  const bigGifGlassY = useSpring(useTransform(_pxYFromGif, [-maxPxFromGif, maxPxFromGif], [-maxGifPxMovement, maxGifPxMovement]))
+  const bigGifGlassX = useTransform(pxXFromGif, [-maxPxFromGif, maxPxFromGif], [-maxGifPxMovement, maxGifPxMovement])
+  const bigGifGlassY = useTransform(pxYFromGif, [-maxPxFromGif, maxPxFromGif], [-maxGifPxMovement, maxGifPxMovement])
 
-  const bigGifX = useSpring(useTransform(_pxXFromGif, [maxPxFromGif, -maxPxFromGif], [-maxGifPxMovement / 2, maxGifPxMovement / 2]))
-  const bigGifY = useSpring(useTransform(_pxYFromGif, [maxPxFromGif, -maxPxFromGif], [-maxGifPxMovement / 2, maxGifPxMovement / 2]))
+  const bigGifX = useTransform(pxXFromGif, [maxPxFromGif, -maxPxFromGif], [-maxGifPxMovement / 2, maxGifPxMovement / 2])
+  const bigGifY = useTransform(pxYFromGif, [maxPxFromGif, -maxPxFromGif], [-maxGifPxMovement / 2, maxGifPxMovement / 2])
 
   useKey([['Escape'], () => full && setFull(false)])
 
   useEffect(() => {
-    setGif(randomFromArray([gif0, gif1, gif2, gif3, gif4, gif5]))
+    setGif(randomFromArray(gifs))
     function onMouseMove(e: MouseEvent) {
       if (bigGifRef.current) {
         const gifRect = bigGifRef.current.getBoundingClientRect()
-        _pxXFromGif.set(e.pageX - (gifRect.x + gifRect.width / 2))
-        _pxYFromGif.set(e.pageY - (gifRect.y + gifRect.height / 2))
+        pxXFromGif.set(e.pageX - (gifRect.x + gifRect.width / 2))
+        pxYFromGif.set(e.pageY - (gifRect.y + gifRect.height / 2))
       }
     }
     addEventListener('mousemove', onMouseMove)

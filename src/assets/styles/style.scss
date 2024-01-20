@@ -69,8 +69,8 @@ code {
     }
   }
   &[data-side="right"] {
-    animation: smoothAppearBottom 0.2s ease-out forwards;
-    @keyframes smoothAppearBottom {
+    animation: smoothAppearRight 0.2s ease-out forwards;
+    @keyframes smoothAppearRight {
       from {
         opacity: 0;
         translate: 0;

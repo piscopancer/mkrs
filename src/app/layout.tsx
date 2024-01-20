@@ -1,33 +1,44 @@
-import girlDancing from '@/assets/dancing-dance.gif'
-import { fonts } from '@/assets/fonts'
+import { fontVars } from '@/assets/fonts'
+import logo from '@/assets/logo.png'
 import '@/assets/styles/style.scss'
 import { Tooltip } from '@/components/tooltip'
 import { project } from '@/project'
 import { classes } from '@/utils'
 import type { Metadata } from 'next'
-import Image from 'next/image'
-import { TbBookmarks, TbBrandGithub, TbDeviceFloppy, TbHistory, TbKeyboard } from 'react-icons/tb'
-import Logo from './(private)/logo'
 import Link from 'next/link'
+import { TbBrandGithub, TbDeviceFloppy, TbHistory, TbKeyboard } from 'react-icons/tb'
+import Logo from './(private)/logo'
 import PageSelector from './(private)/page-selector'
+import ThemeSwitch from './(private)/theme-switch'
+import Info from './(private)/info'
 
 export const metadata: Metadata = {
   title: project.name,
   description: project.description,
+  openGraph: {
+    title: project.name,
+    description: project.description,
+    images: [logo.src],
+    creators: [project.creator.nickname],
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang='ru'>
-      <body className={classes(fonts.sans, 'text-zinc-200 bg-zinc-900')}>
+      <body className={classes(fontVars, 'font-sans text-zinc-200 bg-zinc-900')}>
         <div className='grid grid-cols-[min-content,1fr] grid-rows-[min-content,1fr] h-screen'>
           <div className='grid [grid-template-areas:"stack"] w-20 h-20'>
             <Logo className='[grid-area:stack] place-self-center' />
           </div>
-          <h1 className={classes(fonts.display, 'self-center ml-4')}>
-            МКРС <span className='text-xs text-zinc-600 ml-4'>{'//'} БКРС ПРОКСИ</span>
-          </h1>
-          <aside className='px-3 flex flex-col justify-between py-6'>
+          <header className=' self-center ml-4 flex items-center mr-4'>
+            <span className='font-display mr-auto  '>
+              МКРС <span className='text-xs text-zinc-600 ml-4'>{'//'} БКРС ПРОКСИ</span>
+            </span>
+            <ThemeSwitch className='mr-2' />
+            <Info />
+          </header>
+          <nav className='px-3 flex flex-col justify-between py-6'>
             <Tooltip content='Главная' side='right' sideOffset={6}>
               <Link href={'/'} className='hover:bg-zinc-800 rounded-full py-2 flex justify-center font-bold relative'>
                 <PageSelector route='/' />小
@@ -67,7 +78,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <TbBrandGithub className='h-6' />
               </a>
             </Tooltip>
-          </aside>
+          </nav>
           <section className='border-2 border-zinc-800 px-4 mr-3 mb-3 rounded-lg overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable]'>{children}</section>
         </div>
       </body>

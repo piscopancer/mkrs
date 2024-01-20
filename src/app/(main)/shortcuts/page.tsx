@@ -1,4 +1,3 @@
-import { fonts } from '@/assets/fonts'
 import { shortcuts } from '@/shortcuts'
 import { classes, objectEntries } from '@/utils'
 
@@ -13,13 +12,13 @@ export default function Shortcuts() {
               {display.map((key, i) => (
                 <>
                   <li key={key}>
-                    <kbd className={classes(fonts.mono, 'px-2 shadow-[0_1px_0_2px_theme(colors.zinc.700)] rounded-md ')}>{key}</kbd>
+                    <kbd className='font-mono px-2 shadow-[0_1px_0_2px_theme(colors.zinc.700)] rounded-md'>{key}</kbd>
                   </li>
                   {i !== display.length - 1 && <span>/</span>}
                 </>
               ))}
             </ul>
-            <output className={classes(fonts.mono, 'text-zinc-400 text-xs justify-self-end bg-zinc-800 w-fit px-2 rounded-full py-0.5')}>{id}</output>
+            <output className='font-mono text-zinc-400 text-xs justify-self-end bg-zinc-800 w-fit px-2 rounded-full py-0.5'>{id}</output>
           </li>
         ))}
       </ul>

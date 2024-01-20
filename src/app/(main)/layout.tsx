@@ -16,7 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <div className='max-w-screen-lg mx-auto'>
-      <motion.div initial={{ marginTop: 8 + 'rem' }} animate={{ marginTop: pathname === '/' ? 8 + 'rem' : 2 + 'rem', transition: { duration: 0.8, ease: [0.3, 0.9, 0, 1] } }}>
+      <motion.div initial={{ marginTop: 8 + 'rem' }} animate={{ marginTop: pathname === '/' ? 8 + 'rem' : 5 + 'rem', transition: { duration: 0.8, ease: [0.3, 0.9, 0, 1] } }}>
         <Search className='mb-12' />
       </motion.div>
       {children}

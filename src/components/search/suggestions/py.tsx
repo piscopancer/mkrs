@@ -18,7 +18,7 @@ export default function PySuggestions(props: TSearchProps<'py'>) {
               <output className='text-zinc-500 text-sm'>{i + 1}</output>
               <span className='text-zinc-200 text-nowrap text-lg'>{display.ch}</span>
               <span className='text-zinc-400 text-nowrap'>{display.py}</span>
-              <span className='text-zinc-200 text-nowrap'>{display.ru}</span>
+              <span className='text-zinc-200 text-nowrap overflow-hidden text-ellipsis block'>{display.ru}</span>
             </button>
           )
         }}

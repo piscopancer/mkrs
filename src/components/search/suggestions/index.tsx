@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { ReactNode } from 'react'
 import { useSnapshot } from 'valtio'
 import { searchStore } from '../store'
+import { selectSuggestion } from '../utils'
 
 export default function Suggestions<T extends TSearchType, S extends TSearch<T>, Display extends unknown>(props: {
   suggestions: number
@@ -25,10 +26,9 @@ export default function Suggestions<T extends TSearchType, S extends TSearch<T>,
   useKey([
     ['Enter'],
     () => {
-      console.log(searchSnap.selectedSuggestion)
       if (searchSnap.selectedSuggestion !== -1) {
         const suggestion = suggestions[searchSnap.selectedSuggestion]
-        selectSuggestion(suggestion)
+        selectSuggestion(router, suggestion)
       }
     },
   ])
@@ -48,12 +48,6 @@ export default function Suggestions<T extends TSearchType, S extends TSearch<T>,
     }
   }
 
-  function selectSuggestion(ch: string) {
-    router.push(`/search/${ch}`)
-    searchStore.focused = false
-    searchStore.showSuggestion = false
-  }
-
   return (
     <>
       <ul>
@@ -62,7 +56,7 @@ export default function Suggestions<T extends TSearchType, S extends TSearch<T>,
           return props.button({
             i,
             isSelected,
-            onMouseDown: () => selectSuggestion(suggestion),
+            onMouseDown: () => selectSuggestion(router, suggestion),
             display: display[i],
           })
         })}

@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { project } from './project'
+import { searchStore } from './components/search/store'
 
 export type TWord = Partial<{
   ch: string
@@ -9,7 +10,7 @@ export type TWord = Partial<{
 
 export type TExample = { heading: string; content: string }
 
-export type TSearchType = 'ch' | 'ru' | 'py' | 'error'
+export type TSearchType = 'ch' | 'ru' | 'py' | 'ch-long' | 'error'
 
 type TSearchBase<T extends TSearchType, O extends object> = { type: T } & O
 
@@ -39,9 +40,11 @@ export type TSearches =
       TSearchResults &
         Partial<{
           ru: string // #ru_ru
+          found: true // #no-such-word
         }>
     >
   | TSearchBase<'py', Partial<{ found: true; words: TWord[] } | { found: false }>>
+  | TSearchBase<'ch-long', Partial<{ ch: string; byWords: TWord[] }>>
   | TSearchBase<'error', {}>
 
 export type TSearch<T extends TSearchType> = TSearches & { type: T }
@@ -52,6 +55,7 @@ export function determineSearchType(el: Element): TSearchType {
   if (el.querySelector('#py_search_py')) return 'py'
   if (el.querySelector('#ru_ru')) return 'ru'
   if (el.querySelector('#ch') && el.querySelector('.py')) return 'ch'
+  if (el.querySelector('#ch_long')) return 'ch-long'
   return 'error'
 }
 
@@ -75,18 +79,24 @@ export function parse(el: Element, type: TSearchType): TSearches {
               } else return { content: '', heading: '' }
             })
           : [],
+        byWords: (el.querySelector('.tbl_bywords') && parseWords(el)) ?? undefined,
       },
       ru: {
         type: 'ru',
         ru: el.querySelector('#ru_ru')?.innerHTML ?? undefined,
-        tr: el.querySelector('.ch_ru')?.innerHTML ?? undefined,
+        tr: !!!el.querySelector('#no-such-word') ? el.querySelector('.ch_ru')?.innerHTML : undefined ?? undefined,
+        found: el.querySelector('#no-such-word') ? undefined : true,
         startWith: el.querySelector('#ru_from') ? Array.from(el.querySelectorAll('#ru_from a')).map((a) => a.textContent ?? '') : undefined,
         wordsWith: el.querySelector('#words_start_with') ? Array.from(el.querySelectorAll('#words_start_with a')).map((a) => a.textContent ?? '') : undefined,
       },
       py: {
         type: 'py',
         words: parseWordsFromPinyin(el),
-        found: !!el.querySelector('#py_table'),
+        found: !!!el.querySelector('#no-such-word'),
+      },
+      'ch-long': {
+        type: 'ch-long',
+        byWords: (el.querySelector('.tbl_bywords') && parseWords(el)) ?? undefined,
       },
       error: { type: 'error' },
     } satisfies Record<TSearchType, TSearches>
@@ -97,29 +107,46 @@ export const resultsDescriptions: Record<TSearches['type'], string> = {
   ch: 'Поиск по китайскому',
   py: 'Поиск по пининю',
   ru: 'Поиск по русскому',
+  'ch-long': 'Поиск по тексту',
   error: 'Ошибка',
 }
 
+export let abortController: AbortController | null = null
+
 export async function queryCharacter(ch: string) {
-  const res = await axios.get<string>(`${process.env.NEXT_PUBLIC_URL}/api/search`, { params: { ch } })
-  return res.data
+  const url = new URL(process.env.NEXT_PUBLIC_URL)
+  url.pathname = '/api/search'
+  url.searchParams.set('ch', ch)
+  abortController = new AbortController()
+  const res = await fetch(url, { signal: abortController.signal })
+  abortController = null
+  return res.text()
 }
 
-// export function parseWords(el: Element) {
-//   return Array.from(el.querySelectorAll('.tbl_bywords'))
-//     .map((table) => {
-//       const results: { ch: string; py: string; ru: string[] }[] = []
-//       for (let i = 0; i < 4; i++) {
-//         results.push({
-//           ch: table.querySelector(`tr:nth-child(1) td:nth-child(${i + 1})`)?.textContent ?? '',
-//           py: table.querySelector(`tr:nth-child(2) td:nth-child(${i + 1}) > :nth-child(1)`)?.textContent ?? '',
-//           ru: Array.from(table.querySelectorAll(`tr:nth-child(2) td:nth-child(${i + 1}) > :nth-child(n + 2)`)).map((el) => el.outerHTML),
-//         })
-//       }
-//       return results
-//     })
-//     .flat(1)
-// }
+export function parseWords(el: Element) {
+  return Array.from(el.querySelectorAll('.tbl_bywords'))
+    .map((table) => {
+      const words: TWord[] = []
+      for (let i = 0; i < 4; i++) {
+        words.push({
+          ch: table.querySelector(`tr:nth-child(1) td:nth-child(${i + 1})`)?.textContent ?? '',
+          py: table.querySelector(`tr:nth-child(2) td:nth-child(${i + 1}) > :nth-child(1)`)?.textContent ?? '',
+          ru: parseRu(table, i),
+        })
+      }
+      return words.filter((w) => w.ch && w.py)
+    })
+    .flat(1)
+
+  function parseRu(table: Element, i: number) {
+    const _ru = table.querySelector(`tr:nth-child(2) td:nth-child(${i + 1})`)
+    if (_ru) {
+      const ru = _ru.cloneNode(true) as Element
+      ru.querySelector('center:nth-child(1)')?.remove()
+      return ru.innerHTML
+    }
+  }
+}
 
 export function parseWordsFromPinyin(el: Element, max?: number): TWord[] {
   return Array.from(el.querySelectorAll('#py_table > tbody > tr'))
@@ -130,11 +157,3 @@ export function parseWordsFromPinyin(el: Element, max?: number): TWord[] {
       ru: row.querySelector('td.py_ru')?.textContent ?? '',
     }))
 }
-
-// export function parseSuggestFromRu(el: Element, max?: number) {
-//   return Array.from(el.querySelectorAll('#ru_from a'))
-//     .map((a) => ({
-//       startsWith: a?.textContent ?? '',
-//     }))
-//     .slice(0, max ?? Infinity)
-// }
