@@ -2,6 +2,9 @@
 
 import gif0 from '@/assets/girls/0.gif'
 import gif1 from '@/assets/girls/1.gif'
+import gif10 from '@/assets/girls/10.gif'
+import gif11 from '@/assets/girls/11.gif'
+import gif12 from '@/assets/girls/12.gif'
 import gif2 from '@/assets/girls/2.gif'
 import gif3 from '@/assets/girls/3.gif'
 import gif4 from '@/assets/girls/4.gif'
@@ -10,14 +13,11 @@ import gif6 from '@/assets/girls/6.gif'
 import gif7 from '@/assets/girls/7.gif'
 import gif8 from '@/assets/girls/8.gif'
 import gif9 from '@/assets/girls/9.gif'
-import gif10 from '@/assets/girls/10.gif'
-import gif11 from '@/assets/girls/11.gif'
-import gif12 from '@/assets/girls/12.gif'
 
-import { searchStore } from '@/components/search/store'
 import useKey from '@/hooks/use-key'
+import { searchStore } from '@/search'
 import { classes, randomFromArray } from '@/utils'
-import { motion, useAnimation, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { motion, useAnimation, useSpring, useTransform } from 'framer-motion'
 import Image, { StaticImageData } from 'next/image'
 import { ComponentProps, useEffect, useRef, useState } from 'react'
 import { GiCompactDisc } from 'react-icons/gi'
@@ -56,7 +56,7 @@ export default function Logo(props: ComponentProps<'div'>) {
     }
     addEventListener('mousemove', onMouseMove)
     return () => removeEventListener('mousemove', onMouseMove)
-  }, [])
+  }, [pxXFromGif, pxYFromGif])
 
   useEffect(() => {
     if (searchStore.focused) setFull(false)
@@ -118,7 +118,7 @@ function Disc(props: { side: 'left' | 'right' }) {
       transition: { ease: 'linear', repeat: Infinity, duration: 6 },
       rotate: [0, 360],
     })
-  }, [])
+  }, [anim, props.side])
 
   return (
     <motion.div className='max-lg:hidden' animate={anim} exit={{ scale: 0 }}>

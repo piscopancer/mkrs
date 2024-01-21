@@ -1,20 +1,18 @@
 'use client'
 
-import useKey from '@/hooks/use-key'
 import { TWord } from '@/search'
 import { classes, stringToReact } from '@/utils'
-import { AnimatePresence, motion, useMotionValue, useSpring } from 'framer-motion'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import Heading from './heading'
 
 export default function ByWords({ words, ...htmlProps }: React.ComponentProps<'section'> & { words: TWord[] }) {
   const [hovered, setHovered] = useState<null | number>(null)
   const router = useRouter()
 
   return (
-    <article {...htmlProps} className='mb-12'>
-      <h2 className='font-display uppercase text-zinc-200 mb-8 text-sm'>Пословный перевод</h2>
+    <section {...htmlProps} className={classes(htmlProps.className)}>
+      <Heading text='пословный перевод' className='mb-8' />
       <ul className='grid grid-cols-4 gap-1' onMouseLeave={() => setHovered(null)}>
         {words.map((word, i) => (
           <li key={i}>
@@ -34,6 +32,6 @@ export default function ByWords({ words, ...htmlProps }: React.ComponentProps<'s
           </li>
         ))}
       </ul>
-    </article>
+    </section>
   )
 }

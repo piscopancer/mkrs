@@ -1,8 +1,8 @@
 'use client'
 
 import Search from '@/components/search'
-import { searchStore } from '@/components/search/store'
 import useKey from '@/hooks/use-key'
+import { searchStore } from '@/search'
 import { shortcuts } from '@/shortcuts'
 import { motion } from 'framer-motion'
 import { usePathname, useRouter } from 'next/navigation'

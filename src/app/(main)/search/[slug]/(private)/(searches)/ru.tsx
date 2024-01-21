@@ -1,12 +1,11 @@
 import { TSearchProps } from '@/search'
-import Save from '../save'
 import { stringToReact } from '@/utils'
+import { TbBookOff } from 'react-icons/tb'
 import RuchFulltext from '../ruch-fulltext'
-import { TbChristmasTree, TbEyeClosed, TbHome2, TbTree, TbTrees } from 'react-icons/tb'
-import Link from 'next/link'
+import Save from '../save'
+import StartWith from '../start-with'
 
 export default function Ru(props: TSearchProps<'ru'>) {
-  console.log(props.search.found, props.search.tr)
   return (
     <article className='mb-24 relative'>
       {props.search.ru && <Save ch={props.search.ru} className='absolute top-0 right-0' />}
@@ -18,28 +17,15 @@ export default function Ru(props: TSearchProps<'ru'>) {
               {stringToReact(props.search.tr)}
             </div>
           )}
-          {props.search.inRu && <RuchFulltext examples={props.search.inRu} className='mb-4' />}
+          {props.search.inRu && <RuchFulltext examples={props.search.inRu} className='mb-12' />}
         </>
       ) : (
-        <>
-          <section className='border-2 border-zinc-800 py-5 mx-auto rounded-2xl mb-12'>
-            <TbEyeClosed className='h-6 mb-2 stroke-zinc-400 mx-auto' />
-            <output className='text-center text-zinc-400 block'>Слова не найдено</output>
-          </section>
-        </>
-      )}
-      {props.search.startWith && (
-        <section className='mb-12'>
-          <p className='font-display text-zinc-200 mb-8 uppercase text-sm'>начинающиеся с</p>
-          <ul className='grid grid-cols-3 gap-1'>
-            {props.search.startWith.map((word) => (
-              <li key={word}>
-                <Link href={`/search/${word}`}>{word}</Link>
-              </li>
-            ))}
-          </ul>
+        <section className='border-2 border-zinc-800 py-2 px-4 rounded-full mb-12 flex items-center gap-4 w-fit'>
+          <TbBookOff className='h-5 stroke-zinc-400' />
+          <output className='text-zinc-400 text-sm'>Слова не найдено</output>
         </section>
       )}
+      {props.search.startWith && <StartWith words={props.search.startWith} className='mb-12' />}
     </article>
   )
 }

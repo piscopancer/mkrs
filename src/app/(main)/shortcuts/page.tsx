@@ -1,5 +1,5 @@
 import { shortcuts } from '@/shortcuts'
-import { classes, objectEntries } from '@/utils'
+import { objectEntries } from '@/utils'
 
 export default function Shortcuts() {
   return (

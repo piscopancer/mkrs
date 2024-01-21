@@ -1,39 +1,46 @@
 import useKey from '@/hooks/use-key'
-import { TSearch, TSearchType } from '@/search'
+import { TSearch, TSearchType, findSuggestions, searchDescriptions, searchStore } from '@/search'
 import { useRouter } from 'next/navigation'
 import { ReactNode } from 'react'
 import { useSnapshot } from 'valtio'
-import { searchStore } from '../store'
 import { selectSuggestion } from '../utils'
 
 export default function Suggestions<T extends TSearchType, S extends TSearch<T>, Display extends unknown>(props: {
   suggestions: number
   search: S
-  get: (search: S) => string[]
   display: (search: S) => Display[]
   button: (props: React.ComponentProps<'button'> & { isSelected: boolean; i: number; display: Display }) => ReactNode
 }) {
   const searchSnap = useSnapshot(searchStore)
   const router = useRouter()
+  // const selfAnim = useAnimation()
 
-  const suggestions = props.get(props.search).slice(0, props.suggestions)
-  if (searchStore.selectedSuggestion > suggestions.length - 1) searchStore.selectedSuggestion = 0
+  // useEffect(() => {
+  //   selfAnim.set({ opacity: 0.5, y: -5 })
+  //   selfAnim.start({ opacity: 1, y: 0 })
+  // }, [])
+
+  const suggestions = findSuggestions(props.search)?.slice(0, props.suggestions) ?? undefined
+  if (suggestions) {
+    if (searchStore.selectedSuggestion > suggestions.length - 1) searchStore.selectedSuggestion = 0
+  } else {
+    searchStore.selectedSuggestion = -1
+  }
 
   const display = props.display(props.search)
 
-  useKey([['ArrowUp'], () => suggestions.length > 0 && moveSelection(-1)], true)
-  useKey([['ArrowDown'], () => suggestions.length > 0 && moveSelection(1)], true)
+  useKey([['ArrowUp'], () => suggestions && suggestions.length > 0 && moveSelection(suggestions, -1)], true)
+  useKey([['ArrowDown'], () => suggestions && suggestions.length > 0 && moveSelection(suggestions, 1)], true)
   useKey([
     ['Enter'],
     () => {
-      if (searchSnap.selectedSuggestion !== -1) {
-        const suggestion = suggestions[searchSnap.selectedSuggestion]
-        selectSuggestion(router, suggestion)
+      if (suggestions && searchSnap.selectedSuggestion !== -1) {
+        selectSuggestion(router, suggestions[searchSnap.selectedSuggestion])
       }
     },
   ])
 
-  function moveSelection(by: -1 | 1) {
+  function moveSelection(suggestions: string[], by: -1 | 1) {
     const current = searchStore.selectedSuggestion
     switch (current) {
       case suggestions.length - 1:
@@ -48,8 +55,11 @@ export default function Suggestions<T extends TSearchType, S extends TSearch<T>,
     }
   }
 
+  if (!suggestions) return
+
   return (
-    <>
+    <aside className='absolute inset-x-0 top-full mt-2 bg-zinc-800 p-4 rounded-3xl z-[1]'>
+      <output className='text-xs mb-4 block text-zinc-500'>{searchDescriptions[props.search.type]}</output>
       <ul>
         {suggestions.map((suggestion, i) => {
           const isSelected = searchSnap.selectedSuggestion === i
@@ -61,6 +71,6 @@ export default function Suggestions<T extends TSearchType, S extends TSearch<T>,
           })
         })}
       </ul>
-    </>
+    </aside>
   )
 }

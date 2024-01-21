@@ -1,6 +1,12 @@
-import axios from 'axios'
-import { project } from './project'
-import { searchStore } from './components/search/store'
+import { proxy } from 'valtio'
+
+export const searchStore = proxy({
+  focused: false,
+  inputValue: '',
+  search: undefined as TSearches | undefined,
+  showSuggestions: false,
+  selectedSuggestion: -1,
+})
 
 export type TWord = Partial<{
   ch: string
@@ -69,16 +75,7 @@ export function parse(el: Element, type: TSearchType): TSearches {
         tr: el.querySelector('.ru')?.innerHTML ?? undefined,
         startWith: el.querySelector('#ch_from') ? Array.from(el.querySelectorAll('#ch_from a')).map((a) => a.textContent ?? '') : undefined,
         wordsWith: el.querySelector('#starting_container') ? Array.from(el.querySelectorAll('#starting_container a')).map((a) => a.textContent ?? '') : el.querySelector('#frequency_words_here') ? Array.from(el.querySelectorAll('#frequency_words_here a')).map((a) => a.textContent ?? '') : undefined,
-        inRu: el.querySelector('#ruch_fulltext')
-          ? Array.from(el.querySelectorAll('#ruch_fulltext > *')).map((ch) => {
-              if (Array.from(ch.children).length) {
-                return {
-                  heading: ch.children[0]?.textContent ?? '',
-                  content: ch.children[1]?.outerHTML ?? '',
-                }
-              } else return { content: '', heading: '' }
-            })
-          : [],
+        inRu: parseInRu(el),
         byWords: (el.querySelector('.tbl_bywords') && parseWords(el)) ?? undefined,
       },
       ru: {
@@ -88,6 +85,7 @@ export function parse(el: Element, type: TSearchType): TSearches {
         found: el.querySelector('#no-such-word') ? undefined : true,
         startWith: el.querySelector('#ru_from') ? Array.from(el.querySelectorAll('#ru_from a')).map((a) => a.textContent ?? '') : undefined,
         wordsWith: el.querySelector('#words_start_with') ? Array.from(el.querySelectorAll('#words_start_with a')).map((a) => a.textContent ?? '') : undefined,
+        inRu: parseInRu(el),
       },
       py: {
         type: 'py',
@@ -103,7 +101,7 @@ export function parse(el: Element, type: TSearchType): TSearches {
   )[type]
 }
 
-export const resultsDescriptions: Record<TSearches['type'], string> = {
+export const searchDescriptions: Record<TSearches['type'], string> = {
   ch: 'Поиск по китайскому',
   py: 'Поиск по пининю',
   ru: 'Поиск по русскому',
@@ -156,4 +154,29 @@ export function parseWordsFromPinyin(el: Element, max?: number): TWord[] {
       py: row.querySelector('td.py_py')?.textContent ?? '',
       ru: row.querySelector('td.py_ru')?.textContent ?? '',
     }))
+}
+
+function parseInRu(el: Element) {
+  return el.querySelector('#ruch_fullsearch')
+    ? Array.from(el.querySelectorAll('#ruch_fullsearch > *')).map((ch) => {
+        if (Array.from(ch.children).length) {
+          return {
+            heading: ch.children[0]?.textContent ?? '',
+            content: ch.children[1]?.outerHTML ?? '',
+          }
+        } else return { content: '', heading: '' }
+      })
+    : undefined
+}
+
+const findSuggestionsFunctions: { [T in TSearchType]: (search: TSearch<T>) => string[] | undefined } = {
+  ch: (s) => s.startWith ?? s.wordsWith,
+  ru: (s) => s.startWith ?? s.wordsWith,
+  py: (s) => (s.found ? s.words && s.words.map((w) => w.ch ?? '') : undefined),
+  'ch-long': (s) => s.byWords?.map((w) => w.ch ?? '') ?? undefined,
+  error: () => undefined,
+}
+
+export function findSuggestions(search: TSearches) {
+  return findSuggestionsFunctions[search.type](search as never)
 }

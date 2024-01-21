@@ -1,16 +1,14 @@
 'use client'
 
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
-import { searchStore } from '../store'
 import { useRouter } from 'next/navigation'
 import useKey from '@/hooks/use-key'
-import { TWord } from '@/search'
+import { TWord, searchDescriptions } from '@/search'
 import { classes } from '@/utils'
 import Link from 'next/link'
 import { useState } from 'react'
 import { selectSuggestion } from '../utils'
 
-export function ByWords(props: { words: TWord[] }) {
+export default function ByWords(props: { words: TWord[] }) {
   const [selectedSuggestion, setSelectedSuggestion] = useState(0)
   const router = useRouter()
 
@@ -42,14 +40,17 @@ export function ByWords(props: { words: TWord[] }) {
   }
 
   return (
-    <ul className='flex flex-wrap gap-1'>
-      {props.words.map((word, i) => (
-        <li key={word.ch}>
-          <Link href={`/search/${word.ch}`} className={classes(selectedSuggestion === i ? 'bg-zinc-700' : '', 'text-md px-3 py-1 hover:text-pink-300 rounded-full border-2 border-zinc-700')}>
-            {word.ch}
-          </Link>
-        </li>
-      ))}
-    </ul>
+    <aside className='absolute inset-x-0 top-full mt-2 bg-zinc-800 p-4 rounded-3xl z-[1]'>
+      <output className='text-xs mb-4 block text-zinc-500'>{searchDescriptions['ch-long']}</output>
+      <ul className='flex flex-wrap gap-1 '>
+        {props.words.map((word, i) => (
+          <li key={word.ch}>
+            <Link href={`/search/${word.ch}`} className={classes(selectedSuggestion === i ? 'bg-zinc-700' : '', 'text-md px-3 py-1 hover:text-pink-300 rounded-full border-2 border-zinc-700')}>
+              {word.ch}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </aside>
   )
 }

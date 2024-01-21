@@ -3,10 +3,10 @@
 import { classes } from '@/utils'
 import { HTMLMotionProps, motion } from 'framer-motion'
 import { useSnapshot } from 'valtio'
-import { searchStore } from './store'
 import { TbArrowBadgeRight, TbArrowBadgeRightFilled, TbArrowRightBar } from 'react-icons/tb'
 import { selectSuggestion } from './utils'
 import { useRouter } from 'next/navigation'
+import { searchStore } from '@/search'
 
 export default function ExactFound({ found, ...htmlProps }: HTMLMotionProps<'aside'> & { found: string }) {
   const searchSnap = useSnapshot(searchStore)
@@ -19,7 +19,11 @@ export default function ExactFound({ found, ...htmlProps }: HTMLMotionProps<'asi
       animate={{ y: 0, opacity: searchSnap.selectedSuggestion === -1 ? 1 : 0.5 }}
       initial={{ y: 2, opacity: 0 }}
       onClick={() => selectSuggestion(router, found)}
-      className={classes(htmlProps.className, searchSnap.selectedSuggestion === -1 ? ' from-pink-500 to-pink-400' : ' from-zinc-800 to-zinc-800', 'px-6 py-2 rounded-full flex items-center bg-gradient-to-r text-zinc-200 duration-500 transition-[scale,background]')}
+      className={classes(
+        htmlProps.className,
+        searchSnap.selectedSuggestion === -1 ? ' from-pink-500 to-pink-400 border-pink-200/50' : ' from-zinc-800 to-zinc-800 border-zinc-700',
+        'border-2 border-transparent px-6 py-2 rounded-full flex items-center bg-gradient-to-r text-zinc-200 duration-500 transition-[scale,background]'
+      )}
     >
       <span className='mr-auto font-bold'>{found}</span>
       <ul className='flex items-center mr-6'>

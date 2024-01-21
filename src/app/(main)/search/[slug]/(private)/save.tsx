@@ -1,16 +1,15 @@
 'use client'
 
 import { Tooltip } from '@/components/tooltip'
+import useKey from '@/hooks/use-key'
 import { savedStore } from '@/saved'
+import { searchStore } from '@/search'
+import { shortcuts } from '@/shortcuts'
 import { classes } from '@/utils'
 import { motion, useAnimation, useMotionValue, useSpring, useTransform } from 'framer-motion'
-import { useEffect, useRef } from 'react'
 import { TbDeviceFloppy, TbNorthStar } from 'react-icons/tb'
-import { useSnapshot } from 'valtio'
 import { zinc } from 'tailwindcss/colors'
-import useKey from '@/hooks/use-key'
-import { searchStore } from '@/components/search/store'
-import { shortcuts } from '@/shortcuts'
+import { useSnapshot } from 'valtio'
 
 export default function Save({ ch, ...htmlProps }: React.ComponentProps<'div'> & { ch: string }) {
   const savedSnap = useSnapshot(savedStore)

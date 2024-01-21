@@ -7,10 +7,11 @@ import { classes } from '@/utils'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { TbBrandGithub, TbDeviceFloppy, TbHistory, TbKeyboard } from 'react-icons/tb'
+import Info from './(private)/info'
 import Logo from './(private)/logo'
 import PageSelector from './(private)/page-selector'
 import ThemeSwitch from './(private)/theme-switch'
-import Info from './(private)/info'
+import Store from './store'
 
 export const metadata: Metadata = {
   title: project.name,
@@ -81,6 +82,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </nav>
           <section className='border-2 border-zinc-800 px-4 mr-3 mb-3 rounded-lg overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable]'>{children}</section>
         </div>
+        <Store />
       </body>
     </html>
   )

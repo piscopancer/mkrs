@@ -15,8 +15,8 @@ export default function Ch(props: TSearchProps<'ch'>) {
           {stringToReact(props.search.tr)}
         </div>
       )}
-      {props.search.inRu && <RuchFulltext examples={props.search.inRu} />}
-      {props.search.byWords && <ByWords words={props.search.byWords} />}
+      {props.search.inRu && <RuchFulltext examples={props.search.inRu} className='mb-12' />}
+      {props.search.byWords && <ByWords words={props.search.byWords} className='mb-12' />}
     </article>
   )
 }

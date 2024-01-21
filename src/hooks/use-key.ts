@@ -12,5 +12,5 @@ export default function useKey<Keys extends string[]>(keyAction: TShortcut<Keys>
     }
     addEventListener('keydown', registerEventListeners)
     return () => removeEventListener('keydown', registerEventListeners)
-  }, [keyAction])
+  }, [keyAction, prevent])
 }
