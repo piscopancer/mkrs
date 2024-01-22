@@ -1,13 +1,12 @@
 'use client'
 
-import { TSearchPage } from '@/app/(main)/search/[slug]/(private)/util'
 import useKey from '@/hooks/use-key'
 import { TSearchProps, TSearchType, abortController, determineSearchType, findSuggestions, parse, queryCharacter, searchStore } from '@/search'
 import { shortcuts } from '@/shortcuts'
 import { classes } from '@/utils'
 import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
-import { useParams, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { ChangeEvent, ReactNode, useEffect, useRef, useState } from 'react'
 import { GiCat } from 'react-icons/gi'
 import { TbLoader, TbSearch } from 'react-icons/tb'
@@ -26,7 +25,6 @@ export default function Search(props: React.ComponentProps<'search'>) {
   const inputRef = useRef<HTMLInputElement>(null!)
   const selfRef = useRef<HTMLElement>(null!)
   const router = useRouter()
-  const params = useParams<TSearchPage['params']>()
   const [querying, setQuerying] = useState(false)
 
   const catChance = 0.01
@@ -81,7 +79,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
         searchStore.search = parse(el, determineSearchType(el))
         el.remove()
         const suggestionsFound = !!findSuggestions(searchStore.search)
-        searchStore.showSuggestions = suggestionsFound
+        searchStore.showSuggestions = suggestionsFound && searchStore.focused
         if (!suggestionsFound) searchStore.selectedSuggestion = -1
       })
     } else {
@@ -109,8 +107,9 @@ export default function Search(props: React.ComponentProps<'search'>) {
       <div className='relative flex items-center mb-3 bg-gradient-to-r from-pink-400 to-pink-600 p-0.5 rounded-full'>
         <input
           ref={inputRef}
-          defaultValue={params.slug ? decodeURI(params.slug) : undefined}
-          onFocus={() => (searchStore.focused = true)}
+          onFocus={() => {
+            searchStore.focused = true
+          }}
           onBlur={() => (searchStore.focused = false)}
           spellCheck={false}
           type='text'
@@ -132,7 +131,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
         </Link>
         {searchSnap.search && searchSnap.showSuggestions && <Suggestions search={searchSnap.search} />}
       </div>
-      <ul className='flex items-center gap-6 justify-end'>
+      <ul className='flex items-center gap-6 justify-end max-md:hidden'>
         {[shortcuts.focus, shortcuts.search].map(({ name, display }) => (
           <li key={name} className='text-xs flex'>
             <kbd className='font-mono text-zinc-400 mr-2 px-2 shadow-[0_1px_0_2px_theme(colors.zinc.700)] rounded-md'>{display[0]}</kbd>

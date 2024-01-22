@@ -70,21 +70,25 @@ export function parse(el: Element, type: TSearchType): TSearches {
     {
       ch: {
         type: 'ch',
-        ch: el.querySelector('#ch')?.innerHTML ?? undefined,
-        py: el.querySelector('.py')?.textContent ?? undefined,
-        tr: el.querySelector('.ru')?.innerHTML ?? undefined,
-        startWith: el.querySelector('#ch_from') ? Array.from(el.querySelectorAll('#ch_from a')).map((a) => a.textContent ?? '') : undefined,
-        wordsWith: el.querySelector('#starting_container') ? Array.from(el.querySelectorAll('#starting_container a')).map((a) => a.textContent ?? '') : el.querySelector('#frequency_words_here') ? Array.from(el.querySelectorAll('#frequency_words_here a')).map((a) => a.textContent ?? '') : undefined,
+        ch: el.querySelector('#ch')?.innerHTML.trim() ?? undefined,
+        py: el.querySelector('.py')?.textContent?.trim() ?? undefined,
+        tr: el.querySelector('.ru')?.innerHTML.trim() ?? undefined,
+        startWith: el.querySelector('#ch_from') ? Array.from(el.querySelectorAll('#ch_from a')).map((a) => a.textContent?.trim() ?? '') : undefined,
+        wordsWith: el.querySelector('#starting_container')
+          ? Array.from(el.querySelectorAll('#starting_container a')).map((a) => a.textContent?.trim() ?? '')
+          : el.querySelector('#frequency_words_here')
+          ? Array.from(el.querySelectorAll('#frequency_words_here a')).map((a) => a.textContent?.trim() ?? '')
+          : undefined,
         inRu: parseInRu(el),
         byWords: (el.querySelector('.tbl_bywords') && parseWords(el)) ?? undefined,
       },
       ru: {
         type: 'ru',
-        ru: el.querySelector('#ru_ru')?.innerHTML ?? undefined,
-        tr: !!!el.querySelector('#no-such-word') ? el.querySelector('.ch_ru')?.innerHTML : undefined ?? undefined,
+        ru: el.querySelector('#ru_ru')?.innerHTML.trim() ?? undefined,
+        tr: !!!el.querySelector('#no-such-word') ? el.querySelector('.ch_ru')?.innerHTML.trim() : undefined ?? undefined,
         found: el.querySelector('#no-such-word') ? undefined : true,
-        startWith: el.querySelector('#ru_from') ? Array.from(el.querySelectorAll('#ru_from a')).map((a) => a.textContent ?? '') : undefined,
-        wordsWith: el.querySelector('#words_start_with') ? Array.from(el.querySelectorAll('#words_start_with a')).map((a) => a.textContent ?? '') : undefined,
+        startWith: el.querySelector('#ru_from') ? Array.from(el.querySelectorAll('#ru_from a')).map((a) => a.textContent?.trim() ?? '') : undefined,
+        wordsWith: el.querySelector('#words_start_with') ? Array.from(el.querySelectorAll('#words_start_with a')).map((a) => a.textContent?.trim() ?? '') : undefined,
         inRu: parseInRu(el),
       },
       py: {
@@ -127,8 +131,8 @@ export function parseWords(el: Element) {
       const words: TWord[] = []
       for (let i = 0; i < 4; i++) {
         words.push({
-          ch: table.querySelector(`tr:nth-child(1) td:nth-child(${i + 1})`)?.textContent ?? '',
-          py: table.querySelector(`tr:nth-child(2) td:nth-child(${i + 1}) > :nth-child(1)`)?.textContent ?? '',
+          ch: table.querySelector(`tr:nth-child(1) td:nth-child(${i + 1})`)?.textContent?.trim() ?? '',
+          py: table.querySelector(`tr:nth-child(2) td:nth-child(${i + 1}) > :nth-child(1)`)?.textContent?.trim() ?? '',
           ru: parseRu(table, i),
         })
       }
@@ -150,9 +154,9 @@ export function parseWordsFromPinyin(el: Element, max?: number): TWord[] {
   return Array.from(el.querySelectorAll('#py_table > tbody > tr'))
     .slice(0, max ?? Infinity)
     .map((row) => ({
-      ch: row.querySelector('a')?.textContent ?? '',
-      py: row.querySelector('td.py_py')?.textContent ?? '',
-      ru: row.querySelector('td.py_ru')?.textContent ?? '',
+      ch: row.querySelector('a')?.textContent?.trim() ?? '',
+      py: row.querySelector('td.py_py')?.textContent?.trim() ?? '',
+      ru: row.querySelector('td.py_ru')?.textContent?.trim() ?? '',
     }))
 }
 
@@ -161,8 +165,8 @@ function parseInRu(el: Element) {
     ? Array.from(el.querySelectorAll('#ruch_fullsearch > *')).map((ch) => {
         if (Array.from(ch.children).length) {
           return {
-            heading: ch.children[0]?.textContent ?? '',
-            content: ch.children[1]?.outerHTML ?? '',
+            heading: ch.children[0]?.textContent?.trim() ?? '',
+            content: ch.children[1]?.outerHTML?.trim() ?? '',
           }
         } else return { content: '', heading: '' }
       })
@@ -172,8 +176,8 @@ function parseInRu(el: Element) {
 const findSuggestionsFunctions: { [T in TSearchType]: (search: TSearch<T>) => string[] | undefined } = {
   ch: (s) => s.startWith ?? s.wordsWith,
   ru: (s) => s.startWith ?? s.wordsWith,
-  py: (s) => (s.found ? s.words && s.words.map((w) => w.ch ?? '') : undefined),
-  'ch-long': (s) => s.byWords?.map((w) => w.ch ?? '') ?? undefined,
+  py: (s) => (s.found ? s.words && s.words.map((w) => w.ch?.trim() ?? '') : undefined),
+  'ch-long': (s) => s.byWords?.map((w) => w.ch?.trim() ?? '') ?? undefined,
   error: () => undefined,
 }
 

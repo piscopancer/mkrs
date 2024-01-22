@@ -1,13 +1,13 @@
 'use client'
 
-import { parseLsForSavedStore, savedStore } from '@/saved'
-import { assignObject } from '@/utils'
+import { tryInitRecentStore } from '@/recent'
+import { tryInitSavedStore } from '@/saved'
 import { useEffect } from 'react'
 
 export default function Store() {
   useEffect(() => {
-    const parsedSavedStore = parseLsForSavedStore()
-    parsedSavedStore && assignObject(savedStore, parsedSavedStore)
+    tryInitRecentStore()
+    tryInitSavedStore()
   }, [])
   return <div hidden id='valtio'></div>
 }

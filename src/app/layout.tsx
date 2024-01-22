@@ -6,7 +6,7 @@ import { project } from '@/project'
 import { classes } from '@/utils'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { TbBrandGithub, TbDeviceFloppy, TbHistory, TbKeyboard } from 'react-icons/tb'
+import { TbBrandGithub, TbDeviceFloppy, TbHistory, TbKeyboard, TbLineDashed } from 'react-icons/tb'
 import Info from './(private)/info'
 import Logo from './(private)/logo'
 import PageSelector from './(private)/page-selector'
@@ -28,39 +28,40 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang='ru'>
       <body className={classes(fontVars, 'font-sans text-zinc-200 bg-zinc-900')}>
-        <div className='grid grid-cols-[min-content,1fr] grid-rows-[min-content,1fr] h-screen'>
-          <div className='grid [grid-template-areas:"stack"] w-20 h-20'>
-            <Logo className='[grid-area:stack] place-self-center' />
+        <div className='grid grid-cols-[min-content,1fr] grid-rows-[min-content,1fr] [grid-template-areas:"logo_header"_"nav_main"] max-md:[grid-template-areas:"logo_header"_"main_main"_"nav_nav"] max-md:grid-rows-[min-content,1fr,min-content] h-svh'>
+          <div className='flex items-center justify-center w-20 h-20 [grid-area:logo]'>
+            <Logo />
           </div>
-          <header className=' self-center ml-4 flex items-center mr-4'>
+          <header className=' self-center ml-4 max-md:ml-0 flex items-center mr-4 [grid-area:header]'>
             <span className='font-display mr-auto  '>
-              МКРС <span className='text-xs text-zinc-600 ml-4'>{'//'} БКРС ПРОКСИ</span>
+              <span className='mr-4'>МКРС </span>
+              <span className='text-xs text-zinc-600 max-md:hidden'>{'//'} БКРС ПРОКСИ</span>
             </span>
-            <ThemeSwitch className='mr-2' />
-            <Info />
+            <ThemeSwitch className='mr-2 max-md:hidden' />
+            <Info className='max-md:hidden' />
           </header>
-          <nav className='px-3 flex flex-col justify-between py-6'>
+          <nav className='md:px-3 max-md:py-4 flex md:flex-col justify-between py-6 [grid-area:nav] overflow-x-hidden'>
             <Tooltip content='Главная' side='right' sideOffset={6}>
-              <Link href={'/'} className='hover:bg-zinc-800 rounded-full py-2 flex justify-center font-bold relative'>
+              <Link href={'/'} className='hover:bg-zinc-800 rounded-full py-2 flex justify-center font-bold relative max-md:flex-1 max-md:order-1'>
                 <PageSelector route='/' />小
               </Link>
             </Tooltip>
-            <ul className='flex flex-col gap-2'>
+            <ul className='flex flex-col gap-2 max-md:contents'>
               <Tooltip content='Сохраненные' side='right' sideOffset={6}>
-                <Link href={'/saved'} className='hover:bg-zinc-800 rounded-full py-2 flex justify-center relative'>
+                <Link href={'/saved'} className='hover:bg-zinc-800 rounded-full py-2 flex justify-center relative max-md:flex-1 max-md:order-2'>
                   <PageSelector route='/saved' />
                   <TbDeviceFloppy className='h-6' />
                 </Link>
               </Tooltip>
               <Tooltip content='Недавние' side='right' sideOffset={6}>
-                <Link href={'/recent'} className='hover:bg-zinc-800 rounded-full py-2 flex justify-center relative'>
+                <Link href={'/recent'} className='hover:bg-zinc-800 rounded-full py-2 flex justify-center relative max-md:flex-1 max-md:order-0'>
                   <PageSelector route='/recent' />
                   <TbHistory className='h-6' />
                 </Link>
               </Tooltip>
-              <div className='bg-zinc-800 my-2 h-1.5 w-1.5 mx-auto rounded-full' />
+              <TbLineDashed className='h-8 stroke-zinc-800 max-md:hidden' />
               <Tooltip content='Горячие клавиши' side='right' sideOffset={6}>
-                <Link href={'/shortcuts'} className='hover:bg-zinc-800 rounded-full py-2 flex justify-center relative'>
+                <Link href={'/shortcuts'} className='hover:bg-zinc-800 rounded-full py-2 flex justify-center relative max-md:hidden'>
                   <TbKeyboard className='h-6' />
                   <PageSelector route='/shortcuts' />
                 </Link>
@@ -75,12 +76,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               side='right'
               sideOffset={6}
             >
-              <a href={project.links.github} className='hover:bg-zinc-800 rounded-full py-2 flex justify-center'>
+              <a href={project.links.github} className='hover:bg-zinc-800 rounded-full py-2 flex justify-center max-md:hidden'>
                 <TbBrandGithub className='h-6' />
               </a>
             </Tooltip>
           </nav>
-          <section className='border-2 border-zinc-800 px-4 mr-3 mb-3 rounded-lg overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable]'>{children}</section>
+          <section className='md:border-2 md:border-zinc-800 md:px-4 md:mr-3 md:mb-3 rounded-lg overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable] max-md:[scrollbar-gutter:stable_both-edges] [grid-area:main]'>{children}</section>
         </div>
         <Store />
       </body>

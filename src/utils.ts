@@ -1,4 +1,5 @@
 import { domToReact, htmlToDOM } from 'html-react-parser'
+import { useSnapshot } from 'valtio'
 
 export type TNextPage<ParamsAlias extends string | never = never, SearchParams extends string[] = []> = {
   params: ParamsAlias extends never ? never : Record<ParamsAlias, string>
@@ -34,10 +35,6 @@ export type TRedefineObject<T, P extends Partial<Record<keyof T, unknown>>> = {
   [K in keyof T]: K extends keyof P ? P[K] : T[K]
 }
 
-// export function deleteExtension(string: string) {
-//   return string.replace(/(\.[^.]*)$/, '')
-// }
-
 export function cutStart(whole: string, length: number) {
   let firstPart = whole.slice(0, length)
   let secondPart = whole.slice(length)
@@ -47,3 +44,11 @@ export function cutStart(whole: string, length: number) {
 export function stringToReact(str: string) {
   return domToReact(htmlToDOM(str))
 }
+
+export function parseLsForStore<T extends object>(storeName: string) {
+  const storeString = localStorage.getItem(storeName)
+  if (!storeString) return
+  return JSON.parse(storeString) as T
+}
+
+export type TSnapshot<T extends object> = ReturnType<typeof useSnapshot<T>>

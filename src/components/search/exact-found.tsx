@@ -1,12 +1,12 @@
 'use client'
 
+import { searchStore } from '@/search'
 import { classes } from '@/utils'
 import { HTMLMotionProps, motion } from 'framer-motion'
-import { useSnapshot } from 'valtio'
-import { TbArrowBadgeRight, TbArrowBadgeRightFilled, TbArrowRightBar } from 'react-icons/tb'
-import { selectSuggestion } from './utils'
 import { useRouter } from 'next/navigation'
-import { searchStore } from '@/search'
+import { TbArrowBadgeRightFilled } from 'react-icons/tb'
+import { useSnapshot } from 'valtio'
+import { selectSuggestion } from './utils'
 
 export default function ExactFound({ found, ...htmlProps }: HTMLMotionProps<'aside'> & { found: string }) {
   const searchSnap = useSnapshot(searchStore)
@@ -26,7 +26,7 @@ export default function ExactFound({ found, ...htmlProps }: HTMLMotionProps<'asi
       )}
     >
       <span className='mr-auto font-bold'>{found}</span>
-      <ul className='flex items-center mr-6'>
+      <ul className='flex items-center md:mr-6'>
         {Array.from({ length: 3 }).map((_, i) => (
           <motion.div
             key={i}
@@ -41,7 +41,7 @@ export default function ExactFound({ found, ...htmlProps }: HTMLMotionProps<'asi
               },
             }}
           >
-            <TbArrowBadgeRightFilled className='h-8' />
+            <TbArrowBadgeRightFilled className='h-8 max-md:h-6' />
           </motion.div>
         ))}
       </ul>

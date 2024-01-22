@@ -1,12 +1,20 @@
-import { parse, queryCharacter, determineSearchType, TSearchType, TSearchProps } from '@/search'
+import { project } from '@/project'
+import { TSearchProps, TSearchType, determineSearchType, parse, queryCharacter } from '@/search'
 import { JSDOM } from 'jsdom'
+import { Metadata } from 'next'
 import { ReactNode } from 'react'
-import { TSearchPage } from './(private)/util'
 import Ch from './(private)/(searches)/ch'
-import Ru from './(private)/(searches)/ru'
-import Py from './(private)/(searches)/py'
-import SearchError from './(private)/(searches)/search-error'
 import ChLong from './(private)/(searches)/ch-long'
+import Py from './(private)/(searches)/py'
+import Ru from './(private)/(searches)/ru'
+import SearchError from './(private)/(searches)/search-error'
+import { TSearchPage } from './(private)/util'
+
+export async function generateMetadata({ params }: TSearchPage): Promise<Metadata> {
+  return {
+    title: `${decodeURI(params.slug)} — ${project.name}`,
+  }
+}
 
 export default async function SearchPage({ params }: TSearchPage) {
   const resText = await queryCharacter(params.slug)
