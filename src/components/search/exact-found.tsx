@@ -22,7 +22,7 @@ export default function ExactFound({ found, ...htmlProps }: HTMLMotionProps<'asi
       className={classes(
         htmlProps.className,
         searchSnap.selectedSuggestion === -1 ? ' from-pink-500 to-pink-400 border-pink-200/50' : ' from-zinc-800 to-zinc-800 border-zinc-700',
-        'border-2 border-transparent px-6 py-2 rounded-full flex items-center bg-gradient-to-r text-zinc-200 duration-500 transition-[scale,background]'
+        'border-2 border-transparent px-6 py-2 rounded-full flex items-center bg-gradient-to-r text-zinc-200 duration-500 transition-[scale,background] max-md:px-4 max-md:py-1'
       )}
     >
       <span className='mr-auto font-bold'>{found}</span>

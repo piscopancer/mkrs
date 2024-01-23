@@ -5,7 +5,6 @@ import { TSearchProps, TSearchType, abortController, determineSearchType, findSu
 import { shortcuts } from '@/shortcuts'
 import { classes } from '@/utils'
 import { AnimatePresence, motion } from 'framer-motion'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ChangeEvent, ReactNode, useEffect, useRef, useState } from 'react'
 import { GiCat } from 'react-icons/gi'
@@ -27,7 +26,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
   const router = useRouter()
   const [querying, setQuerying] = useState(false)
 
-  const catChance = 0.01
+  const catChance = 1
   const [showCat, setShowCat] = useState(false)
   useEffect(() => setShowCat(+Math.random().toFixed(2) < catChance), [])
 
@@ -116,7 +115,11 @@ export default function Search(props: React.ComponentProps<'search'>) {
           onChange={onInput}
           className='pl-6 pr-20 rounded-full py-4 bg-zinc-800 duration-100 w-full focus-visible:outline-4 outline-pink-500/50'
         />
-        <Link href={searchSnap.inputValue ? `/search/${searchSnap.inputValue}` : '/'} className='text-zinc-400 hover:text-pink-500 focus-visible:text-pink-500 focus-visible:outline-0 absolute right-0 h-full aspect-square rounded-full group duration-100 grid [grid-template-areas:"stack"]'>
+        <button
+          disabled={!!!searchSnap.inputValue.trim()}
+          onClick={() => selectSuggestion(router, searchStore.inputValue)}
+          className='text-zinc-400 hover:text-pink-500 focus-visible:text-pink-500 focus-visible:outline-0 absolute right-0 h-full aspect-square rounded-full group duration-100 grid [grid-template-areas:"stack"] disabled:opacity-50'
+        >
           <AnimatePresence>
             {querying ? (
               <motion.div key={'querying'} exit={{ scale: 0.5, opacity: 0 }} initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className='[grid-area:stack] place-self-center'>
@@ -128,7 +131,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
               </motion.div>
             )}
           </AnimatePresence>
-        </Link>
+        </button>
         {searchSnap.search && searchSnap.showSuggestions && <Suggestions search={searchSnap.search} />}
       </div>
       <ul className='flex items-center gap-6 justify-end max-md:hidden'>
@@ -141,7 +144,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
       </ul>
       {showCat && (
         <Tooltip content='💋'>
-          <motion.button disabled className='absolute bottom-[90%] left-[10%]'>
+          <motion.button disabled className='absolute bottom-[90%] max-md:bottom-[85%] left-[10%]'>
             <GiCat className='h-10' />
           </motion.button>
         </Tooltip>

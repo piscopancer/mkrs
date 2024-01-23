@@ -58,8 +58,8 @@ export default function Suggestions<T extends TSearchType, S extends TSearch<T>,
   if (!suggestions) return
 
   return (
-    <aside className='absolute inset-x-0 top-full mt-2 bg-zinc-800 p-4 rounded-3xl z-[1]'>
-      <output className='text-xs mb-4 block text-zinc-500'>{searchDescriptions[props.search.type]}</output>
+    <aside className='absolute inset-x-0 top-full mt-2 bg-zinc-800 p-4 rounded-3xl z-[1] max-md:p-3 max-md:rounded-xl'>
+      <output className='text-xs mb-4 max-md:mb-2 block text-zinc-500'>{searchDescriptions[props.search.type]}</output>
       <ul>
         {suggestions.map((suggestion, i) => {
           const isSelected = searchSnap.selectedSuggestion === i

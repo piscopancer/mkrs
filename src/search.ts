@@ -27,7 +27,7 @@ type TSearchResults = Partial<{
   inRu: TExample[] // #ruch_fulltext
   inCh: string[] // #xinsheng_fullsearch
   synonyms: string[] // #synonyms_ru | #synonyms
-  examples: string // #examples
+  examples: TExample[] // #examples
 }>
 
 export type TSearches =
@@ -79,8 +79,9 @@ export function parse(el: Element, type: TSearchType): TSearches {
           : el.querySelector('#frequency_words_here')
           ? Array.from(el.querySelectorAll('#frequency_words_here a')).map((a) => a.textContent?.trim() ?? '')
           : undefined,
-        inRu: parseInRu(el),
+        inRu: parseInRu(el, 'ch'),
         byWords: (el.querySelector('.tbl_bywords') && parseWords(el)) ?? undefined,
+        examples: parseExamples(el),
       },
       ru: {
         type: 'ru',
@@ -89,7 +90,8 @@ export function parse(el: Element, type: TSearchType): TSearches {
         found: el.querySelector('#no-such-word') ? undefined : true,
         startWith: el.querySelector('#ru_from') ? Array.from(el.querySelectorAll('#ru_from a')).map((a) => a.textContent?.trim() ?? '') : undefined,
         wordsWith: el.querySelector('#words_start_with') ? Array.from(el.querySelectorAll('#words_start_with a')).map((a) => a.textContent?.trim() ?? '') : undefined,
-        inRu: parseInRu(el),
+        inRu: parseInRu(el, 'ru'),
+        examples: parseExamples(el),
       },
       py: {
         type: 'py',
@@ -106,11 +108,11 @@ export function parse(el: Element, type: TSearchType): TSearches {
 }
 
 export const searchDescriptions: Record<TSearches['type'], string> = {
-  ch: 'Поиск по китайскому',
+  ch: 'Поиск на китайском',
   py: 'Поиск по пининю',
-  ru: 'Поиск по русскому',
+  ru: 'Поиск на русском',
   'ch-long': 'Поиск по тексту',
-  error: 'Ошибка',
+  error: 'Ошибка поиска',
 }
 
 export let abortController: AbortController | null = null
@@ -160,9 +162,19 @@ export function parseWordsFromPinyin(el: Element, max?: number): TWord[] {
     }))
 }
 
-function parseInRu(el: Element) {
-  return el.querySelector('#ruch_fullsearch')
-    ? Array.from(el.querySelectorAll('#ruch_fullsearch > *')).map((ch) => {
+function parseExamples(el: Element): TSearchResults['examples'] {
+  const examples = el.querySelector('#examples')
+  if (!examples) return
+  return Array.from(examples.children ?? []).map((ex) => ({
+    heading: ex.children[0].textContent?.trim() ?? '-',
+    content: ex.children[1].innerHTML,
+  }))
+}
+
+function parseInRu(el: Element, _for: 'ch' | 'ru') {
+  const id = _for === 'ch' ? '#ruch_fulltext' : '#ruch_fullsearch'
+  return el.querySelector(id)
+    ? Array.from(el.querySelectorAll(`${id} > *`)).map((ch) => {
         if (Array.from(ch.children).length) {
           return {
             heading: ch.children[0]?.textContent?.trim() ?? '',

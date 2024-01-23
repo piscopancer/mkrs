@@ -21,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           marginTop: pathname === '/' ? 'var(--mt)' : 'var(--mt-high)',
         }}
         animate={{ marginTop: pathname === '/' ? 'var(--mt)' : 'var(--mt-high)', transition: { duration: 0.8, ease: [0.3, 0.9, 0, 1] } }}
-        className='md:[--mt-high:5rem] md:[--mt:8rem] max-md:[--mt-high:1rem] max-md:[--mt:3rem]'
+        className='md:[--mt-high:5rem] md:[--mt:8rem] max-md:[--mt-high:3rem] max-md:[--mt:5rem]'
       >
         <Search className='mb-12' />
       </motion.div>

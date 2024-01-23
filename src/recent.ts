@@ -36,7 +36,8 @@ export function groupByDate(recent: TSnapshot<TRecent[]>): Record<string, { name
   const thisWeek: TRecent[] = []
 
   recent.forEach((r) => {
-    const daysPassed = differenceInDays(Date.now(), r.date)
+    const daysPassed = differenceInDays(new Date(), r.date)
+    console.log('daysPassed', daysPassed)
     if (daysPassed < 1) {
       today.push(r)
     } else if (daysPassed === 1) {

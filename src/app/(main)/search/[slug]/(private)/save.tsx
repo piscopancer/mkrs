@@ -42,7 +42,7 @@ export default function Save({ ch, ...htmlProps }: React.ComponentProps<'div'> &
   }
 
   return (
-    <div {...htmlProps} className={classes(htmlProps.className)}>
+    <div {...htmlProps} className={classes(htmlProps.className, 'relative')}>
       <Tooltip content={isSaved ? 'Убрать из сохраненных' : 'Сохранить'}>
         <motion.button onClick={onClick} whileTap={{ scaleY: 0.9 }} transition={{ type: 'spring', stiffness: 300 }} className={classes('h-14 w-14 rounded-lg flex items-center justify-center group')}>
           <div className='grid [grid-template-areas:"stack"] w-full h-full'>
