@@ -26,7 +26,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
   const router = useRouter()
   const [querying, setQuerying] = useState(false)
 
-  const catChance = 1
+  const catChance = 0.01
   const [showCat, setShowCat] = useState(false)
   useEffect(() => setShowCat(+Math.random().toFixed(2) < catChance), [])
 
