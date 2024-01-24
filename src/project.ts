@@ -1,11 +1,11 @@
 export const project = {
   name: 'МКРС',
-  description: 'Малый китайско-русский словарь. Прокси сайта bkrs.info (БКРС). МКРС не претендует на интеллектуальную собственность БКРС. Название является пародией.',
+  description: 'Малый китайско-русский словарь. Прокси сайта bkrs.info (大БКРС). МКРС не претендует на интеллектуальную собственность 大БКРС. Название является пародией.',
   creator: {
     nickname: 'piscopancer',
     name: 'Игорь Быстрицкий',
     links: {
-      email: 'igor.bistr01092003@gmail.com',
+      email: 'mailto:igor.bistr01092003@gmail.com',
       github: 'https://github.com/piscopancer',
       vk: 'https://vk.com/piscopancer',
       discord: 'https://discordapp.com/users/piscopancer',

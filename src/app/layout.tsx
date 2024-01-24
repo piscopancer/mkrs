@@ -6,8 +6,7 @@ import { project } from '@/project'
 import { classes } from '@/utils'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { TbBrandGithub, TbDeviceFloppy, TbHistory, TbKeyboard, TbLineDashed } from 'react-icons/tb'
-import Info from './(private)/info'
+import { TbBrandGithub, TbDeviceFloppy, TbHistory, TbInfoSquareRounded, TbKeyboard, TbLineDashed } from 'react-icons/tb'
 import Logo from './(private)/logo'
 import PageSelector from './(private)/page-selector'
 import ThemeSwitch from './(private)/theme-switch'
@@ -19,7 +18,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: project.name,
     description: project.description,
-    images: [logo.src],
+    images: [{ url: logo.src }],
+    siteName: project.name,
+    locale: 'ru',
+    url: project.url,
     creators: [project.creator.nickname],
   },
 }
@@ -38,7 +40,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <span className='text-xs text-zinc-600 max-md:hidden'>{'//'} БКРС ПРОКСИ</span>
             </Link>
             <ThemeSwitch className='mr-2 max-md:hidden' />
-            <Info className='max-md:hidden' />
+            <Tooltip content='Информация' sideOffset={6}>
+              <Link href={'/info'} className={classes('text-zinc-200 py-2 px-4 rounded-full p-3 flex items-center justify-center hover:bg-zinc-800')}>
+                <TbInfoSquareRounded className='h-6' />
+              </Link>
+            </Tooltip>
           </header>
           <nav className='md:px-3 max-md:py-2 flex md:flex-col justify-between py-6 [grid-area:nav] overflow-x-hidden'>
             <Tooltip content='Главная' side='right' sideOffset={6}>

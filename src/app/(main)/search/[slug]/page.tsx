@@ -1,3 +1,4 @@
+import Logo from '@/assets/logo.png'
 import { project } from '@/project'
 import { TSearchProps, TSearchType, determineSearchType, parse, queryCharacter } from '@/search'
 import { JSDOM } from 'jsdom'
@@ -13,6 +14,12 @@ import { TSearchPage } from './(private)/util'
 export async function generateMetadata({ params }: TSearchPage): Promise<Metadata> {
   return {
     title: `${decodeURI(params.slug)} — ${project.name}`,
+    description: `Смотрите перевод "${params.slug}" на МКРС`,
+    openGraph: {
+      title: `${decodeURI(params.slug)} — ${project.name}`,
+      description: `Смотрите перевод "${params.slug}" на МКРС`,
+      images: [{ url: Logo.src }],
+    },
   }
 }
 

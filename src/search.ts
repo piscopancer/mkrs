@@ -165,10 +165,12 @@ export function parseWordsFromPinyin(el: Element, max?: number): TWord[] {
 function parseExamples(el: Element): TSearchResults['examples'] {
   const examples = el.querySelector('#examples')
   if (!examples) return
-  return Array.from(examples.children ?? []).map((ex) => ({
-    heading: ex.children[0].textContent?.trim() ?? '-',
-    content: ex.children[1].innerHTML,
-  }))
+  return Array.from(examples.children ?? [])
+    .filter((ex) => ex.children[0] && ex.children[1])
+    .map((ex) => ({
+      heading: ex.children[0]?.textContent?.trim() ?? '-',
+      content: ex.children[1]?.innerHTML,
+    }))
 }
 
 function parseInRu(el: Element, _for: 'ch' | 'ru') {
