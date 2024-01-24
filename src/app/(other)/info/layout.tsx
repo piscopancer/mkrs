@@ -31,8 +31,8 @@ export default function InfoLayout({ children }: { children: React.ReactNode }) 
       </article>
       <footer className='border-t-2 border-zinc-800 py-12 mb-12 flex items-center relative max-md:grid max-md:grid-cols-2 max-md:gap-y-4'>
         <span className='mr-4 font-display'>{project.name}</span>
-        <span className='mr-auto'>2024</span>
-        <span className='mr-8'>@{project.creator.nickname}</span>
+        <span className='mr-auto max-md:text-sm'>2024</span>
+        <span className='mr-8 max-md:text-sm'>@{project.creator.nickname}</span>
         <ul className='flex items-center gap-4'>
           {objectEntries(socials).map(([id, social], i) => (
             <Tooltip key={i} content={social.text}>
@@ -43,7 +43,7 @@ export default function InfoLayout({ children }: { children: React.ReactNode }) 
           ))}
         </ul>
         <Tooltip className='!p-0' content={<Image alt='женщина думает, что она кошка' src={womanCat} className='w-48 rounded-[inherit]' />}>
-          <GiCat className='absolute bottom-[92%] left-[10%] h-12' />
+          <GiCat className='absolute bottom-[92%] max-md:bottom-[95%] left-[10%] h-12' />
         </Tooltip>
       </footer>
     </main>

@@ -6,10 +6,10 @@
     @apply my-6 text-xl font-display text-zinc-300 max-md:text-lg;
   }
   p {
-    @apply my-4 text-zinc-400 md:text-lg;
+    @apply my-4 text-zinc-400 text-lg max-md:text-base;
   }
   a {
-    @apply text-pink-500 hover:text-pink-300 [font-size:inherit];
+    @apply text-pink-500 hover:text-pink-300;
   }
   strong {
     @apply text-zinc-300;
