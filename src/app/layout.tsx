@@ -4,7 +4,7 @@ import '@/assets/styles/style.scss'
 import { Tooltip } from '@/components/tooltip'
 import { project } from '@/project'
 import { classes } from '@/utils'
-import type { Metadata } from 'next'
+import type { Metadata, Route } from 'next'
 import Link from 'next/link'
 import { TbBrandGithub, TbDeviceFloppy, TbHistory, TbInfoSquareRounded, TbKeyboard, TbLineDashed } from 'react-icons/tb'
 import Logo from './(private)/logo'
@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </Link>
             <ThemeSwitch className='mr-2 max-md:hidden' />
             <Tooltip content='Информация' sideOffset={6}>
-              <Link href={'/info'} className={classes('text-zinc-200 py-2 px-4 rounded-full p-3 flex items-center justify-center hover:bg-zinc-800')}>
+              <Link href={'/info' as Route} className={classes('text-zinc-200 py-2 px-4 rounded-full p-3 flex items-center justify-center hover:bg-zinc-800')}>
                 <TbInfoSquareRounded className='h-6' />
               </Link>
             </Tooltip>

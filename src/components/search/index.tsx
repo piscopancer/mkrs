@@ -82,6 +82,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
         if (!suggestionsFound) searchStore.selectedSuggestion = -1
       })
     } else {
+      abortController?.abort('empty')
       searchStore.search = undefined
       searchStore.showSuggestions = false
     }
