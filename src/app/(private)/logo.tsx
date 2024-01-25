@@ -8,7 +8,14 @@ import gif12 from '@/assets/girls/12.gif'
 import gif13 from '@/assets/girls/13.gif'
 import gif14 from '@/assets/girls/14.gif'
 import gif15 from '@/assets/girls/15.gif'
+import gif16 from '@/assets/girls/16.gif'
+import gif17 from '@/assets/girls/17.gif'
+import gif18 from '@/assets/girls/18.gif'
+import gif19 from '@/assets/girls/19.gif'
 import gif2 from '@/assets/girls/2.gif'
+import gif20 from '@/assets/girls/20.gif'
+import gif21 from '@/assets/girls/21.gif'
+import gif22 from '@/assets/girls/22.gif'
 import gif3 from '@/assets/girls/3.gif'
 import gif4 from '@/assets/girls/4.gif'
 import gif5 from '@/assets/girls/5.gif'
@@ -26,7 +33,7 @@ import { ComponentProps, useEffect, useRef, useState } from 'react'
 import { GiCompactDisc } from 'react-icons/gi'
 import { useSnapshot } from 'valtio'
 
-const gifs = [gif0, gif1, gif2, gif3, gif4, gif5, gif6, gif7, gif8, gif9, gif10, gif11, gif12, gif13, gif14, gif15]
+const gifs = [gif0, gif1, gif2, gif3, gif4, gif5, gif6, gif7, gif8, gif9, gif10, gif11, gif12, gif13, gif14, gif15, gif16, gif17, gif18, gif19, gif20, gif21, gif22]
 
 export default function Logo(props: ComponentProps<'div'>) {
   const [full, setFull] = useState(false)

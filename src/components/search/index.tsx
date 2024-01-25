@@ -21,7 +21,7 @@ import { findExact, selectSuggestion } from './utils'
 
 export default function Search(props: React.ComponentProps<'search'>) {
   const searchSnap = useSnapshot(searchStore)
-  const inputRef = useRef<HTMLInputElement>(null!)
+  const inputRef = useRef<HTMLInputElement>(null)
   const selfRef = useRef<HTMLElement>(null!)
   const router = useRouter()
   const [querying, setQuerying] = useState(false)
@@ -30,7 +30,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
   const [showCat, setShowCat] = useState(false)
   useEffect(() => setShowCat(+Math.random().toFixed(2) < catChance), [])
 
-  useKey([shortcuts.focus.keys, () => inputRef.current.focus()], !searchSnap.focused || undefined)
+  useKey([shortcuts.focus.keys, () => inputRef.current?.focus()], !searchSnap.focused || undefined)
   useKey([
     ['Escape'],
     () => {
@@ -55,14 +55,17 @@ export default function Search(props: React.ComponentProps<'search'>) {
       }
     }
     addEventListener('click', hideOnClickOutside)
+    return () => {
+      removeEventListener('click', hideOnClickOutside)
+    }
   }, [])
 
   useEffect(() => {
     if (searchStore.focused) {
-      inputRef.current.focus()
+      inputRef.current?.focus()
       if (searchStore.search) searchStore.showSuggestions = true
     } else {
-      inputRef.current.blur()
+      inputRef.current?.blur()
     }
   }, [searchSnap.focused])
 

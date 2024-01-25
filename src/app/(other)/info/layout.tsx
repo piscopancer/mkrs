@@ -43,7 +43,9 @@ export default function InfoLayout({ children }: { children: React.ReactNode }) 
           ))}
         </ul>
         <Tooltip className='!p-0' content={<Image alt='женщина думает, что она кошка' src={womanCat} className='w-48 rounded-[inherit]' />}>
-          <GiCat className='absolute bottom-[92%] max-md:bottom-[95%] left-[10%] h-12' />
+          <button className='absolute bottom-[92%] max-md:bottom-[95%] left-[10%] cursor-default'>
+            <GiCat className='h-12' />
+          </button>
         </Tooltip>
       </footer>
     </main>
