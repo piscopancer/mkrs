@@ -107,7 +107,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
 
   return (
     <search {...props} ref={selfRef} className={classes(props.className, 'relative')}>
-      <div className='relative flex items-center mb-3 bg-gradient-to-r from-pink-400 to-pink-600 p-0.5 rounded-full'>
+      <div className='relative hopper mb-3 bg-gradient-to-r from-pink-400 to-pink-600 p-0.5 rounded-full'>
         <input
           ref={inputRef}
           onFocus={() => {
@@ -122,20 +122,17 @@ export default function Search(props: React.ComponentProps<'search'>) {
         <button
           disabled={!!!searchSnap.inputValue.trim()}
           onClick={() => selectSuggestion(router, searchStore.inputValue)}
-          className='text-zinc-400 hover:text-pink-500 focus-visible:text-pink-500 focus-visible:outline-0 absolute right-0 h-full aspect-square rounded-full group duration-100 grid [grid-template-areas:"stack"] disabled:opacity-50'
+          className='text-zinc-400 hover:text-pink-500 focus-visible:text-pink-500 focus-visible:outline-0 absolute right-0 h-full aspect-square rounded-full group duration-100 flex items-center justify-center disabled:opacity-50'
         >
-          <AnimatePresence>
-            {querying ? (
-              <motion.div key={'querying'} exit={{ scale: 0.5, opacity: 0 }} initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className='[grid-area:stack] place-self-center'>
-                <TbLoader className='animate-spin' />
-              </motion.div>
-            ) : (
-              <motion.div key={'!querying'} exit={{ scale: 0.5, opacity: 0 }} initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className='[grid-area:stack] place-self-center'>
-                <TbSearch />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <TbSearch />
         </button>
+        <AnimatePresence>
+          {querying && (
+            <motion.div initial={querying ? false : { scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }} className='self-center justify-self-end animate-spin mr-14'>
+              <TbLoader className='stroke-zinc-500' />
+            </motion.div>
+          )}
+        </AnimatePresence>
         {searchSnap.search && searchSnap.showSuggestions && <Suggestions search={searchSnap.search} />}
       </div>
       <ul className='flex items-center gap-6 justify-end max-md:hidden'>

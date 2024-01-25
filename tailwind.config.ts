@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss'
+import plugin from 'tailwindcss/plugin'
 
 const config: Config = {
   content: ['./src/**/*.{ts,tsx}'],
@@ -9,5 +10,18 @@ const config: Config = {
       mono: 'var(--font-mono)',
     },
   },
+  plugins: [
+    plugin(({ addComponents }) => {
+      addComponents({
+        '.hopper': {
+          display: 'grid',
+          gridTemplateAreas: '"hopper"',
+          '& > *': {
+            gridArea: 'hopper',
+          },
+        },
+      })
+    }),
+  ],
 }
 export default config
