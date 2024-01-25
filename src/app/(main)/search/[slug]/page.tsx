@@ -12,12 +12,15 @@ import SearchError from './(private)/(searches)/search-error'
 import { TSearchPage } from './(private)/util'
 
 export async function generateMetadata({ params }: TSearchPage): Promise<Metadata> {
+  const slug = decodeURI(params.slug)
+  const title = `${slug} — ${project.name}`
+  const description = `Смотрите перевод "${slug}" на МКРС`
   return {
-    title: `${decodeURI(params.slug)} — ${project.name}`,
-    description: `Смотрите перевод "${params.slug}" на МКРС`,
+    title,
+    description,
     openGraph: {
-      title: `${decodeURI(params.slug)} — ${project.name}`,
-      description: `Смотрите перевод "${params.slug}" на МКРС`,
+      title,
+      description,
       images: [{ url: Logo.src }],
     },
   }
