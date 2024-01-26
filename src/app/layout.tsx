@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     creators: [project.creator.nickname],
   },
   other: {
-    'yandex-verification': '83261876be5b4c8f',
+    'yandex-verification': '80460a4d9f477d0e',
   },
 }
 
