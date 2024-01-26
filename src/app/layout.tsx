@@ -24,6 +24,9 @@ export const metadata: Metadata = {
     url: project.url,
     creators: [project.creator.nickname],
   },
+  other: {
+    'yandex-verification': '83261876be5b4c8f',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
