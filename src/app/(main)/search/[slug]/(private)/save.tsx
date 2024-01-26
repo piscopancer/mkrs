@@ -1,7 +1,7 @@
 'use client'
 
 import { Tooltip } from '@/components/tooltip'
-import useKey from '@/hooks/use-key'
+import useShortcut from '@/hooks/use-key'
 import { savedStore } from '@/saved'
 import { searchStore } from '@/search'
 import { shortcuts } from '@/shortcuts'
@@ -20,7 +20,7 @@ export default function Save({ ch, ...htmlProps }: React.ComponentProps<'div'> &
   const star1Anim = useAnimation()
   const star2Anim = useAnimation()
 
-  useKey([shortcuts.save.keys, () => !searchStore.focused && onClick()])
+  useShortcut([shortcuts.save.keys, () => !searchStore.focused && onClick()])
 
   function onClick() {
     if (!isSaved) {

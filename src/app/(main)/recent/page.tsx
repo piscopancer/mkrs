@@ -1,6 +1,6 @@
 'use client'
 
-import useKey from '@/hooks/use-key'
+import useShortcut from '@/hooks/use-key'
 import { groupByDate, recentStore } from '@/recent'
 import { savedStore } from '@/saved'
 import { classes, objectEntries } from '@/utils'
@@ -22,7 +22,7 @@ export default function Recent() {
     selfAnim.start({ opacity: 1 })
   }, [selfAnim])
 
-  useKey([
+  useShortcut([
     ['r'],
     () => {
       const date = new Date(2024, 0, 18, 16)

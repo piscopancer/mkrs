@@ -1,16 +1,22 @@
 import { TSearchProps } from '@/search'
 import { stringToReact } from '@/utils'
 import { TbBookOff } from 'react-icons/tb'
+import Copyer from '../copyer'
 import Examples from '../examples'
+import RecentWriter from '../recent-writer'
 import RuchFulltext from '../ruch-fulltext'
 import Save from '../save'
 import StartWith from '../start-with'
-import RecentWriter from './recent-writer'
 
 export default function Ru(props: TSearchProps<'ru'>) {
   return (
     <>
-      {props.search.ru && <RecentWriter search={props.search.ru} />}
+      {props.search.ru && (
+        <>
+          <Copyer search={props.search.ru} />
+          <RecentWriter search={props.search.ru} />
+        </>
+      )}
       <article className='mb-24 relative'>
         <header className='flex gap-4 mb-8 items-start'>
           <h1 className='text-3xl grow'>{props.search.ru}</h1>

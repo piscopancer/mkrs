@@ -1,4 +1,4 @@
-import useKey from '@/hooks/use-key'
+import useShortcut from '@/hooks/use-key'
 import { TSearch, TSearchType, findSuggestions, searchDescriptions, searchStore } from '@/search'
 import { useRouter } from 'next/navigation'
 import { ReactNode } from 'react'
@@ -29,9 +29,9 @@ export default function Suggestions<T extends TSearchType, S extends TSearch<T>,
 
   const display = props.display(props.search)
 
-  useKey([['ArrowUp'], () => suggestions && suggestions.length > 0 && moveSelection(suggestions, -1)], true)
-  useKey([['ArrowDown'], () => suggestions && suggestions.length > 0 && moveSelection(suggestions, 1)], true)
-  useKey([
+  useShortcut([['ArrowUp'], () => suggestions && suggestions.length > 0 && moveSelection(suggestions, -1)], true)
+  useShortcut([['ArrowDown'], () => suggestions && suggestions.length > 0 && moveSelection(suggestions, 1)], true)
+  useShortcut([
     ['Enter'],
     () => {
       if (suggestions && searchSnap.selectedSuggestion !== -1) {

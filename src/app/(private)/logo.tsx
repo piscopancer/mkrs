@@ -16,6 +16,9 @@ import gif2 from '@/assets/girls/2.gif'
 import gif20 from '@/assets/girls/20.gif'
 import gif21 from '@/assets/girls/21.gif'
 import gif22 from '@/assets/girls/22.gif'
+import gif23 from '@/assets/girls/23.gif'
+import gif24 from '@/assets/girls/24.gif'
+import gif25 from '@/assets/girls/25.gif'
 import gif3 from '@/assets/girls/3.gif'
 import gif4 from '@/assets/girls/4.gif'
 import gif5 from '@/assets/girls/5.gif'
@@ -24,7 +27,7 @@ import gif7 from '@/assets/girls/7.gif'
 import gif8 from '@/assets/girls/8.gif'
 import gif9 from '@/assets/girls/9.gif'
 
-import useKey from '@/hooks/use-key'
+import useShortcut from '@/hooks/use-key'
 import { searchStore } from '@/search'
 import { classes, randomFromArray } from '@/utils'
 import { motion, useAnimation, useSpring, useTransform } from 'framer-motion'
@@ -33,7 +36,7 @@ import { ComponentProps, useEffect, useRef, useState } from 'react'
 import { GiCompactDisc } from 'react-icons/gi'
 import { useSnapshot } from 'valtio'
 
-const gifs = [gif0, gif1, gif2, gif3, gif4, gif5, gif6, gif7, gif8, gif9, gif10, gif11, gif12, gif13, gif14, gif15, gif16, gif17, gif18, gif19, gif20, gif21, gif22]
+const gifs = [gif0, gif1, gif2, gif3, gif4, gif5, gif6, gif7, gif8, gif9, gif10, gif11, gif12, gif13, gif14, gif15, gif16, gif17, gif18, gif19, gif20, gif21, gif22, gif23, gif24, gif25]
 
 export default function Logo(props: ComponentProps<'div'>) {
   const [full, setFull] = useState(false)
@@ -53,7 +56,7 @@ export default function Logo(props: ComponentProps<'div'>) {
   const bigGifX = useTransform(pxXFromGif, [maxPxFromGif, -maxPxFromGif], [-maxGifPxMovement / 2, maxGifPxMovement / 2])
   const bigGifY = useTransform(pxYFromGif, [maxPxFromGif, -maxPxFromGif], [-maxGifPxMovement / 2, maxGifPxMovement / 2])
 
-  useKey([['Escape'], () => full && setFull(false)])
+  useShortcut([['Escape'], () => full && setFull(false)])
 
   useEffect(() => {
     setGif(randomFromArray(gifs))

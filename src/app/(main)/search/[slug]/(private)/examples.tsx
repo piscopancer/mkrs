@@ -6,7 +6,7 @@ export default function Examples(props: React.ComponentProps<'section'> & { exam
   const { examples, ...htmlProps } = props
   return (
     <section {...htmlProps} className={classes(htmlProps.className)}>
-      <Heading text='примеры' className='mb-8' />
+      <Heading text='примеры' className='mb-6' />
       <ul className='flex-col gap-2 flex' data-search>
         {examples.map((ex, i) => (
           <li key={i} className='text-zinc-400 grid grid-cols-2 even:bg-gradient-to-r even:from-zinc-800 even:to-transparent py-2 px-4 rounded-lg gap-x-8 max-md:block max-md:px-2 max-md:py-1'>

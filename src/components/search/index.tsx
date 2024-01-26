@@ -1,6 +1,6 @@
 'use client'
 
-import useKey from '@/hooks/use-key'
+import useShortcut from '@/hooks/use-key'
 import { TSearchProps, TSearchType, abortController, determineSearchType, findSuggestions, parse, queryCharacter, searchStore } from '@/search'
 import { shortcuts } from '@/shortcuts'
 import { classes } from '@/utils'
@@ -30,15 +30,15 @@ export default function Search(props: React.ComponentProps<'search'>) {
   const [showCat, setShowCat] = useState(false)
   useEffect(() => setShowCat(+Math.random().toFixed(2) < catChance), [])
 
-  useKey([shortcuts.focus.keys, () => inputRef.current?.focus()], !searchSnap.focused || undefined)
-  useKey([
+  useShortcut([shortcuts.focus.keys, () => inputRef.current?.focus()], !searchSnap.focused || undefined)
+  useShortcut([
     ['Escape'],
     () => {
       searchStore.focused = false
       searchStore.showSuggestions = false
     },
   ])
-  useKey([
+  useShortcut([
     shortcuts.search.keys,
     () => {
       if (searchStore.focused && searchStore.inputValue && searchStore.selectedSuggestion === -1) {

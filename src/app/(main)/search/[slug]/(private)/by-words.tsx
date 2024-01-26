@@ -11,7 +11,7 @@ export default function ByWords({ words, ...htmlProps }: React.ComponentProps<'s
 
   return (
     <section {...htmlProps} className={classes(htmlProps.className)}>
-      <Heading text='пословный перевод' className='mb-8' />
+      <Heading text='пословный перевод' className='mb-6' />
       <ul className='grid grid-cols-4 gap-1 max-md:grid-cols-2 max-lg:grid-cols-3' onMouseLeave={() => setHovered(null)}>
         {words.map((word, i) => (
           <li key={i}>
