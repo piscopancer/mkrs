@@ -1,4 +1,5 @@
 import { project } from '@/project'
+import { Route } from 'next'
 import Link from 'next/link'
 import GlobalRecent from './(private)/global-recent'
 import { queryGlobalRecent } from './(private)/util'
@@ -13,7 +14,7 @@ export default async function Home() {
         <h1 className='font-display mb-1'>Впервые на сайте?</h1>
         <h2>
           Узнайте больше о {project.name} на{' '}
-          <Link href={'/info'} className='text-pink-500 hover:text-pink-300 duration-100'>
+          <Link href={'/info' as Route} className='text-pink-500 hover:text-pink-300 duration-100'>
             этой странице
           </Link>
           .
