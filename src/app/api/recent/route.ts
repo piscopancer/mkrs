@@ -1,6 +1,6 @@
-export const dynamic = 'force-dynamic'
+import { NextRequest } from 'next/server'
 
-export async function GET() {
-  const res = await fetch('https://bkrs.info').then((res) => res.text())
+export async function GET(request: NextRequest) {
+  const res = await fetch('https://bkrs.info', { headers: request.headers }).then((res) => res.text())
   return new Response(res)
 }
