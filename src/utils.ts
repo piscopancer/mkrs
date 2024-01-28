@@ -1,4 +1,5 @@
 import { domToReact, htmlToDOM } from 'html-react-parser'
+import { cookies } from 'next/headers'
 import { useSnapshot } from 'valtio'
 
 export type TNextPage<ParamsAlias extends string | never = never, SearchParams extends string[] = []> = {
@@ -52,3 +53,16 @@ export function parseLsForStore<T extends object>(storeName: string) {
 }
 
 export type TSnapshot<T extends object> = ReturnType<typeof useSnapshot<T>>
+
+type TCookies = {
+  'hide-first-time-hint': true
+}
+
+export function getCookie<N extends keyof TCookies>(store: ReturnType<typeof cookies>, name: N) {
+  let value = store.get(name)?.value as any
+  if (!value) return undefined
+  if (Number(value)) value = Number(value)
+  if (value === 'true') value = true
+  if (value === 'false') value = false
+  return value as TCookies[N] | undefined
+}
