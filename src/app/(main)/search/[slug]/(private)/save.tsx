@@ -1,6 +1,7 @@
 'use client'
 
 import { Tooltip } from '@/components/tooltip'
+import Vibrator from '@/components/vibrator'
 import useShortcut from '@/hooks/use-key'
 import { savedStore } from '@/saved'
 import { searchStore } from '@/search'
@@ -83,6 +84,7 @@ export default function Save({ ch, ...htmlProps }: React.ComponentProps<'div'> &
               className='[grid-area:stack] rounded-full w-full h-full bg-pink-500/10'
             />
           </div>
+          <Vibrator key={+isSaved} pattern={isSaved ? [50] : [80, 50, 50]} />
         </motion.button>
       </Tooltip>
       <motion.div className='absolute inset-0 pointer-events-none'>

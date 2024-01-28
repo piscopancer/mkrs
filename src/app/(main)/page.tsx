@@ -1,4 +1,5 @@
 import { project } from '@/project'
+import { getCookie } from '@/utils'
 import { Route } from 'next'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
@@ -6,11 +7,11 @@ import { TbX } from 'react-icons/tb'
 import { hideInfoHint } from '../actions'
 
 export default async function Home() {
-  const hasHideInfoHint = cookies().has('hide-info-banner')
+  const hideInfoBanner = getCookie(cookies(), 'hide-info-banner')
 
   return (
     <main>
-      {!hasHideInfoHint && (
+      {!hideInfoBanner && (
         <article className='hopper rounded-lg border-2 border-zinc-800 bg-gradient-to-r from-zinc-800/50 to-transparent'>
           <div className='px-4 py-2'>
             <h1 className='font-display mb-1'>Впервые на сайте?</h1>

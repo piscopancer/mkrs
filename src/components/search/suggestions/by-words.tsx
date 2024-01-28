@@ -36,7 +36,6 @@ export default function ByWords(props: { words: TWord[] }) {
         searchStore.selectedSuggestion += by
         break
     }
-    console.log(searchStore.selectedSuggestion)
   }
 
   return (

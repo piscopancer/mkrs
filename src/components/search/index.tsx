@@ -11,6 +11,7 @@ import { GiCat } from 'react-icons/gi'
 import { TbLoader, TbSearch } from 'react-icons/tb'
 import { useSnapshot } from 'valtio'
 import { Tooltip } from '../tooltip'
+import Vibrator from '../vibrator'
 import ExactFound from './exact-found'
 import ChSuggestions from './suggestions/ch'
 import ChLongSuggestions from './suggestions/ch-long'
@@ -125,6 +126,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
           className='text-zinc-400 hover:text-pink-500 focus-visible:text-pink-500 focus-visible:outline-0 absolute right-0 h-full aspect-square rounded-full group duration-100 flex items-center justify-center disabled:opacity-50'
         >
           <TbSearch />
+          <Vibrator />
         </button>
         <AnimatePresence>
           {querying && (

@@ -1,9 +1,10 @@
 'use server'
 
+import { setCookie } from '@/utils'
 import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 
 export async function hideInfoHint() {
-  cookies().set('hide-info-banner', '')
+  setCookie(cookies(), 'hide-info-banner', true)
   revalidatePath('/')
 }

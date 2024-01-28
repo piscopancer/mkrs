@@ -55,14 +55,15 @@ export function parseLsForStore<T extends object>(storeName: string) {
 export type TSnapshot<T extends object> = ReturnType<typeof useSnapshot<T>>
 
 type TCookies = {
-  'hide-first-time-hint': true
+  'hide-info-banner': true
 }
 
 export function getCookie<N extends keyof TCookies>(store: ReturnType<typeof cookies>, name: N) {
-  let value = store.get(name)?.value as any
-  if (!value) return undefined
-  if (Number(value)) value = Number(value)
-  if (value === 'true') value = true
-  if (value === 'false') value = false
-  return value as TCookies[N] | undefined
+  const value = store.get(name)?.value
+  if (!value) return
+  return JSON.parse(value) as TCookies[N]
+}
+
+export function setCookie<N extends keyof TCookies>(store: ReturnType<typeof cookies>, name: N, value: TCookies[N]) {
+  return store.set(name, JSON.stringify(value))
 }

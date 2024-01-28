@@ -1,5 +1,6 @@
 'use client'
 
+import Vibrator from '@/components/vibrator'
 import useShortcut from '@/hooks/use-key'
 import { groupByDate, recentStore } from '@/recent'
 import { savedStore } from '@/saved'
@@ -54,8 +55,9 @@ export default function Recent() {
                         className={classes(saved ? 'text-pink-500 hover:text-pink-300' : 'text-zinc-600 hover:text-zinc-400', 'h-8 w-8 flex items-center justify-center mr-2 group py-0.5 -ml-2')}
                       >
                         <TbDeviceFloppy className='group-hover:scale-110 duration-100' />
+                        <Vibrator />
                       </button>
-                      <Link href={`/search/${r.search}`} className='flex items-center group flex-1 py-0.5 min-w-0'>
+                      <Link prefetch={false} href={`/search/${r.search}`} className='flex items-center group flex-1 py-0.5 min-w-0'>
                         <span className='text-pink-500 group-hover:text-pink-300 md:text-lg overflow-hidden text-ellipsis text-nowrap'>{r.search}</span>
                         <span className='text-xs rounded-full text-zinc-400 ml-auto group-hover:text-zinc-200 text-nowrap'>{formatDistanceToNowStrict(r.date, { locale: ru, roundingMethod: 'floor' })}</span>
                       </Link>
