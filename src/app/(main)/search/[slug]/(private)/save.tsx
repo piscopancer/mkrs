@@ -16,6 +16,7 @@ export default function Save({ ch, ...htmlProps }: React.ComponentProps<'div'> &
   const savedSnap = useSnapshot(savedStore)
   const isSaved = !!savedSnap.saved.find((w) => w === ch)
   const savedMV = useSpring(isSaved ? 1 : 0)
+  savedMV.set(isSaved ? 1 : 0)
 
   const star1Anim = useAnimation()
   const star2Anim = useAnimation()
