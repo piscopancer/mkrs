@@ -14,7 +14,9 @@ export type TWord = Partial<{
   ru: string
 }>
 
-export type TExample = { heading: string; content: string }
+export type TSimilar = { search: string; innerHTML: string }
+
+export type TExample = { heading: string; innerHtml: string }
 
 export type TSearchType = 'ch' | 'ru' | 'py' | 'ch-long' | 'error'
 
@@ -28,6 +30,7 @@ type TSearchResults = Partial<{
   inCh: string[] // #xinsheng_fullsearch
   synonyms: string[] // #synonyms_ru | #synonyms
   examples: TExample[] // #examples
+  found: true // #no-such-word | a[href*=add]
 }>
 
 export type TSearches =
@@ -39,6 +42,7 @@ export type TSearches =
           py: string // .py
           byWords: TWord[] // .tbl_bywords
           backlinks: string[] // #backlinks
+          similar: TSimilar[] // #ch_from_inside
         }>
     >
   | TSearchBase<
@@ -46,7 +50,6 @@ export type TSearches =
       TSearchResults &
         Partial<{
           ru: string // #ru_ru
-          found: true // #no-such-word
         }>
     >
   | TSearchBase<'py', Partial<{ found: true; words: TWord[] } | { found: false }>>
@@ -60,7 +63,7 @@ export type TSearchProps<T extends TSearchType> = { search: TSearch<T> }
 export function determineSearchType(el: Element): TSearchType {
   if (el.querySelector('#py_search_py')) return 'py'
   if (el.querySelector('#ru_ru')) return 'ru'
-  if (el.querySelector('#ch') && el.querySelector('.py')) return 'ch'
+  if (el.querySelector('#ch')) return 'ch'
   if (el.querySelector('#ch_long')) return 'ch-long'
   return 'error'
 }
@@ -77,11 +80,13 @@ export function parse(el: Element, type: TSearchType): TSearches {
         wordsWith: el.querySelector('#starting_container')
           ? Array.from(el.querySelectorAll('#starting_container a')).map((a) => a.textContent?.trim() ?? '')
           : el.querySelector('#frequency_words_here')
-          ? Array.from(el.querySelectorAll('#frequency_words_here a')).map((a) => a.textContent?.trim() ?? '')
-          : undefined,
+            ? Array.from(el.querySelectorAll('#frequency_words_here a')).map((a) => a.textContent?.trim() ?? '')
+            : undefined,
         inRu: parseInRu(el, 'ch'),
         byWords: (el.querySelector('.tbl_bywords') && parseWords(el)) ?? undefined,
         examples: parseExamples(el),
+        similar: parseSimilar(el),
+        found: el.querySelector('a[href*=add]') ? undefined : true,
       },
       ru: {
         type: 'ru',
@@ -169,20 +174,23 @@ function parseExamples(el: Element): TSearchResults['examples'] {
     .filter((ex) => ex.children[0] && ex.children[1])
     .map((ex) => ({
       heading: ex.children[0]?.textContent?.trim() ?? '-',
-      content: ex.children[1]?.innerHTML,
+      innerHtml: ex.children[1]?.innerHTML,
     }))
 }
 
-function parseInRu(el: Element, _for: 'ch' | 'ru') {
+function parseInRu(el: Element, _for: 'ch' | 'ru'): TExample[] | undefined {
   const id = _for === 'ch' ? '#ruch_fulltext' : '#ruch_fullsearch'
   return el.querySelector(id)
     ? Array.from(el.querySelectorAll(`${id} > *`)).map((ch) => {
         if (Array.from(ch.children).length) {
+          const _ch = ch.cloneNode(true) as Element
+          _ch.querySelector('a')?.remove()
+          console.log(_ch.innerHTML)
           return {
             heading: ch.children[0]?.textContent?.trim() ?? '',
-            content: ch.children[1]?.outerHTML?.trim() ?? '',
+            innerHtml: _ch.innerHTML,
           }
-        } else return { content: '', heading: '' }
+        } else return { innerHtml: '', heading: '' }
       })
     : undefined
 }
@@ -197,4 +205,13 @@ const findSuggestionsFunctions: { [T in TSearchType]: (search: TSearch<T>) => st
 
 export function findSuggestions(search: TSearches) {
   return findSuggestionsFunctions[search.type](search as never)
+}
+
+export function parseSimilar(el: Element): TSimilar[] | undefined {
+  return el.querySelector('#ch_from_inside')
+    ? Array.from(el.querySelectorAll('#ch_from_inside a')).map((a) => ({
+        innerHTML: a.innerHTML,
+        search: a.textContent ?? '-',
+      }))
+    : undefined
 }

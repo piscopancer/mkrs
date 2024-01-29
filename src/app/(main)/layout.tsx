@@ -15,13 +15,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   useShortcut([shortcuts['saved-page'].keys, () => !searchStore.focused && router.push('/saved')])
 
   return (
-    <div className='max-w-screen-lg mx-auto'>
+    <div className='mx-auto max-w-screen-lg'>
       <motion.div
         initial={{
           marginTop: pathname === '/' ? 'var(--mt)' : 'var(--mt-high)',
         }}
         animate={{ marginTop: pathname === '/' ? 'var(--mt)' : 'var(--mt-high)', transition: { duration: 0.8, ease: [0.3, 0.9, 0, 1] } }}
-        className='md:[--mt-high:5rem] md:[--mt:8rem] max-md:[--mt-high:3rem] max-md:[--mt:5rem]'
+        className='max-md:[--mt-high:3rem] max-md:[--mt:5rem] md:[--mt-high:5rem] md:[--mt:8rem]'
       >
         <Search className='mb-12' />
       </motion.div>

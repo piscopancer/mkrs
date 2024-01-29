@@ -1,4 +1,5 @@
 import { domToReact, htmlToDOM } from 'html-react-parser'
+import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies'
 import { cookies } from 'next/headers'
 import { useSnapshot } from 'valtio'
 
@@ -64,6 +65,6 @@ export function getCookie<N extends keyof TCookies>(store: ReturnType<typeof coo
   return JSON.parse(value) as TCookies[N]
 }
 
-export function setCookie<N extends keyof TCookies>(store: ReturnType<typeof cookies>, name: N, value: TCookies[N]) {
-  return store.set(name, JSON.stringify(value))
+export function setCookie<N extends keyof TCookies>(store: ReturnType<typeof cookies>, name: N, value: TCookies[N], options?: Partial<ResponseCookie>) {
+  return store.set(name, JSON.stringify(value), options)
 }

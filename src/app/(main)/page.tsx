@@ -14,10 +14,10 @@ export default async function Home() {
       {!hideInfoBanner && (
         <article className='hopper rounded-lg border-2 border-zinc-800 bg-gradient-to-r from-zinc-800/50 to-transparent'>
           <div className='px-4 py-2'>
-            <h1 className='font-display mb-1'>Впервые на сайте?</h1>
+            <h1 className='mb-1 font-display'>Впервые на сайте?</h1>
             <h2>
               Узнайте больше о {project.name} на{' '}
-              <Link href={'/info' as Route} className='text-pink-500 hover:text-pink-300 duration-100'>
+              <Link href={'/info' as Route} className='text-pink-500 duration-100 hover:text-pink-300'>
                 этой странице
               </Link>
               .
