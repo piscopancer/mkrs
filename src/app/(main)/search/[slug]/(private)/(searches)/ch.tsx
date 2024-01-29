@@ -24,7 +24,7 @@ export default function Ch(props: TSearchProps<'ch'>) {
           <h1 className='mr-auto text-5xl'>{props.search.ch}</h1>
           {props.search.ch && <Save ch={props.search.ch} className='' />}
         </header>
-        <h2 className='mb-8 w-fit rounded-full bg-zinc-800 px-3 text-zinc-400'>{props.search.py}</h2>
+        <h2 className='mb-8 w-fit max-w-full overflow-hidden text-ellipsis text-nowrap rounded-full bg-zinc-800 px-3 text-base text-zinc-400'>{props.search.py}</h2>
         {!props.search.found && <NotFound />}
         {props.search.tr && (
           <div data-search className='mb-12 text-xl max-md:text-base'>

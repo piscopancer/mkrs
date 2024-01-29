@@ -185,7 +185,6 @@ function parseInRu(el: Element, _for: 'ch' | 'ru'): TExample[] | undefined {
         if (Array.from(ch.children).length) {
           const _ch = ch.cloneNode(true) as Element
           _ch.querySelector('a')?.remove()
-          console.log(_ch.innerHTML)
           return {
             heading: ch.children[0]?.textContent?.trim() ?? '',
             innerHtml: _ch.innerHTML,
