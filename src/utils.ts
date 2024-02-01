@@ -1,7 +1,5 @@
 import { HTMLMotionProps } from 'framer-motion'
 import { domToReact, htmlToDOM } from 'html-react-parser'
-import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies'
-import { cookies } from 'next/headers'
 import { ComponentProps, ReactHTML } from 'react'
 import { useSnapshot } from 'valtio'
 
@@ -56,20 +54,6 @@ export function parseLsForStore<T extends object>(storeName: string) {
 }
 
 export type TSnapshot<T extends object> = ReturnType<typeof useSnapshot<T>>
-
-type TCookies = {
-  'hide-info-banner': true
-}
-
-export function getCookie<N extends keyof TCookies>(store: ReturnType<typeof cookies>, name: N) {
-  const value = store.get(name)?.value
-  if (!value) return
-  return JSON.parse(value) as TCookies[N]
-}
-
-export function setCookie<N extends keyof TCookies>(store: ReturnType<typeof cookies>, name: N, value: TCookies[N], options?: Partial<ResponseCookie>) {
-  return store.set(name, JSON.stringify(value), options)
-}
 
 export type TComponent<T extends keyof ReactHTML, P extends object> = ComponentProps<T> & { props: P }
 
