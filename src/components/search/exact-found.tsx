@@ -1,16 +1,17 @@
 'use client'
 
 import { searchStore } from '@/search'
-import { classes } from '@/utils'
-import { HTMLMotionProps, motion } from 'framer-motion'
+import { TMotionComponent, classes } from '@/utils'
+import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { TbArrowBadgeRightFilled } from 'react-icons/tb'
 import { useSnapshot } from 'valtio'
-import { selectSuggestion } from './utils'
+import { TExact, selectSuggestion } from './utils'
 
-export default function ExactFound({ found, ...htmlProps }: HTMLMotionProps<'aside'> & { found: string }) {
+export default function ExactFound({ props, ...htmlProps }: TMotionComponent<'aside', NonNullable<TExact>>) {
   const searchSnap = useSnapshot(searchStore)
   const router = useRouter()
+  const tr = new DOMParser().parseFromString(props.tr, 'text/html').body.textContent
 
   return (
     <motion.button
@@ -18,14 +19,14 @@ export default function ExactFound({ found, ...htmlProps }: HTMLMotionProps<'asi
       exit={{ y: 2, opacity: 0 }}
       animate={{ y: 0, opacity: searchSnap.selectedSuggestion === -1 ? 1 : 0.5 }}
       initial={{ y: 2, opacity: 0 }}
-      onClick={() => selectSuggestion(router, found)}
+      onClick={() => selectSuggestion(router, props.ch)}
       className={classes(
         htmlProps.className,
-        searchSnap.selectedSuggestion === -1 ? ' from-pink-500 to-pink-400 border-pink-200/50' : ' from-zinc-800 to-zinc-800 border-zinc-700',
-        'border-2 border-transparent px-6 py-2 rounded-full flex items-center bg-gradient-to-r text-zinc-200 duration-500 transition-[scale,background] max-md:px-4 max-md:py-1'
+        searchSnap.selectedSuggestion === -1 ? ' border-pink-200/50 from-pink-500 to-pink-400' : ' border-zinc-700 from-zinc-800 to-zinc-800',
+        'flex items-center rounded-full border-2 border-transparent bg-gradient-to-r px-6 py-2 text-zinc-200 transition-[scale,background] duration-500 max-md:px-4 max-md:py-1',
       )}
     >
-      <span className='mr-auto font-bold'>{found}</span>
+      <span className='mr-auto overflow-hidden text-ellipsis text-nowrap pr-6 font-bold opacity-80 max-md:pr-3 max-md:text-sm'>{tr}</span>
       <ul className='flex items-center md:mr-6'>
         {Array.from({ length: 3 }).map((_, i) => (
           <motion.div

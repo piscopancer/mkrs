@@ -1,7 +1,7 @@
 'use client'
 
 import useShortcut from '@/hooks/use-key'
-import { TSearchProps, TSearchType, abortController, determineSearchType, findSuggestions, parse, queryCharacter, searchStore } from '@/search'
+import { TSearchProps, TSearchType, abortController, determineSearchType, findSuggestions, parse, queryCharacterClient, searchStore } from '@/search'
 import { shortcuts } from '@/shortcuts'
 import { classes } from '@/utils'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -74,7 +74,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
     if (searchStore.inputValue) {
       setQuerying(true)
       abortController?.abort('new query')
-      queryCharacter(searchStore.inputValue).then((text) => {
+      queryCharacterClient(searchStore.inputValue).then((text) => {
         setQuerying(false)
         const el = document.createElement('div')
         el.innerHTML = text
@@ -107,7 +107,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
 
   return (
     <search {...props} ref={selfRef} className={classes(props.className, 'relative')}>
-      <div className='relative hopper mb-3 bg-gradient-to-r from-pink-400 to-pink-600 p-0.5 rounded-full'>
+      <div className='hopper relative mb-3 rounded-full bg-gradient-to-r from-pink-400 to-pink-600 p-0.5'>
         <input
           ref={inputRef}
           onFocus={() => {
@@ -117,40 +117,40 @@ export default function Search(props: React.ComponentProps<'search'>) {
           spellCheck={false}
           type='text'
           onChange={onInput}
-          className='pl-6 pr-20 rounded-full py-4 bg-zinc-800 duration-100 w-full focus-visible:outline-4 outline-pink-500/50'
+          className='w-full rounded-full bg-zinc-800 py-4 pl-6 pr-20 outline-pink-500/50 duration-100 focus-visible:outline-4'
         />
         <button
           disabled={!!!searchSnap.inputValue.trim()}
           onClick={() => selectSuggestion(router, searchStore.inputValue)}
-          className='text-zinc-400 hover:text-pink-500 focus-visible:text-pink-500 focus-visible:outline-0 absolute right-0 h-full aspect-square rounded-full group duration-100 flex items-center justify-center disabled:opacity-50'
+          className='group absolute right-0 flex aspect-square h-full items-center justify-center rounded-full text-zinc-400 duration-100 hover:text-pink-500 focus-visible:text-pink-500 focus-visible:outline-0 disabled:opacity-50'
         >
           <TbSearch />
         </button>
         <AnimatePresence>
           {querying && (
-            <motion.div initial={querying ? false : { scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }} className='self-center justify-self-end animate-spin mr-14'>
+            <motion.div initial={querying ? false : { scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }} className='mr-14 animate-spin self-center justify-self-end'>
               <TbLoader className='stroke-zinc-500' />
             </motion.div>
           )}
         </AnimatePresence>
         {searchSnap.search && searchSnap.showSuggestions && <Suggestions search={searchSnap.search} />}
       </div>
-      <ul className='flex items-center gap-6 justify-end max-md:hidden'>
+      <ul className='flex items-center justify-end gap-6 max-md:hidden'>
         {[shortcuts.focus, shortcuts.search].map(({ name, display }) => (
-          <li key={name} className='text-xs flex'>
-            <kbd className='font-mono text-zinc-400 mr-2 px-2 shadow-[0_1px_0_2px_theme(colors.zinc.700)] rounded-md'>{display[0]}</kbd>
+          <li key={name} className='flex text-xs'>
+            <kbd className='mr-2 rounded-md px-2 font-mono text-zinc-400 shadow-[0_1px_0_2px_theme(colors.zinc.700)]'>{display[0]}</kbd>
             <span className='text-zinc-500'>{name}</span>
           </li>
         ))}
       </ul>
       {showCat && (
         <Tooltip content='💋'>
-          <motion.button disabled className='absolute bottom-[90%] max-md:bottom-[85%] left-[10%]'>
+          <motion.button disabled className='absolute bottom-[90%] left-[10%] max-md:bottom-[85%]'>
             <GiCat className='h-10' />
           </motion.button>
         </Tooltip>
       )}
-      <AnimatePresence>{exact && searchSnap.focused && <ExactFound key={'exact'} found={exact} className='absolute bottom-[calc(100%+0.5rem)] w-full' />}</AnimatePresence>
+      <AnimatePresence>{exact && searchSnap.focused && <ExactFound key={'exact'} props={{ ch: exact.ch, tr: exact.tr }} className='absolute bottom-[calc(100%+0.5rem)] w-full' />}</AnimatePresence>
     </search>
   )
 }

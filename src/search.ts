@@ -122,14 +122,15 @@ export const searchDescriptions: Record<TSearches['type'], string> = {
 
 export let abortController: AbortController | null = null
 
-export async function queryCharacter(ch: string) {
-  const url = new URL(process.env.NEXT_PUBLIC_URL)
-  url.pathname = '/api/search'
-  url.searchParams.set('ch', ch)
+export async function queryCharacterClient(ch: string) {
   abortController = new AbortController()
-  const res = await fetch(url, { signal: abortController.signal })
+  const res = await fetch(`/api/search?ch=${ch}`, { signal: abortController.signal })
   abortController = null
   return res.text()
+}
+
+export async function queryCharacter(ch: string) {
+  return fetch(`https://bkrs.info/slovo.php?ch=${ch}`).then((res) => res.text())
 }
 
 export function parseWords(el: Element) {

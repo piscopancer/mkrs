@@ -50,9 +50,5 @@ export default async function SearchPage({ params }: TSearchPage) {
     return searches[parsedSearch.type](props as never)
   }
 
-  return (
-    <>
-      <Search search={parsedSearch} />
-    </>
-  )
+  return <Search search={parsedSearch} />
 }

@@ -1,6 +1,8 @@
+import { HTMLMotionProps } from 'framer-motion'
 import { domToReact, htmlToDOM } from 'html-react-parser'
 import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies'
 import { cookies } from 'next/headers'
+import { ComponentProps, ReactHTML } from 'react'
 import { useSnapshot } from 'valtio'
 
 export type TNextPage<ParamsAlias extends string | never = never, SearchParams extends string[] = []> = {
@@ -68,3 +70,7 @@ export function getCookie<N extends keyof TCookies>(store: ReturnType<typeof coo
 export function setCookie<N extends keyof TCookies>(store: ReturnType<typeof cookies>, name: N, value: TCookies[N], options?: Partial<ResponseCookie>) {
   return store.set(name, JSON.stringify(value), options)
 }
+
+export type TComponent<T extends keyof ReactHTML, P extends object> = ComponentProps<T> & { props: P }
+
+export type TMotionComponent<T extends keyof ReactHTML, P extends object> = HTMLMotionProps<T> & { props: P }

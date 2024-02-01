@@ -1,12 +1,12 @@
-import { NextRequest } from 'next/server'
+import { queryCharacter } from '@/search'
 import { JSDOM } from 'jsdom'
+import { NextRequest } from 'next/server'
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url)
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url)
   const ch = searchParams.get('ch')
-  const res = await fetch(`https://bkrs.info/slovo.php?ch=${ch}`)
-  const text = await res.text()
-  const el = new JSDOM(text).window.document.querySelector('#ajax_search .margin_left')
-  el?.querySelectorAll('img').forEach((i) => i.remove())
+  if (!ch) return
+  const text = await queryCharacter(ch)
+  const el = new JSDOM(text).window.document.body.querySelector('#ajax_search .margin_left')
   return new Response(el?.innerHTML)
 }
