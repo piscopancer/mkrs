@@ -1,12 +1,12 @@
 import { TSearchProps } from '@/search'
 import { stringToReact } from '@/utils'
 import ByWords from '../by-words'
+import ChHeader from '../ch-header'
 import Copyer from '../copyer'
 import Examples from '../examples'
 import NotFound from '../not-found'
 import RecentWriter from '../recent-writer'
 import RuchFulltext from '../ruch-fulltext'
-import Save from '../save'
 import Similar from '../similar'
 import WordsWith from '../words-with'
 
@@ -20,11 +20,7 @@ export default function Ch(props: TSearchProps<'ch'>) {
         </>
       )}
       <article className='relative mb-24'>
-        <header className='mb-8 flex items-start gap-4'>
-          <h1 className='mr-auto text-5xl'>{props.search.ch}</h1>
-          {props.search.ch && <Save ch={props.search.ch} className='' />}
-        </header>
-        <h2 className='mb-8 w-fit max-w-full overflow-hidden text-ellipsis text-nowrap rounded-full bg-zinc-800 px-3 text-base text-zinc-400'>{props.search.py}</h2>
+        <ChHeader search={props.search} />
         {!props.search.found && <NotFound />}
         {props.search.tr && (
           <div data-search className='mb-12 text-xl max-md:text-base'>

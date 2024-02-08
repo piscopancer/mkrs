@@ -1,6 +1,6 @@
 'use client'
 
-import useShortcut from '@/hooks/use-key'
+import useHotkey from '@/hooks/use-hotkey'
 import { TSearchProps, TSearchType, abortController, determineSearchType, findSuggestions, parse, queryCharacterClient, searchStore } from '@/search'
 import { shortcuts } from '@/shortcuts'
 import { classes } from '@/utils'
@@ -30,15 +30,15 @@ export default function Search(props: React.ComponentProps<'search'>) {
   const [showCat, setShowCat] = useState(false)
   useEffect(() => setShowCat(+Math.random().toFixed(2) < catChance), [])
 
-  useShortcut([shortcuts.focus.keys, () => inputRef.current?.focus()], !searchSnap.focused || undefined)
-  useShortcut([
+  useHotkey([shortcuts.focus.keys, () => inputRef.current?.focus()], !searchSnap.focused || undefined)
+  useHotkey([
     ['Escape'],
     () => {
       searchStore.focused = false
       searchStore.showSuggestions = false
     },
   ])
-  useShortcut([
+  useHotkey([
     shortcuts.search.keys,
     () => {
       if (searchStore.focused && searchStore.inputValue && searchStore.selectedSuggestion === -1) {
@@ -46,6 +46,13 @@ export default function Search(props: React.ComponentProps<'search'>) {
       }
     },
   ])
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.value = searchStore.inputValue
+      query(searchStore.inputValue)
+    }
+  }, [searchSnap.inputValue])
 
   useEffect(() => {
     searchStore.focused = true
@@ -70,11 +77,16 @@ export default function Search(props: React.ComponentProps<'search'>) {
   }, [searchSnap.focused])
 
   function onInput(e: ChangeEvent<HTMLInputElement>) {
-    searchStore.inputValue = e.target.value.trim()
-    if (searchStore.inputValue) {
+    const input = e.target.value.trim()
+    searchStore.inputValue = input
+    query(input)
+  }
+
+  function query(input: string) {
+    if (input) {
       setQuerying(true)
       abortController?.abort('new query')
-      queryCharacterClient(searchStore.inputValue).then((text) => {
+      queryCharacterClient(input).then((text) => {
         setQuerying(false)
         const el = document.createElement('div')
         el.innerHTML = text
@@ -86,6 +98,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
       })
     } else {
       abortController?.abort('empty')
+      setQuerying(false)
       searchStore.search = undefined
       searchStore.showSuggestions = false
     }

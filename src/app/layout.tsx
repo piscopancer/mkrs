@@ -96,7 +96,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </nav>
           <section className='overflow-y-auto overflow-x-hidden rounded-lg [grid-area:main] max-md:px-4 md:mb-3 md:mr-3 md:border-2 md:border-zinc-800 md:px-4 md:[scrollbar-gutter:stable]'>{children}</section>
         </div>
-
         <Store />
       </body>
     </html>

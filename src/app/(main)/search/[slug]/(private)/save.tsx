@@ -2,7 +2,7 @@
 
 import { Tooltip } from '@/components/tooltip'
 import Vibrator from '@/components/vibrator'
-import useShortcut from '@/hooks/use-key'
+import useHotkey from '@/hooks/use-hotkey'
 import { savedStore } from '@/saved'
 import { searchStore } from '@/search'
 import { shortcuts } from '@/shortcuts'
@@ -21,7 +21,7 @@ export default function Save({ ch, ...htmlProps }: React.ComponentProps<'div'> &
   const star1Anim = useAnimation()
   const star2Anim = useAnimation()
 
-  useShortcut([shortcuts.save.keys, () => !searchStore.focused && onClick()])
+  useHotkey([shortcuts.save.keys, () => !searchStore.focused && onClick()])
 
   function onClick() {
     if (!isSaved) {
@@ -45,15 +45,15 @@ export default function Save({ ch, ...htmlProps }: React.ComponentProps<'div'> &
   return (
     <div {...htmlProps} className={classes(htmlProps.className, 'relative')}>
       <Tooltip content={isSaved ? 'Убрать из сохраненных' : 'Сохранить'}>
-        <motion.button onClick={onClick} whileTap={{ scaleY: 0.9 }} transition={{ type: 'spring', stiffness: 300 }} className={classes('group flex h-14 w-14 items-center justify-center rounded-lg')}>
-          <div className='grid h-full w-full [grid-template-areas:"stack"]'>
+        <motion.button onClick={onClick} whileTap={{ scaleY: 0.9 }} transition={{ type: 'spring', stiffness: 300 }} className={classes(isSaved ? '' : 'max-md:active:bg-zinc-800/50 md:hover:bg-zinc-800/50', 'group flex h-14 w-14 items-center justify-center rounded-full')}>
+          <div className='hopper grid h-full w-full'>
             <motion.div
               style={{
                 opacity: useTransform(savedMV, [0, 1], [1, 0]),
                 scale: useTransform(savedMV, [0, 1], [1, 1.5]),
               }}
               transition={{ type: 'spring', stiffness: 300 }}
-              className='h-full w-full rounded-full border-2 border-zinc-800 [grid-area:stack]'
+              className='h-full w-full rounded-full border-2 border-zinc-800'
             />
             <motion.div
               style={{
@@ -62,7 +62,7 @@ export default function Save({ ch, ...htmlProps }: React.ComponentProps<'div'> &
                 scaleY: useTransform(savedMV, [0, 1], [0, 1.2]),
                 scaleX: useTransform(savedMV, [0, 1], [1, 1.2]),
               }}
-              className='place-self-center [grid-area:stack]'
+              className='place-self-center'
             >
               <TbDeviceFloppy className='h-6 w-6  stroke-pink-500 ' />
             </motion.div>
@@ -72,7 +72,7 @@ export default function Save({ ch, ...htmlProps }: React.ComponentProps<'div'> &
                 y: useTransform(savedMV, [0, 1], [0, 10]),
                 scaleY: useTransform(savedMV, [0, 1], [1, 0]),
               }}
-              className='place-self-center [grid-area:stack]'
+              className='place-self-center'
             >
               <TbDeviceFloppy className='h-6 w-6  stroke-zinc-500 ' />
             </motion.div>
@@ -81,7 +81,7 @@ export default function Save({ ch, ...htmlProps }: React.ComponentProps<'div'> &
                 opacity: useTransform(savedMV, [0, 1], [0, 1]),
                 scale: useTransform(savedMV, [0, 1], [0, 1]),
               }}
-              className='h-full w-full rounded-full bg-pink-500/10 [grid-area:stack]'
+              className='h-full w-full rounded-full bg-pink-500/10'
             />
           </div>
           <Vibrator key={+isSaved} pattern={isSaved ? [50] : [80, 50, 50]} />

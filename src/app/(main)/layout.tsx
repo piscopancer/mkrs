@@ -1,7 +1,7 @@
 'use client'
 
 import Search from '@/components/search'
-import useShortcut from '@/hooks/use-key'
+import useHotkey from '@/hooks/use-hotkey'
 import { searchStore } from '@/search'
 import { shortcuts } from '@/shortcuts'
 import { motion } from 'framer-motion'
@@ -10,9 +10,9 @@ import { usePathname, useRouter } from 'next/navigation'
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
-  useShortcut([shortcuts['main-page'].keys, () => !searchStore.focused && router.push('/')])
-  useShortcut([shortcuts['recent-page'].keys, () => !searchStore.focused && router.push('/recent')])
-  useShortcut([shortcuts['saved-page'].keys, () => !searchStore.focused && router.push('/saved')])
+  useHotkey([shortcuts['main-page'].keys, () => !searchStore.focused && router.push('/')])
+  useHotkey([shortcuts['recent-page'].keys, () => !searchStore.focused && router.push('/recent')])
+  useHotkey([shortcuts['saved-page'].keys, () => !searchStore.focused && router.push('/saved')])
 
   return (
     <div className='mx-auto max-w-screen-lg'>

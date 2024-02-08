@@ -19,7 +19,14 @@ import gif22 from '@/assets/girls/22.gif'
 import gif23 from '@/assets/girls/23.gif'
 import gif24 from '@/assets/girls/24.gif'
 import gif25 from '@/assets/girls/25.gif'
+import gif26 from '@/assets/girls/26.gif'
+import gif27 from '@/assets/girls/27.gif'
+import gif28 from '@/assets/girls/28.gif'
+import gif29 from '@/assets/girls/29.gif'
 import gif3 from '@/assets/girls/3.gif'
+import gif30 from '@/assets/girls/30.gif'
+import gif31 from '@/assets/girls/31.gif'
+import gif32 from '@/assets/girls/32.gif'
 import gif4 from '@/assets/girls/4.gif'
 import gif5 from '@/assets/girls/5.gif'
 import gif6 from '@/assets/girls/6.gif'
@@ -27,20 +34,19 @@ import gif7 from '@/assets/girls/7.gif'
 import gif8 from '@/assets/girls/8.gif'
 import gif9 from '@/assets/girls/9.gif'
 
-import useShortcut from '@/hooks/use-key'
+import useHotkey from '@/hooks/use-hotkey'
 import { searchStore } from '@/search'
 import { classes, randomFromArray } from '@/utils'
 import { motion, useAnimation, useSpring, useTransform } from 'framer-motion'
-import Image, { StaticImageData } from 'next/image'
 import { ComponentProps, useEffect, useRef, useState } from 'react'
 import { GiCompactDisc } from 'react-icons/gi'
 import { useSnapshot } from 'valtio'
 
-const gifs = [gif0, gif1, gif2, gif3, gif4, gif5, gif6, gif7, gif8, gif9, gif10, gif11, gif12, gif13, gif14, gif15, gif16, gif17, gif18, gif19, gif20, gif21, gif22, gif23, gif24, gif25]
+const gifs = [gif0, gif1, gif2, gif3, gif4, gif5, gif6, gif7, gif8, gif9, gif10, gif11, gif12, gif13, gif14, gif15, gif16, gif17, gif18, gif19, gif20, gif21, gif22, gif23, gif24, gif25, gif26, gif27, gif28, gif29, gif30, gif31, gif32]
 
 export default function Logo(props: ComponentProps<'div'>) {
   const [full, setFull] = useState(false)
-  const [gif, setGif] = useState<null | StaticImageData>(null!)
+  const [gif, setGif] = useState<null | string>(null!)
   const searchSnap = useSnapshot(searchStore)
   const bigGifRef = useRef<HTMLDivElement | null>(null)
 
@@ -56,10 +62,10 @@ export default function Logo(props: ComponentProps<'div'>) {
   const bigGifX = useTransform(pxXFromGif, [maxPxFromGif, -maxPxFromGif], [-maxGifPxMovement / 2, maxGifPxMovement / 2])
   const bigGifY = useTransform(pxYFromGif, [maxPxFromGif, -maxPxFromGif], [-maxGifPxMovement / 2, maxGifPxMovement / 2])
 
-  useShortcut([['Escape'], () => full && setFull(false)])
+  useHotkey([['Escape'], () => full && setFull(false)])
 
   useEffect(() => {
-    setGif(randomFromArray(gifs))
+    setGif(randomFromArray(gifs).src)
     function onMouseMove(e: MouseEvent) {
       if (bigGifRef.current) {
         const gifRect = bigGifRef.current.getBoundingClientRect()
@@ -86,20 +92,20 @@ export default function Logo(props: ComponentProps<'div'>) {
             scaleY: 0.9,
           }}
           onClick={() => setFull(true)}
-          className='rounded-full bg-zinc-800 w-12 h-12 overflow-hidden'
+          className='h-12 w-12 overflow-hidden rounded-full bg-zinc-800'
         >
           <motion.div initial={{ x: gif ? 0 : -4 + 'rem' }} animate={{ x: 0 }}>
-            {gif && <Image draggable={false} src={gif} alt='девчуля танцует' className='w-12 aspect-square rounded-full saturate-0 hover:saturate-100 duration-100 object-cover' />}
+            {gif && <img draggable={false} src={gif} alt='девчуля танцует' className='aspect-square w-12 rounded-full object-cover saturate-0 duration-100 hover:saturate-100' />}
           </motion.div>
         </motion.div>
       ) : (
         <div onClick={() => setFull(false)} className={classes(!full && 'pointer-events-none', 'fixed inset-0 flex items-center justify-evenly')}>
           <motion.div key='bg' initial={{ opacity: 0 }} animate={{ opacity: 0.8 }} className='absolute inset-0 bg-zinc-950' exit={{ opacity: 0, transition: { duration: 1 } }} />
           <Disc side='left' />
-          <motion.div layout layoutId='logo' ref={bigGifRef} className='h-[80vh] max-md:h-[80vw] aspect-square '>
-            <motion.div style={{ x: bigGifGlassX, y: bigGifGlassY }} className='w-full h-full rounded-full overflow-hidden'>
-              <motion.div style={{ x: bigGifX, y: bigGifY }} className='w-full h-full '>
-                {gif && <Image draggable={false} src={gif} alt='девчуля танцует' className='w-full h-full object-cover scale-110' />}
+          <motion.div layout layoutId='logo' ref={bigGifRef} className='aspect-square h-[80vh] max-md:h-[80vw] '>
+            <motion.div style={{ x: bigGifGlassX, y: bigGifGlassY }} className='h-full w-full overflow-hidden rounded-full'>
+              <motion.div style={{ x: bigGifX, y: bigGifY }} className='h-full w-full '>
+                {gif && <img draggable={false} src={gif} alt='девчуля танцует' className='h-full w-full scale-110 object-cover' />}
               </motion.div>
             </motion.div>
           </motion.div>

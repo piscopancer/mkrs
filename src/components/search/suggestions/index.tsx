@@ -1,4 +1,4 @@
-import useShortcut from '@/hooks/use-key'
+import useHotkey from '@/hooks/use-hotkey'
 import { TSearch, TSearchType, findSuggestions, searchDescriptions, searchStore } from '@/search'
 import { useRouter } from 'next/navigation'
 import { ReactNode } from 'react'
@@ -29,9 +29,9 @@ export default function Suggestions<T extends TSearchType, S extends TSearch<T>,
 
   const display = props.display(props.search)
 
-  useShortcut([['ArrowUp'], () => suggestions && suggestions.length > 0 && moveSelection(suggestions, -1)], true)
-  useShortcut([['ArrowDown'], () => suggestions && suggestions.length > 0 && moveSelection(suggestions, 1)], true)
-  useShortcut([
+  useHotkey([['ArrowUp'], () => suggestions && suggestions.length > 0 && moveSelection(suggestions, -1)], true)
+  useHotkey([['ArrowDown'], () => suggestions && suggestions.length > 0 && moveSelection(suggestions, 1)], true)
+  useHotkey([
     ['Enter'],
     () => {
       if (suggestions && searchSnap.selectedSuggestion !== -1) {
@@ -58,8 +58,8 @@ export default function Suggestions<T extends TSearchType, S extends TSearch<T>,
   if (!suggestions) return
 
   return (
-    <aside className='absolute inset-x-0 top-full mt-2 bg-zinc-800 p-4 rounded-3xl z-[1] max-md:p-3 max-md:rounded-xl'>
-      <output className='text-xs mb-4 max-md:mb-2 block text-zinc-500'>{searchDescriptions[props.search.type]}</output>
+    <aside className='absolute inset-x-0 top-full z-[1] mt-2 rounded-3xl bg-zinc-800 p-4 max-md:rounded-xl max-md:p-3'>
+      <output className='mb-4 block text-xs text-zinc-500 max-md:mb-2'>{searchDescriptions[props.search.type]}</output>
       <ul>
         {suggestions.map((suggestion, i) => {
           const isSelected = searchSnap.selectedSuggestion === i

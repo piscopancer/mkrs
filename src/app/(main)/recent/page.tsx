@@ -1,7 +1,7 @@
 'use client'
 
 import Vibrator from '@/components/vibrator'
-import useShortcut from '@/hooks/use-key'
+import useHotkey from '@/hooks/use-hotkey'
 import { groupByDate, recentStore } from '@/recent'
 import { savedStore } from '@/saved'
 import { classes, objectEntries } from '@/utils'
@@ -23,7 +23,7 @@ export default function Recent() {
     selfAnim.start({ opacity: 1 })
   }, [selfAnim])
 
-  useShortcut([
+  useHotkey([
     ['r'],
     () => {
       const date = new Date(2024, 0, 18, 16)
@@ -36,11 +36,11 @@ export default function Recent() {
 
   return (
     <motion.main animate={selfAnim} className='mb-48'>
-      <h1 className='text-lg font-display text-zinc-200 uppercase mb-8'>недавние</h1>
+      <h1 className='mb-8 font-display text-lg uppercase text-zinc-200'>недавние</h1>
       {objectEntries(groupByDate(recentSnap.recent)).map(([id, { name, recent }]) =>
         recent.length ? (
           <Fragment key={id}>
-            <h2 className='ext-lg text-zinc-300 font-medium mb-6'>{name}</h2>
+            <h2 className='ext-lg mb-6 font-medium text-zinc-300'>{name}</h2>
             <ul className='mb-10'>
               {recent
                 .toSorted((a, b) => compareDesc(a.date, b.date))
@@ -52,21 +52,21 @@ export default function Recent() {
                         onClick={() => {
                           saved ? (savedStore.saved = savedStore.saved.filter((s) => s !== r.search)) : savedStore.saved.push(r.search)
                         }}
-                        className={classes(saved ? 'text-pink-500 hover:text-pink-300' : 'text-zinc-600 hover:text-zinc-400', 'h-8 w-8 flex items-center justify-center mr-2 group py-0.5 -ml-2')}
+                        className={classes(saved ? 'text-pink-500 hover:text-pink-300' : 'text-zinc-600 hover:text-zinc-400', 'group -ml-2 mr-2 flex h-8 w-8 items-center justify-center py-0.5')}
                       >
-                        <TbDeviceFloppy className='group-hover:scale-110 duration-100' />
+                        <TbDeviceFloppy className='duration-100 group-hover:scale-110' />
                         <Vibrator />
                       </button>
-                      <Link prefetch={false} href={`/search/${r.search}`} className='flex items-center group flex-1 py-0.5 min-w-0'>
-                        <span className='text-pink-500 group-hover:text-pink-300 md:text-lg overflow-hidden text-ellipsis text-nowrap'>{r.search}</span>
-                        <span className='text-xs rounded-full text-zinc-400 ml-auto group-hover:text-zinc-200 text-nowrap'>{formatDistanceToNowStrict(r.date, { locale: ru, roundingMethod: 'floor' })}</span>
+                      <Link prefetch={false} href={`/search/${r.search}`} className='group flex min-w-0 flex-1 items-center py-0.5'>
+                        <span className='overflow-hidden text-ellipsis text-nowrap text-pink-500 group-hover:text-pink-300 md:text-lg'>{r.search}</span>
+                        <span className='ml-auto text-nowrap rounded-full text-xs text-zinc-400 group-hover:text-zinc-200'>{formatDistanceToNowStrict(r.date, { locale: ru, roundingMethod: 'floor' })}</span>
                       </Link>
                     </li>
                   )
                 })}
             </ul>
           </Fragment>
-        ) : null
+        ) : null,
       )}
     </motion.main>
   )
