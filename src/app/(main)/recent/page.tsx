@@ -1,7 +1,6 @@
 'use client'
 
 import Vibrator from '@/components/vibrator'
-import useHotkey from '@/hooks/use-hotkey'
 import { groupByDate, recentStore } from '@/recent'
 import { savedStore } from '@/saved'
 import { classes, objectEntries } from '@/utils'
@@ -22,17 +21,6 @@ export default function Recent() {
     selfAnim.set({ opacity: 0 })
     selfAnim.start({ opacity: 1 })
   }, [selfAnim])
-
-  useHotkey([
-    ['r'],
-    () => {
-      const date = new Date(2024, 0, 18, 16)
-      recentStore.recent.push({
-        date,
-        search: 'сексуальный мужчина',
-      })
-    },
-  ])
 
   return (
     <motion.main animate={selfAnim} className='mb-48'>
