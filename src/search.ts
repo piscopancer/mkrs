@@ -130,7 +130,7 @@ export async function queryCharacterClient(ch: string) {
 }
 
 export async function queryCharacter(ch: string) {
-  return fetch(`https://bkrs.info/slovo.php?ch=${ch}`).then((res) => res.text())
+  return fetch(`https://bkrs.info/slovo.php?ch=${ch}`, { next: { revalidate: 60 } }).then((res) => res.text())
 }
 
 export function parseWords(el: Element) {
