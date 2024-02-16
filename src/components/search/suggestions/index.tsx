@@ -29,8 +29,8 @@ export default function Suggestions<T extends TSearchType, S extends TSearch<T>,
 
   const display = props.display(props.search)
 
-  useHotkey([['ArrowUp'], () => suggestions && suggestions.length > 0 && moveSelection(suggestions, -1)], true)
-  useHotkey([['ArrowDown'], () => suggestions && suggestions.length > 0 && moveSelection(suggestions, 1)], true)
+  useHotkey([['ArrowUp'], () => suggestions && suggestions.length > 0 && moveSelection(suggestions, -1)], { prevent: true })
+  useHotkey([['ArrowDown'], () => suggestions && suggestions.length > 0 && moveSelection(suggestions, 1)], { prevent: true })
   useHotkey([
     ['Enter'],
     () => {

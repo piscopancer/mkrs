@@ -11,9 +11,9 @@ export default function ByWords(props: { words: TWord[] }) {
   const router = useRouter()
   const searchSnap = useSnapshot(searchStore)
 
-  useHotkey([['ArrowLeft'], () => moveSelection(-1)], true)
-  useHotkey([['ArrowRight'], () => moveSelection(1)], true)
-  useHotkey([['ArrowUp'], () => (searchStore.selectedSuggestion = -1)], true)
+  useHotkey([['ArrowLeft'], () => moveSelection(-1)], { prevent: true })
+  useHotkey([['ArrowRight'], () => moveSelection(1)], { prevent: true })
+  useHotkey([['ArrowUp'], () => (searchStore.selectedSuggestion = -1)], { prevent: true })
   useHotkey([
     ['Enter'],
     () => {

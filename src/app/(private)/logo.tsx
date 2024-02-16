@@ -95,7 +95,7 @@ export default function Logo(props: ComponentProps<'div'>) {
           className='h-12 w-12 overflow-hidden rounded-full bg-zinc-800'
         >
           <motion.div initial={{ x: gif ? 0 : -4 + 'rem' }} animate={{ x: 0 }}>
-            {gif && <img draggable={false} src={gif} alt='девчуля танцует' className='aspect-square w-12 rounded-full object-cover saturate-0 duration-100 hover:saturate-100' />}
+            {gif && <img fetchPriority='low' draggable={false} src={gif} alt='девчуля танцует' className='aspect-square w-12 rounded-full object-cover saturate-0 duration-100 hover:saturate-100' />}
           </motion.div>
         </motion.div>
       ) : (
@@ -105,7 +105,7 @@ export default function Logo(props: ComponentProps<'div'>) {
           <motion.div layout layoutId='logo' ref={bigGifRef} className='aspect-square h-[80vh] max-md:h-[80vw] '>
             <motion.div style={{ x: bigGifGlassX, y: bigGifGlassY }} className='h-full w-full overflow-hidden rounded-full'>
               <motion.div style={{ x: bigGifX, y: bigGifY }} className='h-full w-full '>
-                {gif && <img draggable={false} src={gif} alt='девчуля танцует' className='h-full w-full scale-110 object-cover' />}
+                {gif && <img fetchPriority='low' draggable={false} src={gif} alt='девчуля танцует' className='h-full w-full scale-110 object-cover' />}
               </motion.div>
             </motion.div>
           </motion.div>

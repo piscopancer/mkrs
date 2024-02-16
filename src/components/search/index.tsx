@@ -30,7 +30,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
   const [showCat, setShowCat] = useState(false)
   useEffect(() => setShowCat(+Math.random().toFixed(2) < catChance), [])
 
-  useHotkey([shortcuts.focus.keys, () => inputRef.current?.focus()], !searchSnap.focused || undefined)
+  useHotkey([shortcuts.focus.keys, () => inputRef.current?.focus()], { prevent: !searchSnap.focused || undefined })
   useHotkey([
     ['Escape'],
     () => {

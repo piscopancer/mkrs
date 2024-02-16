@@ -32,8 +32,8 @@ export default function ChHeader(props: TSearchProps<'ch'>) {
   ])
   useHotkey([
     shortcuts.copy.keys,
-    () => {
-      if (!searchSnap.focused) {
+    (_, e) => {
+      if (!searchSnap.focused && !e.ctrlKey) {
         copy()
         copyBtnAnim.start({
           backgroundColor: [colors.zinc[800], colors.zinc[800], '#00000000'],
@@ -41,7 +41,12 @@ export default function ChHeader(props: TSearchProps<'ch'>) {
       }
     },
   ])
-  useHotkey([shortcuts.bkrs.keys, () => window.open(bkrsUrl, '_blank')?.focus()])
+  useHotkey([
+    shortcuts.bkrs.keys,
+    () => {
+      if (!searchSnap.focused) window.open(bkrsUrl, '_blank')?.focus()
+    },
+  ])
 
   function copy() {
     if (!props.search.ch) return
@@ -88,17 +93,35 @@ export default function ChHeader(props: TSearchProps<'ch'>) {
       <div className='mb-8 flex items-end gap-4'>
         <h2 className='mr-auto w-fit max-w-full overflow-hidden text-ellipsis text-nowrap rounded-full bg-zinc-800 px-3 text-base text-zinc-400'>{props.search.py}</h2>
         <aside className='flex rounded-full'>
-          <Tooltip content='Копировать в поиск'>
+          <Tooltip
+            content={
+              <>
+                <span className='uppercase text-zinc-500'>({shortcuts['to-search'].display})</span> Копировать в поиск
+              </>
+            }
+          >
             <motion.button animate={toSearchBtnAnim} className='rounded-l-full border-y-2 border-l-2 border-zinc-800 p-2 pl-2.5 duration-100 max-md:active:!bg-zinc-800 md:hover:!bg-zinc-800' onClick={toSearch}>
               <TbArrowUp className='stroke-zinc-400' />
             </motion.button>
           </Tooltip>
-          <Tooltip content='Копировать'>
+          <Tooltip
+            content={
+              <>
+                <span className='uppercase text-zinc-500'>({shortcuts.copy.display})</span> Копировать
+              </>
+            }
+          >
             <motion.button animate={copyBtnAnim} className='border-y-2 border-zinc-800 p-2 duration-100 max-md:active:!bg-zinc-800 md:hover:!bg-zinc-800' onClick={copy}>
               <TbCopy className='stroke-zinc-400' />
             </motion.button>
           </Tooltip>
-          <Tooltip content='Открыть на 大БКРС'>
+          <Tooltip
+            content={
+              <>
+                <span className='uppercase text-zinc-500'>({shortcuts.bkrs.display})</span> Открыть на 大БКРС
+              </>
+            }
+          >
             <a target='_blank' href={bkrsUrl} className='rounded-r-full border-y-2 border-r-2 border-zinc-800 p-2 pr-2.5 leading-4 text-zinc-400 duration-100 max-md:active:bg-zinc-800 md:hover:bg-zinc-800'>
               大
             </a>
