@@ -6,6 +6,7 @@ import { cookies } from 'next/headers'
 
 type TCookies = {
   'hide-info-banner': true | undefined
+  'anime-girls': true | undefined
 }
 
 export async function getCookie<N extends keyof TCookies>(name: N) {
@@ -15,7 +16,7 @@ export async function getCookie<N extends keyof TCookies>(name: N) {
 }
 
 export async function setCookie<N extends keyof TCookies>(name: N, value: NonNullable<TCookies[N]>, options?: Partial<ResponseCookie>) {
-  cookies().set(name, JSON.stringify(value), options)
+  cookies().set(name, JSON.stringify(value), { maxAge: 60 * 60 * 24 * 365, ...options })
 }
 
 export async function hasCookie<N extends keyof TCookies>(name: N) {
@@ -27,6 +28,24 @@ export async function deleteCookie<N extends keyof TCookies>(name: N) {
 }
 
 export async function hideInfoBanner() {
-  setCookie('hide-info-banner', true, { maxAge: 60 * 60 * 24 * 365 })
+  setCookie('hide-info-banner', true)
   revalidatePath('/')
+}
+
+export async function switchAnimeGirls(value?: boolean) {
+  if (value === undefined) {
+    if (await hasCookie('anime-girls')) {
+      deleteCookie('anime-girls')
+    } else {
+      setCookie('anime-girls', true)
+    }
+  } else {
+    if (value) {
+      setCookie('anime-girls', true)
+    } else {
+      deleteCookie('anime-girls')
+    }
+  }
+  revalidatePath('/')
+  return hasCookie('anime-girls')
 }

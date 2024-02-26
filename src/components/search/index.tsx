@@ -119,7 +119,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
   const exact = searchSnap.search && findExact(searchSnap.search)
 
   return (
-    <search {...props} ref={selfRef} className={classes(props.className, 'relative')}>
+    <search {...props} ref={selfRef} className={classes(props.className, 'relative block')}>
       <div className='hopper relative mb-3 rounded-full bg-gradient-to-r from-pink-400 to-pink-600 p-0.5'>
         <input
           ref={inputRef}
