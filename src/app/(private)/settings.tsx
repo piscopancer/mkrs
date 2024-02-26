@@ -3,6 +3,7 @@
 import Switch from '@/components/switch'
 import { classes } from '@/utils'
 import * as Dropdown from '@radix-ui/react-dropdown-menu'
+import type { Route } from 'next'
 import Link from 'next/link'
 import { TbInfoSquareRounded, TbSettings } from 'react-icons/tb'
 import { switchAnimeGirls } from '../actions'
@@ -15,7 +16,7 @@ export default function Settings(props: { showAnimeGirls: boolean }) {
           <ul className='flex flex-col rounded-xl border-2 border-zinc-800 bg-zinc-900'>
             <li className='mb-4'>
               <Dropdown.Item asChild>
-                <Link href={'/info'} className='flex items-center rounded-t-[10px] bg-gradient-to-r from-zinc-800/50 to-transparent p-4 outline-none duration-200 focus:from-zinc-800'>
+                <Link href={'/info' as Route} className='flex items-center rounded-t-[10px] bg-gradient-to-r from-zinc-800/50 to-transparent p-4 outline-none duration-200 focus:from-zinc-800'>
                   <TbInfoSquareRounded className='h-5 w-5 stroke-zinc-400' />
                   <span className='ml-auto'>О МКРС</span>
                 </Link>
