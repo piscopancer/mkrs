@@ -44,7 +44,14 @@ export default function Save({ ch, ...htmlProps }: React.ComponentProps<'div'> &
 
   return (
     <div {...htmlProps} className={classes(htmlProps.className, 'relative')}>
-      <Tooltip content={isSaved ? 'Убрать из сохраненных' : 'Сохранить'}>
+      <Tooltip
+        content={
+          <>
+            <span className='uppercase text-zinc-500'>({shortcuts.save.display}) </span>
+            {isSaved ? 'Убрать из сохраненных' : 'Сохранить'}
+          </>
+        }
+      >
         <motion.button onClick={onClick} whileTap={{ scaleY: 0.9 }} transition={{ type: 'spring', stiffness: 300 }} className={classes(isSaved ? '' : 'max-md:active:bg-zinc-800/50 md:hover:bg-zinc-800/50', 'group flex h-14 w-14 items-center justify-center rounded-full')}>
           <div className='hopper grid h-full w-full'>
             <motion.div

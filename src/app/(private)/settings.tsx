@@ -23,9 +23,10 @@ export default function Settings(props: { showAnimeGirls: boolean }) {
               </Dropdown.Item>
             </li>
             <li className='mb-4 grid grid-cols-[auto,min-content] gap-x-2 px-4'>
-              <span>Аниме девочки</span>
+              <span className='mb-1'>Аниме девочки</span>
               <span className='row-start-2 text-xs text-zinc-500'>Включение может снизить скорость поиска: браузер сначала грузит гифки, только потом слово. Ваш интернет должен быть быстрым!</span>
               <Switch
+                className='row-span-2'
                 props={{
                   enabled: props.showAnimeGirls,
                   switch: async () => {
