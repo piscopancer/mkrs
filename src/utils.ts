@@ -1,5 +1,6 @@
 import { HTMLMotionProps } from 'framer-motion'
 import { domToReact, htmlToDOM } from 'html-react-parser'
+import type { Route } from 'next'
 import { ComponentProps, ReactHTML } from 'react'
 import { useSnapshot } from 'valtio'
 
@@ -58,3 +59,12 @@ export type TSnapshot<T extends object> = ReturnType<typeof useSnapshot<T>>
 export type TComponent<T extends keyof ReactHTML, P extends object> = ComponentProps<T> & { props: P }
 
 export type TMotionComponent<T extends keyof ReactHTML, P extends object> = HTMLMotionProps<T> & { props: P }
+
+export function route<R extends string>(route: Route<R>, searchParams?: Record<string, string>) {
+  if (searchParams) {
+    const searchParamsString = new URLSearchParams(searchParams).toString()
+    return `${route}?${searchParamsString}` as Route<R>
+  } else {
+    return route as Route<R>
+  }
+}

@@ -5,6 +5,7 @@ const nextConfig = {
   experimental: {
     typedRoutes: true,
   },
+  logging: { fetches: { fullUrl: true } },
   reactStrictMode: false,
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'mdx'],
 }

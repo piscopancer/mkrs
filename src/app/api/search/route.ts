@@ -8,5 +8,6 @@ export async function GET(req: NextRequest) {
   if (!ch) return
   const text = await queryCharacter(ch)
   const el = new JSDOM(text).window.document.body.querySelector('#ajax_search .margin_left')
+  el?.querySelectorAll('img').forEach((i) => i.remove())
   return new Response(el?.innerHTML)
 }

@@ -1,12 +1,12 @@
 'use client'
 
 import useHotkey from '@/hooks/use-hotkey'
-import { TSearchProps, TSearchType, abortController, determineSearchType, findSuggestions, parse, queryCharacterClient, searchStore } from '@/search'
+import { TSearchProps, TSearchType, determineSearchType, findSuggestions, parse, queryCharacterClient, searchStore } from '@/search'
 import { shortcuts } from '@/shortcuts'
 import { classes } from '@/utils'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import { ChangeEvent, ReactNode, useEffect, useRef, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import { GiCat } from 'react-icons/gi'
 import { TbLoader, TbSearch } from 'react-icons/tb'
 import { useSnapshot } from 'valtio'
@@ -25,7 +25,6 @@ export default function Search(props: React.ComponentProps<'search'>) {
   const selfRef = useRef<HTMLElement>(null!)
   const router = useRouter()
   const [querying, setQuerying] = useState(false)
-
   const catChance = 0.01
   const [showCat, setShowCat] = useState(false)
   useEffect(() => setShowCat(+Math.random().toFixed(2) < catChance), [])
@@ -76,44 +75,26 @@ export default function Search(props: React.ComponentProps<'search'>) {
     }
   }, [searchSnap.focused])
 
-  function onInput(e: ChangeEvent<HTMLInputElement>) {
-    const input = e.target.value.trim()
-    searchStore.inputValue = input
-    query(input)
-  }
-
   function query(input: string) {
-    if (input) {
-      setQuerying(true)
-      abortController?.abort('new query')
-      queryCharacterClient(input).then((text) => {
-        setQuerying(false)
-        const el = document.createElement('div')
-        el.innerHTML = text
-        searchStore.search = parse(el, determineSearchType(el))
-        el.remove()
-        const suggestionsFound = !!findSuggestions(searchStore.search)
-        searchStore.showSuggestions = suggestionsFound && searchStore.focused
-        if (!suggestionsFound) searchStore.selectedSuggestion = -1
-      })
-    } else {
-      abortController?.abort('empty')
+    if (!input) {
       setQuerying(false)
       searchStore.search = undefined
       searchStore.showSuggestions = false
+      return
     }
-  }
-
-  const suggestions = {
-    ch: ChSuggestions,
-    ru: RuSuggestions,
-    py: PySuggestions,
-    'ch-long': ChLongSuggestions,
-    error: SearchError,
-  } satisfies { [T in TSearchType]: (props: TSearchProps<T>) => ReactNode }
-
-  function Suggestions<T extends TSearchType>(props: ReturnType<typeof useSnapshot<TSearchProps<T>>>) {
-    return suggestions[props.search.type](props as never)
+    setQuerying(true)
+    console.log('🍋 CLIENT QUERY')
+    queryCharacterClient(input).then((text) => {
+      setQuerying(false)
+      const el = document.createElement('div')
+      el.innerHTML = text
+      el.querySelectorAll('img').forEach((i) => i.remove())
+      searchStore.search = parse(el, determineSearchType(el))
+      el.remove()
+      const suggestionsFound = !!findSuggestions(searchStore.search)
+      searchStore.showSuggestions = suggestionsFound && searchStore.focused
+      if (!suggestionsFound) searchStore.selectedSuggestion = -1
+    })
   }
 
   const exact = searchSnap.search && findExact(searchSnap.search)
@@ -129,7 +110,10 @@ export default function Search(props: React.ComponentProps<'search'>) {
           onBlur={() => (searchStore.focused = false)}
           spellCheck={false}
           type='text'
-          onChange={onInput}
+          onChange={(e) => {
+            const input = e.target.value.trim()
+            searchStore.inputValue = input
+          }}
           className='w-full rounded-full bg-zinc-800 py-4 pl-6 pr-20 outline-pink-500/50 duration-100 focus-visible:outline-4'
         />
         <button
@@ -166,4 +150,16 @@ export default function Search(props: React.ComponentProps<'search'>) {
       <AnimatePresence>{exact && searchSnap.focused && <ExactFound key={'exact'} props={{ ch: exact.ch, tr: exact.tr }} className='absolute bottom-[calc(100%+0.5rem)] w-full' />}</AnimatePresence>
     </search>
   )
+}
+
+const suggestions = {
+  ch: ChSuggestions,
+  ru: RuSuggestions,
+  py: PySuggestions,
+  'ch-long': ChLongSuggestions,
+  error: SearchError,
+} satisfies { [T in TSearchType]: (props: TSearchProps<T>) => ReactNode }
+
+function Suggestions<T extends TSearchType>(props: ReturnType<typeof useSnapshot<TSearchProps<T>>>) {
+  return suggestions[props.search.type](props as never)
 }

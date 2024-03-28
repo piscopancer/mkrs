@@ -38,17 +38,17 @@ export default async function SearchPage({ params }: TSearchPage) {
 
   const parsedSearch = parse(el, determineSearchType(el))
 
-  const searches = {
-    ch: Ch,
-    ru: Ru,
-    py: Py,
-    'ch-long': ChLong,
-    error: SearchError,
-  } satisfies { [T in TSearchType]: (props: TSearchProps<T>) => ReactNode }
-
-  function Search<T extends TSearchType>(props: TSearchProps<T>) {
-    return searches[parsedSearch.type](props as never)
-  }
-
   return <Search search={parsedSearch} />
+}
+
+const searches = {
+  ch: Ch,
+  ru: Ru,
+  py: Py,
+  'ch-long': ChLong,
+  error: SearchError,
+} satisfies { [T in TSearchType]: (props: TSearchProps<T>) => ReactNode }
+
+function Search<T extends TSearchType>(props: TSearchProps<T>) {
+  return searches[props.search.type](props as never)
 }

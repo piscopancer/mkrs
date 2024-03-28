@@ -1,4 +1,5 @@
 import { proxy } from 'valtio'
+import { route } from './utils'
 
 export const searchStore = proxy({
   focused: false,
@@ -120,17 +121,21 @@ export const searchDescriptions: Record<TSearches['type'], string> = {
   error: 'Ошибка поиска',
 }
 
-export let abortController: AbortController | null = null
+export let abortController: AbortController | null = new AbortController()
 
 export async function queryCharacterClient(ch: string) {
+  if (abortController) {
+    abortController.abort()
+    abortController = new AbortController()
+  }
   abortController = new AbortController()
-  const res = await fetch(`/api/search?ch=${ch}`, { signal: abortController.signal })
+  const res = await fetch(route('/api/search', { ch }), { signal: abortController.signal })
   abortController = null
   return res.text()
 }
 
 export async function queryCharacter(ch: string) {
-  return fetch(`https://bkrs.info/slovo.php?ch=${ch}`, { next: { revalidate: 60 } }).then((res) => res.text())
+  return fetch(`https://bkrs.info/slovo.php?ch=${ch}`, { next: { revalidate: 60 * 60 * 24 * 7 } }).then((res) => res.text())
 }
 
 export function parseWords(el: Element) {
