@@ -48,12 +48,6 @@ export function stringToReact(str: string) {
   return domToReact(htmlToDOM(str))
 }
 
-export function parseLsForStore<T extends object>(storeName: string) {
-  const storeString = localStorage.getItem(storeName)
-  if (!storeString) return
-  return JSON.parse(storeString) as T
-}
-
 export type TSnapshot<T extends object> = ReturnType<typeof useSnapshot<T>>
 
 export type TComponent<T extends keyof ReactHTML, P extends object> = ComponentProps<T> & { props: P }

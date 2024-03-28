@@ -1,22 +1,25 @@
 'use client'
 
 import { proxy, subscribe } from 'valtio'
-import { devtools } from 'valtio/utils'
-import { assignObject, parseLsForStore } from './utils'
+import { z } from 'zod'
+import { assignObject } from './utils'
 
-const defaultSavedStore = {
-  saved: [] as string[],
+const storeName = 'saved'
+const savedStoreSchema = z.object({
+  saved: z.array(z.string()),
+})
+const defaultSavedStore: z.infer<typeof savedStoreSchema> = {
+  saved: [],
 }
 
 export const savedStore = proxy({ ...defaultSavedStore })
-
-const storeName = 'saved'
-
-export function tryInitSavedStore() {
-  const parsedStore = parseLsForStore<typeof savedStore>(storeName)
-  parsedStore && assignObject(savedStore, parsedStore)
+export function tryLoadSavedStore() {
+  const storeString = localStorage.getItem(storeName)
+  if (!storeString) return
+  const parseRes = savedStoreSchema.safeParse(JSON.parse(storeString))
+  if (parseRes.success) {
+    assignObject(savedStore, parseRes.data)
+  }
 }
 
 subscribe(savedStore, () => localStorage.setItem(storeName, JSON.stringify(savedStore)))
-
-devtools(savedStore)

@@ -1,38 +1,30 @@
+'use client'
+
 import { fontVars } from '@/assets/fonts'
-import logo from '@/assets/logo.png'
 import '@/assets/styles/style.scss'
 import { Tooltip } from '@/components/tooltip'
+import { generalStore } from '@/general-store'
+import useHotkey from '@/hooks/use-hotkey'
 import { project } from '@/project'
-import { classes } from '@/utils'
-import type { Metadata } from 'next'
+import { searchStore } from '@/search'
+import { shortcuts } from '@/shortcuts'
+import { classes, route } from '@/utils'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { TbBrandGithub, TbDeviceFloppy, TbHistory, TbKeyboard, TbLineDashed } from 'react-icons/tb'
+import { useSnapshot } from 'valtio'
 import Vibrator from '../components/vibrator'
 import Logo from './(private)/logo'
 import PageSelector from './(private)/page-selector'
 import Settings from './(private)/settings'
-import { getCookie } from './actions'
 import Store from './store'
 
-export const metadata: Metadata = {
-  title: project.name,
-  description: project.description,
-  openGraph: {
-    title: project.name,
-    description: project.description,
-    images: [{ url: logo.src }],
-    siteName: project.name,
-    locale: 'ru',
-    url: project.url,
-    creators: [project.creator.nickname],
-  },
-  other: {
-    'yandex-verification': '80460a4d9f477d0e',
-  },
-}
-
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const showAnimeGirls = await getCookie('anime-girls')
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const generalSnap = useSnapshot(generalStore)
+  const router = useRouter()
+  useHotkey([shortcuts['main-page'].keys, () => !searchStore.focused && router.push('/')])
+  useHotkey([shortcuts['recent-page'].keys, () => !searchStore.focused && router.push('/recent')])
+  useHotkey([shortcuts['saved-page'].keys, () => !searchStore.focused && router.push('/saved')])
 
   return (
     <html lang='ru'>
@@ -40,39 +32,39 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <div
           className={classes(
             'grid h-svh grid-cols-[min-content,1fr] grid-rows-[min-content,1fr] [grid-template-areas:"logo_header"_"nav_main"] max-md:grid-rows-[min-content,1fr,min-content] max-md:[grid-template-areas:"logo_header"_"main_main"_"nav_nav"]',
-            !showAnimeGirls && 'max-md:[grid-template-areas:"header_header"_"main_main"_"nav_nav"]',
+            !generalSnap.animeGirls && 'max-md:[grid-template-areas:"header_header"_"main_main"_"nav_nav"]',
           )}
         >
-          {showAnimeGirls && (
+          {generalSnap.animeGirls && (
             <div className={'flex h-20 w-20 items-center justify-center [grid-area:logo]'}>
               <Logo />
             </div>
           )}
-          <header className={classes('ml-4 mr-4 flex h-20 items-center self-center [grid-area:header] max-md:ml-0', !showAnimeGirls && 'max-md:ml-4')}>
+          <header className={classes('ml-4 mr-4 flex h-20 items-center self-center [grid-area:header] max-md:ml-0', !generalSnap.animeGirls && 'max-md:ml-4')}>
             <Link href={'/'} className='mr-auto font-display'>
               <span className='mr-4'>МКРС </span>
               <span className='text-xs text-zinc-600 max-md:hidden'>{'//'} БКРС ПРОКСИ</span>
             </Link>
-            <Settings showAnimeGirls={!!showAnimeGirls} />
+            <Settings />
           </header>
           <nav className='flex w-20 justify-between overflow-x-hidden py-6 [grid-area:nav] max-md:w-auto max-md:py-2 md:flex-col md:px-3'>
             <Tooltip content='Главная' side='right' sideOffset={6}>
               <Link href={'/'} className='relative flex justify-center rounded-full py-2 font-bold active:bg-zinc-800 max-md:order-1 max-md:flex-1 max-md:duration-200 md:hover:bg-zinc-800'>
-                <PageSelector route='/' />小
+                <PageSelector route={route('/')} />小
                 <Vibrator />
               </Link>
             </Tooltip>
             <ul className='flex flex-col gap-2 max-md:contents'>
               <Tooltip content='Сохраненные' side='right' sideOffset={6}>
                 <Link href={'/saved'} className='relative flex justify-center rounded-full py-2 active:bg-zinc-800 max-md:order-2 max-md:flex-1 max-md:duration-200 md:hover:bg-zinc-800'>
-                  <PageSelector route='/saved' />
+                  <PageSelector route={route('/saved')} />
                   <TbDeviceFloppy className='h-6' />
                   <Vibrator />
                 </Link>
               </Tooltip>
               <Tooltip content='Недавние' side='right' sideOffset={6}>
                 <Link href={'/recent'} className='max-md:order-0 relative flex justify-center rounded-full py-2 active:bg-zinc-800 max-md:flex-1 max-md:duration-200 md:hover:bg-zinc-800'>
-                  <PageSelector route='/recent' />
+                  <PageSelector route={route('/recent')} />
                   <TbHistory className='h-6' />
                   <Vibrator />
                 </Link>
@@ -81,7 +73,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <Tooltip content='Горячие клавиши' side='right' sideOffset={6}>
                 <Link href={'/shortcuts'} className='relative  flex justify-center rounded-full py-2 hover:bg-zinc-800 max-md:hidden'>
                   <TbKeyboard className='h-6' />
-                  <PageSelector route='/shortcuts' />
+                  <PageSelector route={route('/shortcuts')} />
                 </Link>
               </Tooltip>
             </ul>

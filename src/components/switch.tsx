@@ -4,12 +4,12 @@ import { classes, type TMotionComponent } from '@/utils'
 import { motion, useAnimation } from 'framer-motion'
 import colors from 'tailwindcss/colors'
 
-export default function Switch({ props, ...htmlProps }: TMotionComponent<'button', { enabled: boolean; switch: (current: boolean) => Promise<boolean> }>) {
+export default function Switch({ props, ...htmlProps }: TMotionComponent<'button', { enabled: boolean; action: (current: boolean) => Promise<boolean> | boolean }>) {
   const btnAnim = useAnimation()
   const knobAnim = useAnimation()
 
   async function onClick() {
-    const enabled = await props.switch(props.enabled)
+    const enabled = await props.action(props.enabled)
     if (enabled) {
       btnAnim.start({
         backgroundColor: colors.pink[500],

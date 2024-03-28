@@ -1,14 +1,17 @@
 'use client'
 
 import Switch from '@/components/switch'
+import { generalStore } from '@/general-store'
 import { classes } from '@/utils'
 import * as Dropdown from '@radix-ui/react-dropdown-menu'
 import type { Route } from 'next'
 import Link from 'next/link'
 import { TbInfoSquareRounded, TbSettings } from 'react-icons/tb'
-import { switchAnimeGirls } from '../actions'
+import { useSnapshot } from 'valtio'
 
-export default function Settings(props: { showAnimeGirls: boolean }) {
+export default function Settings() {
+  const generalSnap = useSnapshot(generalStore)
+
   return (
     <Dropdown.Root>
       <Dropdown.Content sideOffset={8} className='z-[1] px-3 max-md:w-screen max-md:px-3 md:w-[40ch]'>
@@ -28,10 +31,10 @@ export default function Settings(props: { showAnimeGirls: boolean }) {
               <Switch
                 className='row-span-2'
                 props={{
-                  enabled: props.showAnimeGirls,
-                  switch: async () => {
-                    const after = await switchAnimeGirls()
-                    return !!after
+                  enabled: generalSnap.animeGirls,
+                  action: (prev) => {
+                    generalStore.animeGirls = !prev
+                    return !prev
                   },
                 }}
               />
