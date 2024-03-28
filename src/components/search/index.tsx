@@ -136,7 +136,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
         {[shortcuts.focus, shortcuts.search].map(({ name, display }) => (
           <li key={name} className='flex text-xs'>
             <kbd className='mr-2 rounded-md px-2 font-mono text-zinc-400 shadow-[0_1px_0_2px_theme(colors.zinc.700)]'>{display[0]}</kbd>
-            <span className='text-zinc-500'>{name}</span>
+            <span className='font-mono text-zinc-500'>{name}</span>
           </li>
         ))}
       </ul>

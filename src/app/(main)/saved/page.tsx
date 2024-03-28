@@ -21,7 +21,7 @@ export default function Saved() {
       <ul>
         {savedSnap.saved.toReversed().map((saved) => (
           <li key={saved} className='group flex items-center'>
-            <Link prefetch={false} href={`/search/${saved}`} className='text-lg text-pink-500 hover:text-pink-300'>
+            <Link prefetch={false} href={`/search/${saved}`} className='text-lg text-pink-500 duration-100 max-md:active:text-pink-300 md:hover:text-pink-300'>
               {saved}
             </Link>
           </li>

@@ -40,14 +40,14 @@ export default function Recent() {
                         onClick={() => {
                           saved ? (savedStore.saved = savedStore.saved.filter((s) => s !== r.search)) : savedStore.saved.push(r.search)
                         }}
-                        className={classes(saved ? 'text-pink-500 hover:text-pink-300' : 'text-zinc-600 hover:text-zinc-400', 'group -ml-2 mr-2 flex h-8 w-8 items-center justify-center py-0.5')}
+                        className={classes(saved ? 'text-pink-500 max-md:active:text-pink-300 md:hover:text-pink-300' : 'text-zinc-600 max-md:active:text-zinc-400 md:hover:text-zinc-400', 'group -ml-2 mr-2 flex h-8 w-8 items-center justify-center py-0.5')}
                       >
                         <TbDeviceFloppy className='duration-100 group-hover:scale-110' />
                         <Vibrator />
                       </button>
                       <Link prefetch={false} href={`/search/${r.search}`} className='group flex min-w-0 flex-1 items-center py-0.5'>
-                        <span className='overflow-hidden text-ellipsis text-nowrap text-pink-500 group-hover:text-pink-300 md:text-lg'>{r.search}</span>
-                        <span className='ml-auto text-nowrap rounded-full text-xs text-zinc-400 group-hover:text-zinc-200'>{formatDistanceToNowStrict(r.date, { locale: ru, roundingMethod: 'floor' })}</span>
+                        <span className='overflow-hidden text-ellipsis text-nowrap text-lg text-pink-500 duration-100 max-md:group-active:text-pink-300 md:text-lg md:group-hover:text-pink-300'>{r.search}</span>
+                        <span className='ml-auto text-nowrap rounded-full text-xs text-zinc-400 duration-100 max-md:group-active:text-zinc-200 md:group-hover:text-zinc-200'>{formatDistanceToNowStrict(r.date, { locale: ru, roundingMethod: 'floor' })}</span>
                       </Link>
                     </li>
                   )
