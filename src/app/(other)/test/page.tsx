@@ -70,9 +70,9 @@ export default function TestPage() {
 
   async function recognize(worker: Tesseract.Worker) {
     const {
-      data: { text, words },
+      data: { text, symbols },
     } = await worker.recognize(canvasRef.current, {}, {})
-    setRecognition({ text, words: words.map((w) => w.symbols.map((s) => s.choices)) })
+    setRecognition({ text, symbols: symbols.flatMap((s) => s.choices) })
   }
 
   return (

@@ -7,6 +7,7 @@ export const searchStore = proxy({
   search: undefined as TSearches | undefined,
   showSuggestions: false,
   selectedSuggestion: -1,
+  showHandwriting: false as boolean,
 })
 
 export type TWord = Partial<{

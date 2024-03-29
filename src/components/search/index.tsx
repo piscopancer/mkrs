@@ -4,14 +4,16 @@ import useHotkey from '@/hooks/use-hotkey'
 import { TSearchProps, TSearchType, determineSearchType, findSuggestions, parse, queryCharacterClient, searchStore } from '@/search'
 import { shortcuts } from '@/shortcuts'
 import { classes } from '@/utils'
+import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { GiCat } from 'react-icons/gi'
-import { TbLoader, TbSearch } from 'react-icons/tb'
+import { TbLoader, TbPencil, TbSearch } from 'react-icons/tb'
 import { useSnapshot } from 'valtio'
 import { Tooltip } from '../tooltip'
 import ExactFound from './exact-found'
+import Handwriting from './handwriting'
 import ChSuggestions from './suggestions/ch'
 import ChLongSuggestions from './suggestions/ch-long'
 import PySuggestions from './suggestions/py'
@@ -27,6 +29,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
   const [querying, setQuerying] = useState(false)
   const catChance = 0.01
   const [showCat, setShowCat] = useState(false)
+
   useEffect(() => setShowCat(+Math.random().toFixed(2) < catChance), [])
 
   useHotkey([shortcuts.focus.keys, () => inputRef.current?.focus()], { prevent: !searchSnap.focused || undefined })
@@ -114,23 +117,37 @@ export default function Search(props: React.ComponentProps<'search'>) {
             const input = e.target.value.trim()
             searchStore.inputValue = input
           }}
-          className='w-full rounded-full bg-zinc-800 py-4 pl-6 pr-20 outline-pink-500/50 duration-100 focus-visible:outline-4'
+          className='w-full rounded-full bg-zinc-800 py-4 pl-6 pr-32 outline-pink-500/50 duration-100 focus-visible:outline-4 max-md:pr-20'
         />
-        <button
-          disabled={!!!searchSnap.inputValue.trim()}
-          onClick={() => selectSuggestion(router, searchStore.inputValue)}
-          className='group absolute right-0 flex aspect-square h-full items-center justify-center rounded-full text-zinc-400 duration-100 hover:text-pink-500 focus-visible:text-pink-500 focus-visible:outline-0 disabled:opacity-50'
-        >
-          <TbSearch />
-        </button>
         <AnimatePresence>
           {querying && (
-            <motion.div initial={querying ? false : { scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }} className='mr-14 animate-spin self-center justify-self-end'>
+            <motion.div initial={querying ? false : { scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }} className='mr-24 animate-spin self-center justify-self-end max-md:mr-14'>
               <TbLoader className='stroke-zinc-500' />
             </motion.div>
           )}
         </AnimatePresence>
-        {searchSnap.search && searchSnap.showSuggestions && <Suggestions search={searchSnap.search} />}
+        <Tooltip content='Рукописный ввод'>
+          <button
+            onClick={() => {
+              searchStore.showHandwriting = !searchStore.showHandwriting
+            }}
+            className={clsx(
+              'group mr-12 flex h-full items-center justify-center justify-self-end rounded-full pl-4 pr-2 duration-100  focus-visible:outline-0 disabled:opacity-50 max-md:hidden',
+              searchSnap.showHandwriting ? 'text-pink-500' : 'text-zinc-400 hover:text-pink-500 focus-visible:text-pink-500',
+            )}
+          >
+            <TbPencil className='size-5' />
+          </button>
+        </Tooltip>
+        <button
+          disabled={!!!searchSnap.inputValue.trim()}
+          onClick={() => selectSuggestion(router, searchStore.inputValue)}
+          className='group flex h-full items-center justify-center justify-self-end rounded-full pl-2 pr-6 text-zinc-400 duration-100 focus-visible:text-pink-500 focus-visible:outline-0 enabled:hover:text-pink-500 disabled:opacity-50'
+        >
+          <TbSearch className='size-4' />
+        </button>
+        {searchSnap.search && searchSnap.showSuggestions && !searchSnap.showHandwriting && <Suggestions search={searchSnap.search} />}
+        {searchSnap.showHandwriting && <Handwriting props={{}} className='absolute inset-x-0 top-full z-[1] mt-2 ' />}
       </div>
       <ul className='flex items-center justify-end gap-6 max-md:hidden'>
         {[shortcuts.focus, shortcuts.search].map(({ name, display }) => (
