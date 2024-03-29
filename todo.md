@@ -1,6 +1,8 @@
 - добавить светлую тему (когда-нибудь)
 - открывать иероглиф на полный экран на десктопе
 - вибратор не отписывает ивент
+- https://github.com/naptha/tesseract.js
+- https://github.com/zapolnoch/node-tesseract-ocr
 
 <!--  -->
 
