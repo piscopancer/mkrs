@@ -1,9 +1,9 @@
-import { shortcuts } from '@/shortcuts'
+import { hotkeys } from '@/hotkeys'
 import { objectEntries } from '@/utils'
 
-export default function Shortcuts() {
-  const shortcutsGroups: Record<string, (keyof typeof shortcuts)[]> = {
-    Поиск: ['focus', 'search'],
+export default function HotkeysPage() {
+  const shortcutsGroups: Record<string, (keyof typeof hotkeys)[]> = {
+    Поиск: ['focus', 'search', 'handwriting'],
     'Взаимодействие со словом': ['save', 'copy', 'to-search', 'bkrs'],
     Навигация: ['main-page', 'recent-page', 'saved-page'],
   }
@@ -18,7 +18,7 @@ export default function Shortcuts() {
               <h2 className='mb-4 font-display uppercase'>{groupName}</h2>
               <ul className='mb-10 grid w-full grid-cols-[3fr,2fr,1fr] items-center gap-y-2'>
                 {ids
-                  .map((id) => [id, shortcuts[id]] as const)
+                  .map((id) => [id, hotkeys[id]] as const)
                   .map(([id, shortcut]) => (
                     <li key={shortcut.name} className='contents'>
                       <p className='text-zinc-400'>{shortcut.name}</p>

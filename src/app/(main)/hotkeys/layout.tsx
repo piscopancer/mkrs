@@ -5,6 +5,6 @@ export const metadata: Metadata = {
   title: `Горячие клавиши — ${project.name}`,
 }
 
-export default function ShortcutsLayout({ children }: { children: React.ReactNode }) {
+export default function HotkeysLayout({ children }: { children: React.ReactNode }) {
   return children
 }

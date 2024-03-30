@@ -2,8 +2,8 @@
 
 import { Tooltip } from '@/components/tooltip'
 import useHotkey from '@/hooks/use-hotkey'
+import { hotkeys } from '@/hotkeys'
 import { searchStore, type TSearchProps } from '@/search'
-import { shortcuts } from '@/shortcuts'
 import { motion, useAnimation } from 'framer-motion'
 import { TbArrowUp, TbCopy } from 'react-icons/tb'
 import colors from 'tailwindcss/colors'
@@ -20,7 +20,7 @@ export default function ChHeader(props: TSearchProps<'ch'>) {
   const toSearchBtnAnim = useAnimation()
 
   useHotkey([
-    shortcuts['to-search'].keys,
+    hotkeys['to-search'].keys,
     () => {
       if (!searchSnap.focused) {
         toSearch()
@@ -31,7 +31,7 @@ export default function ChHeader(props: TSearchProps<'ch'>) {
     },
   ])
   useHotkey([
-    shortcuts.copy.keys,
+    hotkeys.copy.keys,
     (_, e) => {
       if (!searchSnap.focused && !e.ctrlKey) {
         copy()
@@ -42,7 +42,7 @@ export default function ChHeader(props: TSearchProps<'ch'>) {
     },
   ])
   useHotkey([
-    shortcuts.bkrs.keys,
+    hotkeys.bkrs.keys,
     () => {
       if (!searchSnap.focused) window.open(bkrsUrl, '_blank')?.focus()
     },
@@ -96,7 +96,7 @@ export default function ChHeader(props: TSearchProps<'ch'>) {
           <Tooltip
             content={
               <>
-                <span className='uppercase text-zinc-500'>({shortcuts['to-search'].display})</span> Копировать в поиск
+                <span className='uppercase text-zinc-500'>({hotkeys['to-search'].display})</span> Копировать в поиск
               </>
             }
           >
@@ -107,7 +107,7 @@ export default function ChHeader(props: TSearchProps<'ch'>) {
           <Tooltip
             content={
               <>
-                <span className='uppercase text-zinc-500'>({shortcuts.copy.display})</span> Копировать
+                <span className='uppercase text-zinc-500'>({hotkeys.copy.display})</span> Копировать
               </>
             }
           >
@@ -118,7 +118,7 @@ export default function ChHeader(props: TSearchProps<'ch'>) {
           <Tooltip
             content={
               <>
-                <span className='uppercase text-zinc-500'>({shortcuts.bkrs.display})</span> Открыть на 大БКРС
+                <span className='uppercase text-zinc-500'>({hotkeys.bkrs.display})</span> Открыть на 大БКРС
               </>
             }
           >

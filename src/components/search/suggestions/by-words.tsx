@@ -11,9 +11,17 @@ export default function ByWords(props: { words: TWord[] }) {
   const router = useRouter()
   const searchSnap = useSnapshot(searchStore)
 
-  useHotkey([['ArrowLeft'], () => moveSelection(-1)], { prevent: true })
-  useHotkey([['ArrowRight'], () => moveSelection(1)], { prevent: true })
-  useHotkey([['ArrowUp'], () => (searchStore.selectedSuggestion = -1)], { prevent: true })
+  useHotkey([['ArrowLeft'], () => searchStore.selectedSuggestion !== -1 && moveSelection(-1)], { prevent: searchStore.selectedSuggestion !== -1 || undefined })
+  useHotkey([['ArrowRight'], () => searchStore.selectedSuggestion !== -1 && moveSelection(1)], { prevent: searchStore.selectedSuggestion !== -1 || undefined })
+  useHotkey(
+    [
+      ['ArrowUp', 'ArrowDown'],
+      () => {
+        searchStore.selectedSuggestion = searchStore.selectedSuggestion === -1 ? 0 : -1
+      },
+    ],
+    { prevent: true },
+  )
   useHotkey([
     ['Enter'],
     () => {
@@ -27,10 +35,10 @@ export default function ByWords(props: { words: TWord[] }) {
   function moveSelection(by: -1 | 1) {
     switch (searchStore.selectedSuggestion) {
       case props.words.length - 1:
-        by > 0 ? (searchStore.selectedSuggestion = -1) : (searchStore.selectedSuggestion += by)
+        by > 0 ? (searchStore.selectedSuggestion = 0) : (searchStore.selectedSuggestion += by)
         break
-      case -1:
-        by > 0 ? (searchStore.selectedSuggestion = 0) : (searchStore.selectedSuggestion = props.words.length - 1)
+      case 0:
+        by > 0 ? (searchStore.selectedSuggestion = 1) : (searchStore.selectedSuggestion = props.words.length - 1)
         break
       default:
         searchStore.selectedSuggestion += by

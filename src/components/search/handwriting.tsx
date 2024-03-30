@@ -6,10 +6,11 @@ import { objectEntries, type TComponent } from '@/utils'
 import * as Dropdown from '@radix-ui/react-dropdown-menu'
 import { clsx } from 'clsx'
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState, type ForwardedRef } from 'react'
-import { TbArrowBackUp, TbEraser, TbPencil, TbPointFilled } from 'react-icons/tb'
+import { TbArrowBackUp, TbBorderOuter, TbEraser, TbPencil, TbPointFilled } from 'react-icons/tb'
 import { zinc } from 'tailwindcss/colors'
 import { createWorker } from 'tesseract.js'
 import { useSnapshot } from 'valtio'
+import { subscribeKey } from 'valtio/utils'
 import SelectBar from '../select-bar'
 
 export default function Handwriting({ props, ...attr }: TComponent<'section', {}>) {
@@ -19,12 +20,7 @@ export default function Handwriting({ props, ...attr }: TComponent<'section', {}
   const handwritingSnap = useSnapshot(handwritingStore)
 
   useEffect(() => {
-    console.log(canvasSizesInfo[handwritingSnap.canvasSize])
-    createWorker('chi_sim', 1, {
-      // logger: console.info,
-    }).then((w) => {
-      worker = w
-    })
+    createWorker('chi_sim', 1).then((w) => (worker = w))
   }, [])
 
   async function recognize(worker: Tesseract.Worker, canvas: HTMLCanvasElement) {
@@ -46,13 +42,13 @@ export default function Handwriting({ props, ...attr }: TComponent<'section', {}
             }}
             style={{ width: `${canvasSizesInfo[handwritingSnap.canvasSize].rem}rem` }}
             ref={drawingCanvasRef}
-            className='aspect-square w-full cursor-crosshair'
+            className='aspect-square w-full cursor-crosshair duration-200'
           />
           <div className='pointer-events-none h-4/5 w-0.5 place-self-center bg-gradient-to-b from-zinc-800 via-transparent to-zinc-800 opacity-50 duration-300 group-hover:opacity-100' />
           <div className='pointer-events-none h-0.5 w-4/5 place-self-center bg-gradient-to-r from-zinc-800 via-transparent to-zinc-800 opacity-50 duration-300 group-hover:opacity-100' />
         </div>
-        <menu className='mb-2 flex justify-center'>
-          <li className='px-2'>
+        <menu className='mb-2 flex px-4'>
+          <li className='mr-2'>
             <Dropdown.Root>
               <Dropdown.Portal>
                 <Dropdown.Content side='top' sideOffset={8} className='z-[1] rounded-lg bg-zinc-800 p-2'>
@@ -71,29 +67,42 @@ export default function Handwriting({ props, ...attr }: TComponent<'section', {}
                         selected: (o) => o[0] === handwritingSnap.strokeSize,
                       }}
                     />
-                    {/* <menu className='flex'>
-
-                      {objectEntries(strokeSizesInfo).map(([size, { scale }]) => (
-                        <li key={size} className='first:rounded-l-md last:rounded-r-md'>
-                          <button
-                            key={size}
-                            onClick={() => {
-                              handwritingStore.strokeSize = Number(size) as typeof handwritingStore.strokeSize
-                            }}
-                            className={clsx('flex items-center gap-1 rounded-[inherit] px-2 py-1 text-sm text-zinc-300', handwritingSnap.strokeSize === Number(size) ? 'bg-zinc-700' : '')}
-                          >
-                            <TbPointFilled style={{ scale }} className='' />
-                            {size}
-                          </button>
-                        </li>
-                      ))}
-                    </menu> */}
                   </fieldset>
                   <Dropdown.Arrow className='fill-zinc-800' />
                 </Dropdown.Content>
               </Dropdown.Portal>
-              <Dropdown.Trigger className=' rounded-lg border border-zinc-800'>
-                <TbPointFilled style={{ scale: strokeSizesInfo[handwritingSnap.strokeSize].scale }} className='size-4' />
+              <Dropdown.Trigger className='flex items-center rounded-lg border border-zinc-800 px-2 py-0.5 text-zinc-500 hover:border-zinc-600 hover:text-zinc-400'>
+                <TbPencil className='mr-1 size-5' />
+                <TbPointFilled style={{ scale: strokeSizesInfo[handwritingSnap.strokeSize].scale }} className='size-4 fill-zinc-300' />
+              </Dropdown.Trigger>
+            </Dropdown.Root>
+          </li>
+          <li className='mr-auto'>
+            <Dropdown.Root>
+              <Dropdown.Portal>
+                <Dropdown.Content side='top' sideOffset={8} className='z-[1] rounded-lg bg-zinc-800 p-2'>
+                  <fieldset>
+                    <legend className='mb-2 flex items-center text-xs text-zinc-500'>
+                      <TbBorderOuter className='mr-1 size-4' />
+                      Размер холста
+                    </legend>
+                    <SelectBar
+                      props={{
+                        options: objectEntries(canvasSizesInfo),
+                        display: (o) => o[0],
+                        onSelect: (o) => {
+                          handwritingStore.canvasSize = o[0]
+                        },
+                        selected: (o) => o[0] === handwritingSnap.canvasSize,
+                      }}
+                    />
+                  </fieldset>
+                  <Dropdown.Arrow className='fill-zinc-800' />
+                </Dropdown.Content>
+              </Dropdown.Portal>
+              <Dropdown.Trigger className='flex items-center rounded-lg border border-zinc-800 px-2 py-0.5 text-zinc-500 hover:border-zinc-600 hover:text-zinc-400'>
+                <TbBorderOuter className='mr-1 size-5' />
+                <span className='font-mono text-sm'>{canvasSizesInfo[handwritingSnap.canvasSize].rem}</span>
               </Dropdown.Trigger>
             </Dropdown.Root>
           </li>
@@ -176,7 +185,7 @@ function _DrawingCanvas({ props, ...attr }: TComponent<'canvas', { onChange: (ca
     ctx.fillStyle = zinc[900]
     ctx.fillRect(0, 0, canvasSize, canvasSize)
     ctx.strokeStyle = zinc[300]
-    ctx.lineWidth = 20
+    ctx.lineWidth = handwritingStore.strokeSize
     selfRef.current.addEventListener('mousedown', () => {
       mouseHeldDown = true
     })
@@ -205,12 +214,14 @@ function _DrawingCanvas({ props, ...attr }: TComponent<'canvas', { onChange: (ca
       ctx.stroke()
       prevMousePos = { x, y }
     })
+    const unsub = subscribeKey(handwritingStore, 'strokeSize', (s) => {
+      const ctx = selfRef.current.getContext('2d')!
+      ctx.lineWidth = s
+    })
+    return () => {
+      unsub()
+    }
   }, [])
 
-  return (
-    <div>
-      <p>{history.length}</p>
-      <canvas {...attr} width={canvasSize} height={canvasSize} ref={selfRef} className={clsx(attr.className, '')}></canvas>
-    </div>
-  )
+  return <canvas {...attr} width={canvasSize} height={canvasSize} ref={selfRef} className={clsx(attr.className, '')}></canvas>
 }

@@ -12,7 +12,7 @@ import { Fragment, useEffect } from 'react'
 import { TbDeviceFloppy } from 'react-icons/tb'
 import { useSnapshot } from 'valtio'
 
-export default function Recent() {
+export default function RecentPage() {
   const recentSnap = useSnapshot(recentStore)
   const savedSnap = useSnapshot(savedStore)
   const selfAnim = useAnimation()

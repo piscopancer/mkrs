@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useEffect } from 'react'
 import { useSnapshot } from 'valtio'
 
-export default function Saved() {
+export default function SavedPage() {
   const savedSnap = useSnapshot(savedStore)
   const selfAnim = useAnimation()
 

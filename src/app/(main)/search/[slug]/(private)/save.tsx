@@ -3,9 +3,9 @@
 import { Tooltip } from '@/components/tooltip'
 import Vibrator from '@/components/vibrator'
 import useHotkey from '@/hooks/use-hotkey'
+import { hotkeys } from '@/hotkeys'
 import { savedStore } from '@/saved'
 import { searchStore } from '@/search'
-import { shortcuts } from '@/shortcuts'
 import { classes } from '@/utils'
 import { motion, useAnimation, useSpring, useTransform } from 'framer-motion'
 import { TbDeviceFloppy, TbNorthStar } from 'react-icons/tb'
@@ -21,7 +21,7 @@ export default function Save({ ch, ...htmlProps }: React.ComponentProps<'div'> &
   const star1Anim = useAnimation()
   const star2Anim = useAnimation()
 
-  useHotkey([shortcuts.save.keys, () => !searchStore.focused && onClick()])
+  useHotkey([hotkeys.save.keys, () => !searchStore.focused && onClick()])
 
   function onClick() {
     if (!isSaved) {
@@ -47,7 +47,7 @@ export default function Save({ ch, ...htmlProps }: React.ComponentProps<'div'> &
       <Tooltip
         content={
           <>
-            <span className='uppercase text-zinc-500'>({shortcuts.save.display}) </span>
+            <span className='uppercase text-zinc-500'>({hotkeys.save.display}) </span>
             {isSaved ? 'Убрать из сохраненных' : 'Сохранить'}
           </>
         }

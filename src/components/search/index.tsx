@@ -1,8 +1,8 @@
 'use client'
 
 import useHotkey from '@/hooks/use-hotkey'
+import { hotkeys } from '@/hotkeys'
 import { TSearchProps, TSearchType, determineSearchType, findSuggestions, parse, queryCharacterClient, searchStore } from '@/search'
-import { shortcuts } from '@/shortcuts'
 import { classes } from '@/utils'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -32,7 +32,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
 
   useEffect(() => setShowCat(+Math.random().toFixed(2) < catChance), [])
 
-  useHotkey([shortcuts.focus.keys, () => inputRef.current?.focus()], { prevent: !searchSnap.focused || undefined })
+  useHotkey([hotkeys.focus.keys, () => inputRef.current?.focus()], { prevent: !searchSnap.focused || undefined })
   useHotkey([
     ['Escape'],
     () => {
@@ -41,13 +41,25 @@ export default function Search(props: React.ComponentProps<'search'>) {
     },
   ])
   useHotkey([
-    shortcuts.search.keys,
+    hotkeys.search.keys,
     () => {
       if (searchStore.focused && searchStore.inputValue && searchStore.selectedSuggestion === -1) {
         selectSuggestion(router, searchStore.inputValue)
       }
     },
   ])
+  useHotkey(
+    [
+      hotkeys.handwriting.keys,
+      () => {
+        if (!searchStore.focused) {
+          searchStore.showHandwriting = !searchStore.showHandwriting
+          searchStore.focused = !searchStore.showHandwriting
+        }
+      },
+    ],
+    { prevent: !searchStore.focused || undefined },
+  )
 
   useEffect(() => {
     if (inputRef.current) {
@@ -130,6 +142,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
           <button
             onClick={() => {
               searchStore.showHandwriting = !searchStore.showHandwriting
+              searchStore.focused = !searchStore.showHandwriting
             }}
             className={clsx(
               'group mr-12 flex h-full items-center justify-center justify-self-end rounded-full pl-4 pr-2 duration-100  focus-visible:outline-0 disabled:opacity-50 max-md:hidden',
@@ -150,7 +163,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
         {searchSnap.showHandwriting && <Handwriting props={{}} className='absolute inset-x-0 top-full z-[1] mt-2 ' />}
       </div>
       <ul className='flex items-center justify-end gap-6 max-md:hidden'>
-        {[shortcuts.focus, shortcuts.search].map(({ name, display }) => (
+        {[hotkeys.focus, hotkeys.search].map(({ name, display }) => (
           <li key={name} className='flex text-xs'>
             <kbd className='mr-2 rounded-md px-2 font-mono text-zinc-400 shadow-[0_1px_0_2px_theme(colors.zinc.700)]'>{display[0]}</kbd>
             <span className='font-mono text-zinc-500'>{name}</span>

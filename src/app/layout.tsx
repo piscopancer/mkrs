@@ -5,9 +5,9 @@ import '@/assets/styles/style.scss'
 import { Tooltip } from '@/components/tooltip'
 import { generalStore } from '@/general-store'
 import useHotkey from '@/hooks/use-hotkey'
+import { hotkeys } from '@/hotkeys'
 import { project } from '@/project'
 import { searchStore } from '@/search'
-import { shortcuts } from '@/shortcuts'
 import { classes, route } from '@/utils'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -22,9 +22,9 @@ import Store from './store'
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const generalSnap = useSnapshot(generalStore)
   const router = useRouter()
-  useHotkey([shortcuts['main-page'].keys, () => !searchStore.focused && router.push('/')])
-  useHotkey([shortcuts['recent-page'].keys, () => !searchStore.focused && router.push('/recent')])
-  useHotkey([shortcuts['saved-page'].keys, () => !searchStore.focused && router.push('/saved')])
+  useHotkey([hotkeys['main-page'].keys, () => !searchStore.focused && router.push('/')])
+  useHotkey([hotkeys['recent-page'].keys, () => !searchStore.focused && router.push('/recent')])
+  useHotkey([hotkeys['saved-page'].keys, () => !searchStore.focused && router.push('/saved')])
 
   return (
     <html lang='ru'>
@@ -71,9 +71,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </Tooltip>
               <TbLineDashed className='h-8 stroke-zinc-800 max-md:hidden' />
               <Tooltip content='Горячие клавиши' side='right' sideOffset={6}>
-                <Link href={'/shortcuts'} className='relative  flex justify-center rounded-full py-2 hover:bg-zinc-800 max-md:hidden'>
+                <Link href={'/hotkeys'} className='relative  flex justify-center rounded-full py-2 hover:bg-zinc-800 max-md:hidden'>
                   <TbKeyboard className='h-6' />
-                  <PageSelector route={route('/shortcuts')} />
+                  <PageSelector route={route('/hotkeys')} />
                 </Link>
               </Tooltip>
             </ul>
