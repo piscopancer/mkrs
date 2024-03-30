@@ -138,7 +138,13 @@ export default function Search(props: React.ComponentProps<'search'>) {
             </motion.div>
           )}
         </AnimatePresence>
-        <Tooltip content='Рукописный ввод'>
+        <Tooltip
+          content={
+            <>
+              <span className='uppercase text-zinc-500'>({hotkeys.handwriting.display})</span> Рукописный ввод
+            </>
+          }
+        >
           <button
             onClick={() => {
               searchStore.showHandwriting = !searchStore.showHandwriting
@@ -160,7 +166,13 @@ export default function Search(props: React.ComponentProps<'search'>) {
           <TbSearch className='size-4' />
         </button>
         {searchSnap.search && searchSnap.showSuggestions && !searchSnap.showHandwriting && <Suggestions search={searchSnap.search} />}
-        {searchSnap.showHandwriting && <Handwriting props={{}} className='absolute inset-x-0 top-full z-[1] mt-2 ' />}
+        <AnimatePresence>
+          {searchSnap.showHandwriting && (
+            <motion.div initial={{ opacity: 1, y: -2 }} animate={{ y: 0, opacity: 1, transition: { duration: 0.1 } }} key='handwriting' exit={{ opacity: 0, y: -2, transition: { duration: 0.1 } }} className='absolute inset-x-0 top-full z-[1] mt-2 '>
+              <Handwriting props={{}} className='max-md:hidden' />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
       <ul className='flex items-center justify-end gap-6 max-md:hidden'>
         {[hotkeys.focus, hotkeys.search].map(({ name, display }) => (

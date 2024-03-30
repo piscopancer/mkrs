@@ -53,8 +53,8 @@ export default function Handwriting({ props, ...attr }: TComponent<'section', {}
               <Dropdown.Portal>
                 <Dropdown.Content side='top' sideOffset={8} className='z-[1] rounded-lg bg-zinc-800 p-2'>
                   <fieldset>
-                    <legend className='mb-2 flex items-center text-xs text-zinc-500'>
-                      <TbPencil className='mr-1 size-4' />
+                    <legend className='mb-2 flex items-center font-mono text-xs text-zinc-500'>
+                      <TbPencil className='mr-2 size-4' />
                       Толщина карандаша
                     </legend>
                     <SelectBar
@@ -64,7 +64,7 @@ export default function Handwriting({ props, ...attr }: TComponent<'section', {}
                         onSelect: (o) => {
                           handwritingStore.strokeSize = o[0]
                         },
-                        selected: (o) => o[0] === handwritingSnap.strokeSize,
+                        selected: (o) => o[0] == handwritingSnap.strokeSize,
                       }}
                     />
                   </fieldset>
@@ -82,8 +82,8 @@ export default function Handwriting({ props, ...attr }: TComponent<'section', {}
               <Dropdown.Portal>
                 <Dropdown.Content side='top' sideOffset={8} className='z-[1] rounded-lg bg-zinc-800 p-2'>
                   <fieldset>
-                    <legend className='mb-2 flex items-center text-xs text-zinc-500'>
-                      <TbBorderOuter className='mr-1 size-4' />
+                    <legend className='mb-2 flex items-center font-mono text-xs text-zinc-500'>
+                      <TbBorderOuter className='mr-2 size-4' />
                       Размер холста
                     </legend>
                     <SelectBar
@@ -107,12 +107,12 @@ export default function Handwriting({ props, ...attr }: TComponent<'section', {}
             </Dropdown.Root>
           </li>
           <li>
-            <button onClick={() => drawingCanvasRef.current.back()} className='ml-auto px-2 text-zinc-500 duration-100 hover:text-zinc-300'>
+            <button onClick={() => drawingCanvasRef.current.back()} className='ml-auto px-2 text-zinc-500 hover:text-zinc-300'>
               <TbArrowBackUp className='size-6' />
             </button>
           </li>
           <li>
-            <button onClick={() => drawingCanvasRef.current.clear()} className='px-2 text-zinc-500 duration-100 hover:text-zinc-300'>
+            <button onClick={() => drawingCanvasRef.current.clear()} className='px-2 text-zinc-500 hover:text-zinc-300'>
               <TbEraser className='size-6' />
             </button>
           </li>
@@ -122,7 +122,7 @@ export default function Handwriting({ props, ...attr }: TComponent<'section', {}
         <header className='mb-4 flex items-center'>
           <h1 className='mr-auto font-mono text-sm text-zinc-500'>Рукописный ввод</h1>
           <aside className='font-mono text-xs'>
-            <span className='mr-2 rounded-md px-2 text-zinc-400 shadow-[0_1px_0_2px_theme(colors.zinc.700)]'>0-9</span>
+            <span className='mr-2 text-nowrap rounded-md px-2 text-zinc-400 shadow-[0_1px_0_2px_theme(colors.zinc.700)]'>0-9</span>
             <span className='text-zinc-500'>Выбор</span>
           </aside>
         </header>
@@ -175,7 +175,10 @@ function _DrawingCanvas({ props, ...attr }: TComponent<'canvas', { onChange: (ca
     },
     clear: () => {
       setHistory([])
-      selfRef.current.getContext('2d')?.clearRect(0, 0, canvasSize, canvasSize)
+      const ctx = selfRef.current.getContext('2d')!
+      ctx.clearRect(0, 0, canvasSize, canvasSize)
+      ctx.fillStyle = zinc[900]
+      ctx.fillRect(0, 0, canvasSize, canvasSize)
       props.onChange(selfRef.current)
     },
   }))
@@ -223,5 +226,5 @@ function _DrawingCanvas({ props, ...attr }: TComponent<'canvas', { onChange: (ca
     }
   }, [])
 
-  return <canvas {...attr} width={canvasSize} height={canvasSize} ref={selfRef} className={clsx(attr.className, '')}></canvas>
+  return <canvas {...attr} width={canvasSize} height={canvasSize} ref={selfRef} className={clsx(attr.className, 'rounded-3xl')}></canvas>
 }

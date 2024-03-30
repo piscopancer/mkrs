@@ -7,7 +7,7 @@ import { assignObject } from './utils'
 export const strokeSizesInfo = {
   15: { scale: 1 },
   20: { scale: 1.3 },
-  25: { scale: 1.8 },
+  30: { scale: 1.8 },
 } as const satisfies Record<z.infer<typeof handwritingStoreSchema>['strokeSize'], { scale: number }>
 
 export const canvasSizesInfo = {
@@ -18,7 +18,7 @@ export const canvasSizesInfo = {
 
 const storeName = 'handwriting'
 const handwritingStoreSchema = z.object({
-  strokeSize: z.union([z.literal(15), z.literal(20), z.literal(25)]),
+  strokeSize: z.union([z.literal(15), z.literal(20), z.literal(30)]),
   canvasSize: z.union([z.literal('sm'), z.literal('base'), z.literal('lg')]),
 })
 

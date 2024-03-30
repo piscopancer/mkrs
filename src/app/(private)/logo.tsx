@@ -82,7 +82,7 @@ export default function Logo(props: ComponentProps<'div'>) {
   }, [searchSnap.focused])
 
   return (
-    <div {...props} className={classes(props.className, 'z-[1]')}>
+    <div {...props} className={classes(props.className, 'z-[2]')}>
       {!full ? (
         <motion.div
           layout
