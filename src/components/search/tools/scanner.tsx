@@ -89,7 +89,8 @@ export default function Scanner({ props, ...attr }: TComponent<'article', {}>) {
             </div>
             <Tooltip content='Убрать изображение'>
               <button
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation()
                   setImage(undefined)
                   setRecognitions([])
                 }}
