@@ -3,7 +3,7 @@ import { objectEntries } from '@/utils'
 
 export default function HotkeysPage() {
   const shortcutsGroups: Record<string, (keyof typeof hotkeys)[]> = {
-    Поиск: ['focus', 'search', 'handwriting'],
+    Поиск: ['focus', 'search', 'tools'],
     'Взаимодействие со словом': ['save', 'copy', 'to-search', 'bkrs'],
     Навигация: ['main-page', 'recent-page', 'saved-page'],
   }

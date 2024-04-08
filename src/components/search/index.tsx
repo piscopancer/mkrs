@@ -2,7 +2,7 @@
 
 import useHotkey from '@/hooks/use-hotkey'
 import { hotkeys } from '@/hotkeys'
-import { TSearchProps, TSearchType, determineSearchType, findSuggestions, parse, queryCharacterClient, searchStore } from '@/search'
+import { TSearchProps, TSearchType, determineSearchType, findSuggestions, parse, queryCharacterClient, searchStore, type TSearches } from '@/search'
 import { classes } from '@/utils'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -30,13 +30,21 @@ export default function Search(props: React.ComponentProps<'search'>) {
   const catChance = 0.01
   const [showCat, setShowCat] = useState(false)
 
-  useEffect(() => setShowCat(+Math.random().toFixed(2) < catChance), [])
-
-  useHotkey([hotkeys.focus.keys, () => inputRef.current?.focus()], { prevent: !searchSnap.focused || undefined })
+  useHotkey(
+    [
+      hotkeys.focus.keys,
+      () => {
+        searchStore.focused = true
+        if (searchStore.search) searchStore.showSuggestions = true
+      },
+    ],
+    { prevent: !searchSnap.focused || undefined },
+  )
   useHotkey([
     ['Escape'],
     () => {
       searchStore.focused = false
+      searchStore.showTools = false
       searchStore.showSuggestions = false
     },
   ])
@@ -50,7 +58,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
   ])
   useHotkey(
     [
-      hotkeys.handwriting.keys,
+      hotkeys.tools.keys,
       () => {
         if (!searchStore.focused) {
           searchStore.showTools = !searchStore.showTools
@@ -61,10 +69,26 @@ export default function Search(props: React.ComponentProps<'search'>) {
     { prevent: !searchStore.focused || undefined },
   )
 
+  useEffect(() => setShowCat(+Math.random().toFixed(2) < catChance), [])
+
   useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.value = searchStore.inputValue
-      query(searchStore.inputValue)
+    if (!inputRef.current) {
+      return
+    }
+    inputRef.current.value = searchStore.inputValue
+    if (!searchStore.inputValue) {
+      setQuerying(false)
+      searchStore.search = undefined
+      searchStore.showSuggestions = false
+    } else {
+      setQuerying(true)
+      query(searchStore.inputValue).then((search) => {
+        setQuerying(false)
+        searchStore.search = searchStore.inputValue ? search : undefined
+        const suggestionsFound = searchStore.inputValue ? !!findSuggestions(search) : false
+        searchStore.showSuggestions = suggestionsFound && searchStore.focused
+        if (!suggestionsFound) searchStore.selectedSuggestion = -1
+      })
     }
   }, [searchSnap.inputValue])
 
@@ -73,6 +97,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
     function hideOnClickOutside(e: MouseEvent) {
       if (!selfRef.current.contains(e.target as Node)) {
         searchStore.showSuggestions = false
+        searchStore.showTools = false
       }
     }
     addEventListener('click', hideOnClickOutside)
@@ -84,32 +109,20 @@ export default function Search(props: React.ComponentProps<'search'>) {
   useEffect(() => {
     if (searchStore.focused) {
       inputRef.current?.focus()
-      if (searchStore.search) searchStore.showSuggestions = true
     } else {
       inputRef.current?.blur()
     }
   }, [searchSnap.focused])
 
-  function query(input: string) {
-    if (!input) {
-      setQuerying(false)
-      searchStore.search = undefined
-      searchStore.showSuggestions = false
-      return
-    }
-    setQuerying(true)
+  async function query(input: string): Promise<TSearches> {
     console.log('🍋 CLIENT QUERY')
-    queryCharacterClient(input).then((text) => {
-      setQuerying(false)
-      const el = document.createElement('div')
-      el.innerHTML = text
-      el.querySelectorAll('img').forEach((i) => i.remove())
-      searchStore.search = parse(el, determineSearchType(el))
-      el.remove()
-      const suggestionsFound = !!findSuggestions(searchStore.search)
-      searchStore.showSuggestions = suggestionsFound && searchStore.focused
-      if (!suggestionsFound) searchStore.selectedSuggestion = -1
-    })
+    const text = await queryCharacterClient(input)
+    const el = document.createElement('div')
+    el.innerHTML = text
+    el.querySelectorAll('img').forEach((i) => i.remove())
+    const search = parse(el, determineSearchType(el))
+    el.remove()
+    return search
   }
 
   const exact = searchSnap.search && findExact(searchSnap.search)
@@ -141,7 +154,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
         <Tooltip
           content={
             <>
-              <span className='uppercase text-zinc-500'>({hotkeys.handwriting.display})</span> Инструменты
+              <span className='uppercase text-zinc-500'>({hotkeys.tools.display})</span> Инструменты
             </>
           }
         >

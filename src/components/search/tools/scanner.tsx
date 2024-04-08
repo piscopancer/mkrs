@@ -4,7 +4,7 @@ import { Tooltip } from '@/components/tooltip'
 import { searchStore } from '@/search'
 import { type TComponent } from '@/utils'
 import { clsx } from 'clsx'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { GiBrassEye } from 'react-icons/gi'
 import { TbX } from 'react-icons/tb'
 import { createWorker } from 'tesseract.js'
@@ -12,14 +12,35 @@ import { createWorker } from 'tesseract.js'
 const nonChRegex = /\P{Script=Han}/gu
 
 export default function Scanner({ props, ...attr }: TComponent<'article', {}>) {
-  const [worker, setWorker] = useState<Tesseract.Worker | undefined>(undefined)
+  const workerRef = useRef<Tesseract.Worker | undefined>(undefined)
   const [scanning, setScanning] = useState(false)
   const [recognitions, setRecognitions] = useState<string[]>([])
   const [image, setImage] = useState<string | undefined>(undefined)
 
   useEffect(() => {
-    createWorker('chi_sim', 1).then(setWorker)
+    createWorker('chi_sim', 1, {
+      logger: (l) => {
+        console.log(l.workerId, l.progress)
+      },
+    }).then((w) => {
+      workerRef.current = w
+      console.log(w, workerRef.current)
+    })
+
+    addEventListener('paste', onPaste)
+    return () => {
+      removeEventListener('paste', onPaste)
+    }
   }, [])
+
+  function onPaste(e: ClipboardEvent) {
+    const file = e.clipboardData?.files[0]
+    if (file && ['image/png', 'image/jpeg'].includes(file.type) && workerRef.current) {
+      const imageData = URL.createObjectURL(file)
+      setImage(imageData)
+      recognize(workerRef.current, imageData)
+    }
+  }
 
   async function recognize(worker: Tesseract.Worker, image: string) {
     setScanning(true)
@@ -47,10 +68,9 @@ export default function Scanner({ props, ...attr }: TComponent<'article', {}>) {
             const file = e.target.files?.[0]
             const imageData = file ? URL.createObjectURL(file) : undefined
             setImage(imageData)
-            if (imageData && worker) {
-              recognize(worker, imageData)
+            if (imageData && workerRef.current) {
+              recognize(workerRef.current, imageData)
             } else {
-              console.log('worker not loaded')
               setRecognitions([])
             }
             e.target.value = ''

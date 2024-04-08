@@ -8,5 +8,5 @@ export const hotkeys = {
   copy: { name: 'Скопировать', keys: ['c', 'с'], display: 'c' },
   'to-search': { name: 'Скопировать в поиск', keys: ['w', 'ц'], display: 'w' },
   bkrs: { name: 'Открыть на 大БКРС', keys: ['b', 'и'], display: 'b' },
-  handwriting: { name: 'Рукописный ввод', keys: ['v', 'м'], display: 'v' },
+  tools: { name: 'Инструменты', keys: ['t', 'е'], display: 't' },
 } as const satisfies Record<string, { name: string; keys: string[]; display: string }>

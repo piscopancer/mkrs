@@ -81,7 +81,7 @@ export default function ChHeader(props: TSearchProps<'ch'>) {
     <>
       <header className='mb-8 flex items-start gap-4'>
         <div className='hopper mr-auto'>
-          <motion.span animate={ch2Anim} className='text-5xl'>
+          <motion.span animate={ch2Anim} className='pointer-events-none text-5xl'>
             {props.search.ch}
           </motion.span>
           <motion.h1 animate={chAnim} className='relative text-5xl'>
