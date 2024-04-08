@@ -1,5 +1,18 @@
+import type { IconType } from 'react-icons'
+import { TbPencil, TbScan } from 'react-icons/tb'
 import { proxy } from 'valtio'
 import { route } from './utils'
+
+export const tools = {
+  scanner: {
+    name: 'сканер',
+    icon: TbScan,
+  },
+  handwriting: {
+    name: 'рукописный ввод',
+    icon: TbPencil,
+  },
+} as const satisfies Record<string, { name: string; icon: IconType }>
 
 export const searchStore = proxy({
   focused: false,
@@ -7,7 +20,8 @@ export const searchStore = proxy({
   search: undefined as TSearches | undefined,
   showSuggestions: false,
   selectedSuggestion: -1,
-  showHandwriting: false as boolean,
+  showTools: false as boolean,
+  tool: 'scanner' as keyof typeof tools,
 })
 
 export type TWord = Partial<{

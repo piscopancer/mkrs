@@ -9,16 +9,16 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { GiCat } from 'react-icons/gi'
-import { TbLoader, TbPencil, TbSearch } from 'react-icons/tb'
+import { TbApps, TbLoader, TbSearch } from 'react-icons/tb'
 import { useSnapshot } from 'valtio'
 import { Tooltip } from '../tooltip'
 import ExactFound from './exact-found'
-import Handwriting from './handwriting'
 import ChSuggestions from './suggestions/ch'
 import ChLongSuggestions from './suggestions/ch-long'
 import PySuggestions from './suggestions/py'
 import RuSuggestions from './suggestions/ru'
 import SearchError from './suggestions/search-error'
+import Tools from './tools'
 import { findExact, selectSuggestion } from './utils'
 
 export default function Search(props: React.ComponentProps<'search'>) {
@@ -53,8 +53,8 @@ export default function Search(props: React.ComponentProps<'search'>) {
       hotkeys.handwriting.keys,
       () => {
         if (!searchStore.focused) {
-          searchStore.showHandwriting = !searchStore.showHandwriting
-          searchStore.focused = !searchStore.showHandwriting
+          searchStore.showTools = !searchStore.showTools
+          searchStore.focused = !searchStore.showTools
         }
       },
     ],
@@ -141,21 +141,21 @@ export default function Search(props: React.ComponentProps<'search'>) {
         <Tooltip
           content={
             <>
-              <span className='uppercase text-zinc-500'>({hotkeys.handwriting.display})</span> Рукописный ввод
+              <span className='uppercase text-zinc-500'>({hotkeys.handwriting.display})</span> Инструменты
             </>
           }
         >
           <button
             onClick={() => {
-              searchStore.showHandwriting = !searchStore.showHandwriting
-              searchStore.focused = !searchStore.showHandwriting
+              searchStore.showTools = !searchStore.showTools
+              searchStore.focused = !searchStore.showTools
             }}
             className={clsx(
               'group mr-12 flex h-full items-center justify-center justify-self-end rounded-full pl-4 pr-2 duration-100  focus-visible:outline-0 disabled:opacity-50 max-md:hidden',
-              searchSnap.showHandwriting ? 'text-pink-500' : 'text-zinc-400 hover:text-pink-500 focus-visible:text-pink-500',
+              searchSnap.showTools ? 'text-pink-500' : 'text-zinc-400 hover:text-pink-500 focus-visible:text-pink-500',
             )}
           >
-            <TbPencil className='size-5' />
+            <TbApps className='size-5' />
           </button>
         </Tooltip>
         <button
@@ -165,11 +165,11 @@ export default function Search(props: React.ComponentProps<'search'>) {
         >
           <TbSearch className='size-4' />
         </button>
-        {searchSnap.search && searchSnap.showSuggestions && !searchSnap.showHandwriting && <Suggestions search={searchSnap.search} />}
+        {searchSnap.search && searchSnap.showSuggestions && !searchSnap.showTools && <Suggestions search={searchSnap.search} />}
         <AnimatePresence>
-          {searchSnap.showHandwriting && (
+          {searchSnap.showTools && (
             <motion.div initial={{ opacity: 1, y: -2 }} animate={{ y: 0, opacity: 1, transition: { duration: 0.1 } }} key='handwriting' exit={{ opacity: 0, y: -2, transition: { duration: 0.1 } }} className='absolute inset-x-0 top-full z-[1] mt-2 '>
-              <Handwriting props={{}} className='max-md:hidden' />
+              <Tools props={{}} />
             </motion.div>
           )}
         </AnimatePresence>

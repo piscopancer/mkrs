@@ -11,9 +11,9 @@ import { zinc } from 'tailwindcss/colors'
 import { createWorker } from 'tesseract.js'
 import { useSnapshot } from 'valtio'
 import { subscribeKey } from 'valtio/utils'
-import SelectBar from '../select-bar'
+import SelectBar from '../../select-bar'
 
-export default function Handwriting({ props, ...attr }: TComponent<'section', {}>) {
+export default function Handwriting({ props, ...attr }: TComponent<'article', {}>) {
   let worker: Tesseract.Worker | undefined = undefined
   const [recognitions, setRecognitions] = useState<string[]>([])
   const drawingCanvasRef = useRef<DrawingCanvasRef>(null!)
@@ -32,7 +32,7 @@ export default function Handwriting({ props, ...attr }: TComponent<'section', {}
 
   return (
     <article {...attr} className={clsx(attr.className, 'flex')}>
-      <div className='rounded-l-3xl rounded-br-3xl border-2 border-zinc-800 bg-zinc-900'>
+      <div className='rounded-b-3xl border-2 border-zinc-800 bg-zinc-900'>
         <div className='group hopper'>
           <DrawingCanvas
             props={{
@@ -44,8 +44,8 @@ export default function Handwriting({ props, ...attr }: TComponent<'section', {}
             ref={drawingCanvasRef}
             className='aspect-square w-full cursor-crosshair duration-200'
           />
-          <div className='pointer-events-none h-4/5 w-0.5 place-self-center bg-gradient-to-b from-zinc-800 via-transparent to-zinc-800 opacity-50 duration-300 group-hover:opacity-100' />
-          <div className='pointer-events-none h-0.5 w-4/5 place-self-center bg-gradient-to-r from-zinc-800 via-transparent to-zinc-800 opacity-50 duration-300 group-hover:opacity-100' />
+          {/* <div className='pointer-events-none h-4/5 w-0.5 place-self-center bg-gradient-to-b from-zinc-800 via-transparent to-zinc-800 opacity-50 duration-300 group-hover:opacity-100' /> */}
+          {/* <div className='pointer-events-none h-0.5 w-4/5 place-self-center bg-gradient-to-r from-zinc-800 via-transparent to-zinc-800 opacity-50 duration-300 group-hover:opacity-100' /> */}
         </div>
         <menu className='mb-2 flex px-4'>
           <li className='mr-2'>
@@ -119,13 +119,6 @@ export default function Handwriting({ props, ...attr }: TComponent<'section', {}
         </menu>
       </div>
       <div className='h-fit grow rounded-r-3xl border-y-2 border-r-2 border-zinc-800 bg-gradient-to-r from-zinc-900 to-zinc-800 px-4 py-3'>
-        <header className='mb-4 flex items-center'>
-          <h1 className='mr-auto font-mono text-sm text-zinc-500'>Рукописный ввод</h1>
-          <aside className='font-mono text-xs'>
-            <span className='mr-2 text-nowrap rounded-md px-2 text-zinc-400 shadow-[0_1px_0_2px_theme(colors.zinc.700)]'>0-9</span>
-            <span className='text-zinc-500'>Выбор</span>
-          </aside>
-        </header>
         <menu className='flex min-h-24 flex-wrap gap-2'>
           {recognitions.map((r, i) => (
             <li key={i}>
