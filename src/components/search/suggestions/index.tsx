@@ -58,7 +58,7 @@ export default function Suggestions<T extends TSearchType, S extends TSearch<T>,
   if (!suggestions) return
 
   return (
-    <aside className='absolute inset-x-0 top-full z-[1] mt-2 rounded-3xl bg-zinc-800 p-4 max-md:rounded-xl max-md:p-3'>
+    <aside className='absolute inset-x-0 top-full z-[1] mt-2 rounded-xl border-2 border-zinc-800 bg-zinc-900/90 p-4 max-md:p-3'>
       <output className='mb-4 block text-xs text-zinc-500 max-md:mb-2'>{searchDescriptions[props.search.type]}</output>
       <ul>
         {suggestions.map((suggestion, i) => {

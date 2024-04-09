@@ -3,12 +3,12 @@
 import { TWord } from '@/search'
 import { classes, stringToReact } from '@/utils'
 import Link from 'next/link'
-import Heading from './heading'
+import Header from './header'
 
 export default function ByWords({ words, ...htmlProps }: React.ComponentProps<'section'> & { words: TWord[] }) {
   return (
     <section {...htmlProps} className={classes(htmlProps.className)}>
-      <Heading text='пословный перевод' className='mb-6' />
+      <Header text='пословный перевод' className='mb-6' />
       <ul className='grid grid-cols-4 gap-1 max-lg:grid-cols-3 max-md:grid-cols-2'>
         {words.map((word, i) => (
           <li key={i} className={classes('hopper h-full w-full gap-y-2 rounded-2xl border-2 border-transparent bg-zinc-800/50 hover:border-zinc-700 hover:bg-zinc-800 max-md:rounded-lg')}>

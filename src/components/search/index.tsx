@@ -85,7 +85,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
       query(searchStore.inputValue).then((search) => {
         setQuerying(false)
         searchStore.search = searchStore.inputValue ? search : undefined
-        const suggestionsFound = searchStore.inputValue ? !!findSuggestions(search) : false
+        const suggestionsFound = searchStore.inputValue && search ? !!findSuggestions(search) : false
         searchStore.showSuggestions = suggestionsFound && searchStore.focused
         if (!suggestionsFound) searchStore.selectedSuggestion = -1
       })
@@ -114,9 +114,9 @@ export default function Search(props: React.ComponentProps<'search'>) {
     }
   }, [searchSnap.focused])
 
-  async function query(input: string): Promise<TSearches> {
-    console.log('🍋 CLIENT QUERY')
+  async function query(input: string): Promise<TSearches | undefined> {
     const text = await queryCharacterClient(input)
+    if (!text) return
     const el = document.createElement('div')
     el.innerHTML = text
     el.querySelectorAll('img').forEach((i) => i.remove())
@@ -134,6 +134,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
           ref={inputRef}
           onFocus={() => {
             searchStore.focused = true
+            if (searchStore.search) searchStore.showSuggestions = true
           }}
           onBlur={() => (searchStore.focused = false)}
           spellCheck={false}

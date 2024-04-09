@@ -29,13 +29,10 @@ export async function generateMetadata({ params }: TSearchPage): Promise<Metadat
 export default async function SearchPage({ params }: TSearchPage) {
   const resText = await queryCharacter(params.slug)
   if (!resText) return
-
   const el = new JSDOM(resText).window.document.body
-
   el.querySelectorAll('a').forEach((el) => {
     el.setAttribute('href', `/search/${el.textContent}`)
   })
-
   const parsedSearch = parse(el, determineSearchType(el))
 
   return <Search search={parsedSearch} />

@@ -1,12 +1,12 @@
 import { TExample } from '@/search'
 import { classes, stringToReact } from '@/utils'
-import Heading from './heading'
+import Header from './header'
 
 export default function Examples(props: React.ComponentProps<'section'> & { examples: TExample[] }) {
   const { examples, ...htmlProps } = props
   return (
     <section {...htmlProps} className={classes(htmlProps.className)}>
-      <Heading text='примеры' className='mb-6' />
+      <Header text='примеры' className='mb-6' />
       <ul className='divide-y divide-zinc-800' data-search>
         {examples.map((ex, i) => (
           <li key={i} className='grid grid-cols-2 gap-x-8 py-3 text-zinc-400 max-md:block max-md:py-1'>

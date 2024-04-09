@@ -2,7 +2,7 @@
 
 import useHotkey from '@/hooks/use-hotkey'
 import { TWord, searchDescriptions, searchStore } from '@/search'
-import { classes } from '@/utils'
+import clsx from 'clsx'
 import { useRouter } from 'next/navigation'
 import { useSnapshot } from 'valtio'
 import { selectSuggestion } from '../utils'
@@ -47,18 +47,14 @@ export default function ByWords(props: { words: TWord[] }) {
   }
 
   return (
-    <aside className='absolute inset-x-0 top-full z-[1] mt-2 rounded-3xl bg-zinc-800 p-4'>
+    <aside className='absolute inset-x-0 top-full z-[1] mt-2 rounded-xl border-2 border-zinc-800 bg-zinc-900/90 p-4'>
       <output className='mb-4 block text-xs text-zinc-500 max-md:mb-2'>{searchDescriptions['ch-long']}</output>
       <ul className='flex flex-wrap gap-1'>
         {props.words.map((word, i) => (
           <li key={i}>
             <button
               onMouseDown={() => word.ch && selectSuggestion(router, word.ch)}
-              className={classes(
-                searchSnap.selectedSuggestion === i && 'bg-zinc-700',
-                searchSnap.search?.type && searchSnap.search.type === 'ch' && searchSnap.search.ch && searchSnap.search.ch === word.ch && '!text-pink-500',
-                'text-md block rounded-full border-2 border-zinc-700 px-3 py-1 hover:bg-zinc-700/50',
-              )}
+              className={clsx(searchSnap.selectedSuggestion === i ? 'border-zinc-600 text-zinc-200' : 'border-zinc-800 text-zinc-400', 'text-md block border-b-2 border-dashed px-2 py-1 text-xl hover:border-zinc-600 hover:text-zinc-200')}
             >
               {word.ch}
             </button>

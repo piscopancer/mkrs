@@ -138,15 +138,19 @@ export const searchDescriptions: Record<TSearches['type'], string> = {
 
 export let abortController: AbortController | null = new AbortController()
 
-export async function queryCharacterClient(ch: string) {
+export async function queryCharacterClient(ch: string): Promise<string | undefined> {
   if (abortController) {
     abortController.abort()
     abortController = new AbortController()
   }
   abortController = new AbortController()
-  const res = await fetch(route('/api/search', { ch }), { signal: abortController.signal })
-  abortController = null
-  return res.text()
+  try {
+    const res = await fetch(route('/api/search', { ch }), { signal: abortController.signal })
+    abortController = null
+    return res.text()
+  } catch (e) {
+    console.info('Запрос отменен')
+  }
 }
 
 export async function queryCharacter(ch: string) {
