@@ -3,7 +3,8 @@
 import Vibrator from '@/components/vibrator'
 import { groupByDate, recentStore } from '@/recent'
 import { savedStore } from '@/saved'
-import { classes, objectEntries } from '@/utils'
+import { objectEntries } from '@/utils'
+import clsx from 'clsx'
 import { compareDesc, formatDistanceToNowStrict } from 'date-fns'
 import { ru } from 'date-fns/locale'
 import { motion, useAnimation } from 'framer-motion'
@@ -40,12 +41,12 @@ export default function RecentPage() {
                         onClick={() => {
                           saved ? (savedStore.saved = savedStore.saved.filter((s) => s !== r.search)) : savedStore.saved.push(r.search)
                         }}
-                        className={classes(saved ? 'text-pink-500 max-md:active:text-pink-300 md:hover:text-pink-300' : 'text-zinc-600 max-md:active:text-zinc-400 md:hover:text-zinc-400', 'group -ml-2 mr-2 flex h-8 w-8 items-center justify-center py-0.5')}
+                        className={clsx(saved ? 'text-pink-500 max-md:active:text-pink-300 md:hover:text-pink-300' : 'text-zinc-600 max-md:active:text-zinc-400 md:hover:text-zinc-400', 'group -ml-2 mr-2 flex h-8 w-8 items-center justify-center py-0.5')}
                       >
                         <TbDeviceFloppy className='duration-100 group-hover:scale-110' />
                         <Vibrator />
                       </button>
-                      <Link prefetch={false} href={`/search/${r.search}`} className='group flex min-w-0 flex-1 items-center py-0.5'>
+                      <Link href={`/search/${r.search}`} className='group flex min-w-0 flex-1 items-center py-0.5'>
                         <span className='overflow-hidden text-ellipsis text-nowrap text-lg text-pink-500 duration-100 max-md:group-active:text-pink-300 md:text-lg md:group-hover:text-pink-300'>{r.search}</span>
                         <span className='ml-auto text-nowrap rounded-full text-xs text-zinc-400 duration-100 max-md:group-active:text-zinc-200 md:group-hover:text-zinc-200'>{formatDistanceToNowStrict(r.date, { locale: ru, roundingMethod: 'floor' })}</span>
                       </Link>

@@ -3,7 +3,6 @@
 import useHotkey from '@/hooks/use-hotkey'
 import { hotkeys } from '@/hotkeys'
 import { TSearchProps, TSearchType, determineSearchType, findSuggestions, parse, queryCharacterClient, searchStore, type TSearches } from '@/search'
-import { classes } from '@/utils'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
@@ -69,30 +68,8 @@ export default function Search(props: React.ComponentProps<'search'>) {
     { prevent: !searchStore.focused || undefined },
   )
 
-  useEffect(() => setShowCat(+Math.random().toFixed(2) < catChance), [])
-
   useEffect(() => {
-    if (!inputRef.current) {
-      return
-    }
-    inputRef.current.value = searchStore.inputValue
-    if (!searchStore.inputValue) {
-      setQuerying(false)
-      searchStore.search = undefined
-      searchStore.showSuggestions = false
-    } else {
-      setQuerying(true)
-      query(searchStore.inputValue).then((search) => {
-        setQuerying(false)
-        searchStore.search = searchStore.inputValue ? search : undefined
-        const suggestionsFound = searchStore.inputValue && search ? !!findSuggestions(search) : false
-        searchStore.showSuggestions = suggestionsFound && searchStore.focused
-        if (!suggestionsFound) searchStore.selectedSuggestion = -1
-      })
-    }
-  }, [searchSnap.inputValue])
-
-  useEffect(() => {
+    setShowCat(+Math.random().toFixed(2) < catChance)
     searchStore.focused = true
     function hideOnClickOutside(e: MouseEvent) {
       if (!selfRef.current.contains(e.target as Node)) {
@@ -105,6 +82,27 @@ export default function Search(props: React.ComponentProps<'search'>) {
       removeEventListener('click', hideOnClickOutside)
     }
   }, [])
+
+  useEffect(() => {
+    if (!inputRef.current) {
+      return
+    }
+    inputRef.current.value = searchStore.inputValue
+    if (!searchStore.inputValue) {
+      setQuerying(false)
+      searchStore.search = undefined
+      searchStore.showSuggestions = false
+    } else {
+      !querying && setQuerying(true)
+      query(searchStore.inputValue).then((search) => {
+        setQuerying(false)
+        searchStore.search = searchStore.inputValue ? search : undefined
+        const suggestionsFound = searchStore.inputValue && search ? !!findSuggestions(search) : false
+        searchStore.showSuggestions = suggestionsFound && searchStore.focused
+        if (!suggestionsFound) searchStore.selectedSuggestion = -1
+      })
+    }
+  }, [searchSnap.inputValue])
 
   useEffect(() => {
     if (searchStore.focused) {
@@ -128,7 +126,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
   const exact = searchSnap.search && findExact(searchSnap.search)
 
   return (
-    <search {...props} ref={selfRef} className={classes(props.className, 'relative block')}>
+    <search {...props} ref={selfRef} className={clsx(props.className, 'relative block')}>
       <div className='hopper relative mb-3 rounded-full bg-gradient-to-r from-pink-400 to-pink-600 p-0.5'>
         <input
           ref={inputRef}

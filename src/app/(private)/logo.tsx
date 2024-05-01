@@ -36,7 +36,8 @@ import gif9 from '@/assets/girls/9.gif'
 
 import useHotkey from '@/hooks/use-hotkey'
 import { searchStore } from '@/search'
-import { classes, randomFromArray } from '@/utils'
+import { randomFromArray } from '@/utils'
+import clsx from 'clsx'
 import { motion, useAnimation, useSpring, useTransform } from 'framer-motion'
 import { ComponentProps, useEffect, useRef, useState } from 'react'
 import { GiCompactDisc } from 'react-icons/gi'
@@ -82,7 +83,7 @@ export default function Logo(props: ComponentProps<'div'>) {
   }, [searchSnap.focused])
 
   return (
-    <div {...props} className={classes(props.className, 'z-[2]')}>
+    <div {...props} className={clsx(props.className, 'z-[2]')}>
       {!full ? (
         <motion.div
           layout
@@ -99,7 +100,7 @@ export default function Logo(props: ComponentProps<'div'>) {
           </motion.div>
         </motion.div>
       ) : (
-        <div onClick={() => setFull(false)} className={classes(!full && 'pointer-events-none', 'fixed inset-0 flex items-center justify-evenly')}>
+        <div onClick={() => setFull(false)} className={clsx(!full && 'pointer-events-none', 'fixed inset-0 flex items-center justify-evenly')}>
           <motion.div key='bg' initial={{ opacity: 0 }} animate={{ opacity: 0.8 }} className='absolute inset-0 bg-zinc-950' exit={{ opacity: 0, transition: { duration: 1 } }} />
           <Disc side='left' />
           <motion.div layout layoutId='logo' ref={bigGifRef} className='aspect-square h-[80vh] max-md:h-[80vw] '>

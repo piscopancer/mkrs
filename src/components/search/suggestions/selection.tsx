@@ -18,8 +18,8 @@ export default function SuggestionSelection(props: { isSelected: boolean }) {
           transition={{
             layout: { duration: 0.1 },
           }}
-          className='absolute inset-0 bg-gradient-to-r from-zinc-700 via-zinc-700/20 to-transparent rounded-full z-[-1]'
-        />
+          className='absolute inset-0 z-[-1] bg-zinc-800'
+        ></motion.div>
       )}
     </AnimatePresence>
   )

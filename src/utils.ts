@@ -19,12 +19,6 @@ export async function wait(seconds: number) {
   return new Promise((res) => setTimeout(res, seconds * 1000))
 }
 
-export function classes(...classes: (string | false | undefined)[]): string | undefined {
-  const cleaned = classes.filter(Boolean) as string[]
-  if (cleaned.length === 0) return
-  return cleaned.reduce((total, next) => `${total} ${next}`)
-}
-
 export function randomFromArray<T>(array: T[]): T {
   const randomIndex = Math.floor(Math.random() * array.length)
   return array[randomIndex]

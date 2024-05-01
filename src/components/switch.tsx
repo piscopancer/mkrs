@@ -1,6 +1,7 @@
 'use client'
 
-import { classes, type TMotionComponent } from '@/utils'
+import { type TMotionComponent } from '@/utils'
+import clsx from 'clsx'
 import { motion, useAnimation } from 'framer-motion'
 import colors from 'tailwindcss/colors'
 
@@ -48,7 +49,7 @@ export default function Switch({ props, ...htmlProps }: TMotionComponent<'button
       onPointerUp={() => {
         knobAnim.start({ scaleY: 1, transition: { type: 'spring' } })
       }}
-      className={classes(htmlProps.className, props.enabled ? 'justify-end' : 'justify-start', 'flex h-8 w-12 rounded-full p-1')}
+      className={clsx(htmlProps.className, props.enabled ? 'justify-end' : 'justify-start', 'flex h-8 w-12 rounded-full p-1')}
     >
       <motion.div
         layout
@@ -61,7 +62,7 @@ export default function Switch({ props, ...htmlProps }: TMotionComponent<'button
           },
         }}
         animate={knobAnim}
-        className={classes('aspect-square h-6 rounded-full')}
+        className={clsx('aspect-square h-6 rounded-full')}
       />
     </motion.button>
   )

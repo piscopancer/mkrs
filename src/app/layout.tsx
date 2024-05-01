@@ -8,7 +8,7 @@ import useHotkey from '@/hooks/use-hotkey'
 import { hotkeys } from '@/hotkeys'
 import { project } from '@/project'
 import { searchStore } from '@/search'
-import { classes, route } from '@/utils'
+import { route } from '@/utils'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { TbBrandGithub, TbDeviceFloppy, TbHistory, TbKeyboard, TbLineDashed } from 'react-icons/tb'
@@ -18,6 +18,8 @@ import Logo from './(private)/logo'
 import PageSelector from './(private)/page-selector'
 import Settings from './(private)/settings'
 import Store from './store'
+import Debug from '@/components/debug'
+import clsx from 'clsx'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const generalSnap = useSnapshot(generalStore)
@@ -28,9 +30,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang='ru'>
-      <body className={classes(fontVars, 'bg-zinc-900 font-sans text-base text-zinc-200')}>
+      <body className={clsx(fontVars, 'bg-zinc-900 font-sans text-base text-zinc-200')}>
         <div
-          className={classes(
+          className={clsx(
             'grid h-svh grid-cols-[min-content,1fr] grid-rows-[min-content,1fr] [grid-template-areas:"logo_header"_"nav_main"] max-md:grid-rows-[min-content,1fr,min-content] max-md:[grid-template-areas:"logo_header"_"main_main"_"nav_nav"]',
             !generalSnap.animeGirls && 'max-md:[grid-template-areas:"header_header"_"main_main"_"nav_nav"]',
           )}
@@ -40,7 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Logo />
             </div>
           )}
-          <header className={classes('ml-4 mr-4 flex h-20 items-center self-center [grid-area:header] max-md:ml-0', !generalSnap.animeGirls && 'max-md:ml-4')}>
+          <header className={clsx('ml-4 mr-4 flex h-20 items-center self-center [grid-area:header] max-md:ml-0', !generalSnap.animeGirls && 'max-md:ml-4')}>
             <Link href={'/'} className='mr-auto font-display'>
               <span className='mr-4'>МКРС </span>
               <span className='text-xs text-zinc-600 max-md:hidden'>{'//'} БКРС ПРОКСИ</span>
@@ -94,6 +96,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <section className='overflow-y-auto overflow-x-hidden rounded-lg [grid-area:main] max-md:px-4 md:mb-3 md:mr-3 md:border-2 md:border-zinc-800 md:px-4 md:[scrollbar-gutter:stable]'>{children}</section>
         </div>
         <Store />
+        {false && process.env.NODE_ENV !== 'production' && <Debug />}
       </body>
     </html>
   )

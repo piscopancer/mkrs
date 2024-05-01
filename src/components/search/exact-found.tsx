@@ -1,12 +1,13 @@
 'use client'
 
 import { searchStore } from '@/search'
-import { TMotionComponent, classes } from '@/utils'
+import { TMotionComponent } from '@/utils'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { TbArrowBadgeRightFilled } from 'react-icons/tb'
 import { useSnapshot } from 'valtio'
 import { TExact, selectSuggestion } from './utils'
+import clsx from 'clsx'
 
 export default function ExactFound({ props, ...htmlProps }: TMotionComponent<'aside', NonNullable<TExact>>) {
   const searchSnap = useSnapshot(searchStore)
@@ -20,7 +21,7 @@ export default function ExactFound({ props, ...htmlProps }: TMotionComponent<'as
       animate={{ y: 0, opacity: searchSnap.selectedSuggestion === -1 ? 1 : 0.5 }}
       initial={{ y: 2, opacity: 0 }}
       onClick={() => selectSuggestion(router, props.ch)}
-      className={classes(
+      className={clsx(
         htmlProps.className,
         searchSnap.selectedSuggestion === -1 ? ' border-pink-200/50 from-pink-500 to-pink-400' : ' border-zinc-700 from-zinc-800 to-zinc-800',
         'flex items-center rounded-full border-2 border-transparent bg-gradient-to-r px-6 py-2 text-zinc-200 transition-[scale,background] duration-500 max-md:px-4 max-md:py-1',

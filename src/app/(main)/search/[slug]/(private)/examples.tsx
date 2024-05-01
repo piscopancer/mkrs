@@ -1,11 +1,12 @@
 import { TExample } from '@/search'
-import { classes, stringToReact } from '@/utils'
+import { stringToReact } from '@/utils'
 import Header from './header'
+import clsx from 'clsx'
 
 export default function Examples(props: React.ComponentProps<'section'> & { examples: TExample[] }) {
   const { examples, ...htmlProps } = props
   return (
-    <section {...htmlProps} className={classes(htmlProps.className)}>
+    <section {...htmlProps} className={clsx(htmlProps.className)}>
       <Header text='примеры' className='mb-6' />
       <ul className='divide-y divide-zinc-800' data-search>
         {examples.map((ex, i) => (
