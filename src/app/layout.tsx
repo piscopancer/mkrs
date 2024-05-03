@@ -2,6 +2,7 @@
 
 import { fontVars } from '@/assets/fonts'
 import '@/assets/styles/style.scss'
+import Debug from '@/components/debug'
 import { Tooltip } from '@/components/tooltip'
 import { generalStore } from '@/general-store'
 import useHotkey from '@/hooks/use-hotkey'
@@ -9,6 +10,7 @@ import { hotkeys } from '@/hotkeys'
 import { project } from '@/project'
 import { searchStore } from '@/search'
 import { route } from '@/utils'
+import clsx from 'clsx'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { TbBrandGithub, TbDeviceFloppy, TbHistory, TbKeyboard, TbLineDashed } from 'react-icons/tb'
@@ -18,8 +20,6 @@ import Logo from './(private)/logo'
 import PageSelector from './(private)/page-selector'
 import Settings from './(private)/settings'
 import Store from './store'
-import Debug from '@/components/debug'
-import clsx from 'clsx'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const generalSnap = useSnapshot(generalStore)
@@ -96,7 +96,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <section className='overflow-y-auto overflow-x-hidden rounded-lg [grid-area:main] max-md:px-4 md:mb-3 md:mr-3 md:border-2 md:border-zinc-800 md:px-4 md:[scrollbar-gutter:stable]'>{children}</section>
         </div>
         <Store />
-        {false && process.env.NODE_ENV !== 'production' && <Debug />}
+        {process.env.NODE_ENV !== 'production' && <Debug />}
       </body>
     </html>
   )

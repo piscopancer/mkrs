@@ -39,6 +39,20 @@ export default function Settings() {
                 }}
               />
             </li>
+            <li className='mb-4 grid grid-cols-[auto,min-content] gap-x-2 px-4'>
+              <span className='mb-1'>Игра</span>
+              <span className='row-start-2 text-xs text-zinc-500'>Показывать игру на главной странице</span>
+              <Switch
+                className='row-span-2'
+                props={{
+                  enabled: generalSnap.showMemoryGame,
+                  action: (prev) => {
+                    generalStore.showMemoryGame = !prev
+                    return !prev
+                  },
+                }}
+              />
+            </li>
           </ul>
           <Dropdown.Arrow className='fill-zinc-800' />
         </>

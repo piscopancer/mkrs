@@ -47,9 +47,9 @@ export default function ByWords(props: { words: TWord[] }) {
   }
 
   return (
-    <aside className='absolute inset-x-0 top-full z-[1] mt-2 rounded-xl border-2 border-zinc-800 bg-zinc-900/90 p-4'>
-      <output className='mb-4 block text-xs text-zinc-500 max-md:mb-2'>{searchDescriptions['ch-long']}</output>
-      <ul className='flex flex-wrap gap-1'>
+    <aside className='absolute inset-x-0 top-full z-[1] mt-2 rounded-xl border-2 border-zinc-800 bg-zinc-900/90 pb-4'>
+      <h1 className='mx-4 mb-2 mt-3 block font-mono text-xs text-zinc-500 max-md:mb-2'>{searchDescriptions['ch-long']}</h1>
+      <ul className='mx-4 flex flex-wrap gap-1'>
         {props.words.map((word, i) => (
           <li key={i}>
             <button

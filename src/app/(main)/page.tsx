@@ -1,8 +1,10 @@
 import { project } from '@/project'
 import { Route } from 'next'
+import { revalidatePath } from 'next/cache'
 import Link from 'next/link'
 import { TbX } from 'react-icons/tb'
-import { getCookie, hideInfoBanner } from '../actions'
+import { getCookie, setCookie } from '../actions'
+import MemoGame from './()/memo-game'
 
 export default async function Home() {
   const ifHideInfoBanner = await getCookie('hide-info-banner')
@@ -21,13 +23,21 @@ export default async function Home() {
               .
             </h2>
           </div>
-          <form action={hideInfoBanner} className='justify-self-end'>
+          <form
+            action={async () => {
+              'use server'
+              await setCookie('hide-info-banner', true)
+              revalidatePath('/')
+            }}
+            className='justify-self-end'
+          >
             <button type='submit' className='p-3 text-zinc-400 hover:text-zinc-200'>
               <TbX />
             </button>
           </form>
         </article>
       )}
+      <MemoGame />
     </main>
   )
 }

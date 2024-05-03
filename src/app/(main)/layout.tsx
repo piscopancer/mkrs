@@ -1,7 +1,7 @@
 import { project } from '@/project'
 import type { Metadata } from 'next'
 import { rootMetadata } from '../(private)'
-import Search from './(private)/search'
+import Search from './()/search'
 
 export const metadata: Metadata = {
   ...rootMetadata,

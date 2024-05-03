@@ -5,8 +5,8 @@ const nextConfig = {
   experimental: {
     typedRoutes: true,
     staleTimes: {
-      dynamic: 300,
-      static: 600,
+      dynamic: 60 * 60,
+      static: 60 * 120,
     },
   },
   logging: { fetches: { fullUrl: true } },

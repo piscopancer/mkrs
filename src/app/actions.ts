@@ -1,6 +1,5 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
 import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies'
 import { cookies } from 'next/headers'
 
@@ -24,9 +23,4 @@ export async function hasCookie<N extends keyof TCookies>(name: N) {
 
 export async function deleteCookie<N extends keyof TCookies>(name: N) {
   return !!cookies().delete(name)
-}
-
-export async function hideInfoBanner() {
-  setCookie('hide-info-banner', true)
-  revalidatePath('/')
 }

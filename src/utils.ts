@@ -1,7 +1,9 @@
+import twConfig from '#/tailwind.config'
 import { HTMLMotionProps } from 'framer-motion'
 import { domToReact, htmlToDOM } from 'html-react-parser'
 import type { Route } from 'next'
 import { ComponentProps, ReactHTML } from 'react'
+import resolveConfig from 'tailwindcss/resolveConfig'
 import { useSnapshot } from 'valtio'
 
 export type TNextPage<ParamsAlias extends string | never = never, SearchParams extends string[] = []> = {
@@ -55,4 +57,25 @@ export function route<R extends string>(route: Route<R>, searchParams?: Record<s
   } else {
     return route as Route<R>
   }
+}
+
+export const { theme } = resolveConfig(twConfig)
+
+export function getShuffledArray<T>(array: T[], seed: number) {
+  function random(seed: number) {
+    var x = Math.sin(seed++) * 10000
+    return x - Math.floor(x)
+  }
+  const shuffled = [...array]
+  let m = shuffled.length,
+    t,
+    i
+  while (m) {
+    i = Math.floor(random(seed) * m--)
+    t = shuffled[m]
+    shuffled[m] = shuffled[i]
+    shuffled[i] = t
+    ++seed
+  }
+  return shuffled
 }
