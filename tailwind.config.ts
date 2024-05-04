@@ -1,3 +1,4 @@
+import cqPlugin from '@tailwindcss/container-queries'
 import type { Config } from 'tailwindcss'
 import plugin from 'tailwindcss/plugin'
 import { ThemeConfig } from 'tailwindcss/types/config'
@@ -12,6 +13,7 @@ const config: Config = {
     },
   },
   plugins: [
+    cqPlugin,
     plugin(({ addComponents, matchUtilities, theme }) => {
       addComponents({
         '.hopper': {

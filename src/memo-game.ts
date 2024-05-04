@@ -2,7 +2,7 @@ import { IconType } from 'react-icons'
 import { GiBearHead, GiDirewolf, GiSpikedDragonHead } from 'react-icons/gi'
 import { proxy, subscribe } from 'valtio'
 import { z } from 'zod'
-import { assignObject, theme } from './utils'
+import { assignObject } from './utils'
 
 const difficulties = ['easy', 'medium', 'hard'] as const
 const states = ['active', 'paused', 'cancelled', 'completed'] as const
@@ -24,21 +24,18 @@ export const difficultiesInfo = {
     words: 8,
     name: 'Нормально',
     icon: GiDirewolf,
-    color: theme.colors.slate[400],
   },
   medium: {
     words: 12,
     name: 'Сложно',
     icon: GiBearHead,
-    color: theme.colors.orange[600],
   },
   hard: {
     words: 18,
     name: 'Невыносимо',
     icon: GiSpikedDragonHead,
-    color: theme.colors.red[500],
   },
-} as const satisfies Record<(typeof difficulties)[number], { name: string; icon: IconType; color: string; words: number }>
+} as const satisfies Record<(typeof difficulties)[number], { name: string; icon: IconType; words: number }>
 
 const storeName = 'memo'
 const memoStoreSchema = z.object({

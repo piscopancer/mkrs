@@ -3,12 +3,20 @@
 import { difficultiesInfo, memoStore, type MemoGame } from '@/memo-game'
 import { recentStore } from '@/recent'
 import { savedStore } from '@/saved'
-import { TComponent, clone, getShuffledArray, objectEntries } from '@/utils'
+import { TComponent, clone, getShuffledArray, objectEntries, randomItemsFromArray, wait } from '@/utils'
 import clsx from 'clsx'
+import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { IconType } from 'react-icons'
-import { TbDeviceFloppy, TbEraser, TbExternalLink, TbHandStop, TbHistory } from 'react-icons/tb'
+import { TbClockPlay, TbDeviceFloppy, TbEraser, TbExternalLink, TbHandStop, TbHistory, TbInfoCircle, TbPlayerPause, TbPlayerPlay } from 'react-icons/tb'
 import { useSnapshot } from 'valtio'
+import { Tooltip } from '../tooltip'
+
+function transformTime(seconds: number) {
+  const min = Math.floor(seconds / 60)
+  const sec = seconds - min * 60
+  return `${min}:${sec > 9 ? sec : `0${sec}`}`
+}
 
 const columns = {
   easy: 4,
@@ -40,6 +48,8 @@ export default function MemoGame(props: TComponent<'article', {}>) {
   function startGame(_game: Pick<MemoGame, 'difficulty' | 'words'>) {
     const seed = Math.floor(Math.random() * 100)
     const game = clone(_game)
+    const words = game.words.length > difficultiesInfo[game.difficulty].words ? randomItemsFromArray(game.words, difficultiesInfo[game.difficulty].words) : game.words
+    game.words = words
     memoStore.currentGame = {
       ...game,
       id: crypto.randomUUID(),
@@ -48,20 +58,45 @@ export default function MemoGame(props: TComponent<'article', {}>) {
       state: 'active',
       solvedWords: [],
     }
-    setCards(getShuffledArray([...game.words, ...game.words], seed))
+    setCards(getShuffledArray([...words, ...words], seed))
   }
 
-  function stopGame() {
+  async function pauseGame(game: MemoGame) {
+    game.state = 'paused'
+    // pause timer
+  }
+
+  async function resumeGame(game: MemoGame) {
+    game.state = 'active'
+    // resume timer
+  }
+
+  async function stopGame() {
     memoStore.currentGame = undefined
+    setCard1(undefined)
+    setCard2(undefined)
+    setClickable(false)
+    await wait(0.2)
     setCards([])
+    setClickable(true)
   }
 
-  function onCardClick(index: number) {
+  async function onCardClick(game: MemoGame, index: number) {
     if (card1 === undefined) {
       setCard1(index)
-      return
+    } else {
+      setCard2(index)
+      setClickable(false)
+      if (cards[card1] === cards[index]) {
+        await wait(0.25)
+        game.solvedWords.push(cards[card1])
+      } else {
+        await wait(1)
+      }
+      setCard2(undefined)
+      setCard1(undefined)
+      setClickable(true)
     }
-    setCard2(index)
   }
 
   useEffect(() => {
@@ -69,24 +104,6 @@ export default function MemoGame(props: TComponent<'article', {}>) {
       setCards(getShuffledArray([...memoStore.currentGame.words, ...memoStore.currentGame.words], memoStore.currentGame.seed))
     }
   }, [memoSnap.currentGame])
-
-  // useEffect(() => {
-  //   checkMatch()
-  // }, [card2])
-
-  // async function checkMatch() {
-  //   if (card1 === undefined || card2 === undefined) return
-  //   setClickable(false)
-  //   if (cards[card1].text === cards[card2].text) {
-  //     await wait(0.25)
-  //     setSolvedCards([...solvedWords, cards[card1].text])
-  //   } else {
-  //     await wait(1)
-  //   }
-  //   setCard2(undefined)
-  //   setCard1(undefined)
-  //   setClickable(true)
-  // }
 
   // async function restart() {
   //   setClickable(false)
@@ -99,55 +116,107 @@ export default function MemoGame(props: TComponent<'article', {}>) {
   // }
 
   return (
-    <article {...props} className={clsx(props.className, 'grid grid-cols-[2fr,2fr] gap-12')}>
-      <section className='flex flex-col'>
-        <header className='h-12 rounded-lg bg-zinc-700'></header>
-        {memoSnap.currentGame ? (
-          <ul
-            style={{
-              gridTemplateColumns: `repeat(${columns[memoSnap.currentGame.difficulty]}, minmax(0, 1fr))`,
+    <article {...props} className={clsx(props.className, 'grid grid-cols-[1fr,1fr] gap-12')}>
+      <section className='flex w-full flex-col justify-self-center'>
+        <header className='hopper mb-4'>
+          <div className='mx-auto mt-1 h-4 w-4/5 rounded-full bg-zinc-800'></div>
+          <div className='mx-auto h-4 w-4/5 overflow-hidden rounded-full'>
+            <motion.div
+              animate={{
+                scaleX: memoSnap.currentGame ? memoSnap.currentGame.solvedWords.length / difficultiesInfo[memoSnap.currentGame.difficulty].words : 0,
+                transition: { ease: [0.3, 1, 0, 1] },
+              }}
+              className='h-full origin-left bg-pink-500'
+            ></motion.div>
+          </div>
+        </header>
+        <div about='game-board' className='mb-4 flex w-full grow'>
+          <div className='grow'>
+            {memoSnap.currentGame ? (
+              <ul
+                className='relative left-1/2 top-1/2 grid max-h-full max-w-full -translate-x-1/2 -translate-y-1/2 gap-1'
+                style={{
+                  aspectRatio: columns[memoSnap.currentGame.difficulty] / ((difficultiesInfo[memoSnap.currentGame.difficulty].words * 2) / columns[memoSnap.currentGame.difficulty]),
+                  gridTemplateColumns: `repeat(${columns[memoSnap.currentGame.difficulty]}, minmax(0, 1fr))`,
+                }}
+              >
+                {cards.map((word, i) => {
+                  const selected = i === card1 || i === card2
+                  const solved = memoStore.currentGame!.solvedWords.includes(word)
+                  return (
+                    <li key={word + i} className='contents'>
+                      <button
+                        disabled={!clickable}
+                        onClick={() => onCardClick(memoStore.currentGame!, i)}
+                        className={clsx('hopper bg-zinc-800 duration-200 [perspective:100px] [transform-style:preserve-3d]', selected && '!bg-zinc-700', selected || solved ? 'pointer-events-none [transform:rotateY(0deg)]' : '[transform:rotateY(180deg)]')}
+                      >
+                        <div className={clsx('hopper size-full place-self-center overflow-hidden')}>
+                          <div className={clsx(solved ? 'scale-150 duration-500' : 'scale-0', 'h-full w-full rounded-full bg-pink-400 ease-out')} />
+                        </div>
+                        <span className={clsx('flex size-full items-center justify-center place-self-center stroke-zinc-500 text-4xl [transform:translateZ(1rem)]', solved && '!text-zinc-900', selected && '!text-zinc-400 duration-1000')}>{word}</span>
+                      </button>
+                    </li>
+                  )
+                })}
+              </ul>
+            ) : (
+              <div className='aspect-square h-[100cqmin] bg-zinc-800/50'></div>
+            )}
+          </div>
+        </div>
+        <footer className='mb-8 flex w-fit items-center self-center'>
+          <p className='mr-12 flex items-center'>
+            <TbClockPlay className='mr-3 size-6' />
+            {transformTime(memoSnap.currentGame?.time ?? 0)}
+          </p>
+          <button
+            disabled={!memoSnap.currentGame}
+            onClick={() => {
+              if (!memoStore.currentGame) return
+              if (memoStore.currentGame.state === 'active') {
+                pauseGame(memoStore.currentGame)
+              } else if (memoStore.currentGame.state === 'paused') {
+                resumeGame(memoStore.currentGame)
+              }
             }}
-            className='my-auto grid aspect-square w-full max-w-[80vmin] self-center'
+            className='mr-2 rounded-md bg-zinc-800 text-zinc-400 duration-100 enabled:hover:text-zinc-200 disabled:opacity-50'
           >
-            {cards.map((word, i) => (
-              <li key={word + i} className='contents'>
-                <button className='flex size-full items-center justify-center'>{word}</button>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <div className='my-auto aspect-square w-full max-w-[80vmin] self-center rounded-xl bg-zinc-800'></div>
-        )}
-        <footer>
+            {memoSnap.currentGame?.state === 'active' ? <TbPlayerPause className='size-12 p-3' /> : <TbPlayerPlay className='size-12 p-3' />}
+          </button>
           <button disabled={!!!memoSnap.currentGame} onClick={stopGame} className='rounded-md bg-zinc-800 text-zinc-400 duration-100 enabled:hover:text-zinc-200 disabled:opacity-50'>
             <TbHandStop className='size-12 p-3' />
           </button>
         </footer>
       </section>
-      <section>
+      <section about='game-settings'>
         <h2 className='mb-4 font-display'>Сложность</h2>
         <menu className='mb-6 flex w-full gap-4'>
           {objectEntries(difficultiesInfo).map(([d, info]) => {
             const selected = memoStore.gameSettings.difficulty === d
             return (
               <li key={d} className='contents'>
-                <button onClick={() => (memoStore.gameSettings.difficulty = d)} className={clsx('hopper aspect-[5/3] max-w-40 flex-1 rounded-lg duration-100', selected ? 'bg-zinc-700' : 'bg-zinc-800')}>
-                  <span className={clsx('mr-4 mt-2 justify-self-end text-xl', selected ? 'text-zinc-200' : 'text-zinc-400')}>{info.words}</span>
-                  <div className={clsx('mb-1 ml-3 self-end justify-self-start', selected ? 'text-zinc-200' : 'text-zinc-400')}>{info.name}</div>
-                  <info.icon className={clsx('ml-3 mt-2 size-10 self-start duration-100', selected ? 'fill-pink-500 saturate-100' : 'saturate-0')} />
+                <button disabled={selected} onClick={() => (memoStore.gameSettings.difficulty = d)} className={clsx('hopper h-20 max-w-40 flex-1 rounded-lg border-2 border-zinc-700 bg-zinc-800 duration-100', selected ? 'opacity-100' : 'opacity-50')}>
+                  <span className={clsx('mr-4 mt-2 justify-self-end text-xl')}>{info.words}</span>
+                  <div className={clsx('mx-3 mb-1 self-end justify-self-start')}>{info.name}</div>
+                  <info.icon className={clsx('ml-3 mt-2 size-8 self-start duration-100', selected ? 'scale-100' : 'scale-90')} />
                 </button>
               </li>
             )
           })}
         </menu>
         <h2 className='mb-4 font-display'>Слова</h2>
-        <section className='grid h-72 grid-cols-[3fr,2fr] grid-rows-[auto,1fr] overflow-hidden rounded-lg border-2 border-zinc-800'>
+        <section className='mb-8 grid h-72 grid-cols-[3fr,2fr] grid-rows-[auto,1fr] overflow-hidden rounded-lg border-2 border-zinc-800'>
           <header className='flex gap-5 border-r-2 border-zinc-800'>
             <h2 className='self-center py-1.5 pl-4'>
               <span className={clsx('duration-100', memoSnap.gameSettings.words.length / difficultiesInfo[memoSnap.gameSettings.difficulty].words < 1 ? 'text-zinc-500' : 'text-zinc-200')}>{memoSnap.gameSettings.words.length}</span>
               <span className='text-zinc-500'>/</span>
               {difficultiesInfo[memoSnap.gameSettings.difficulty].words}
             </h2>
+            <Tooltip content='Если слов будет больше, чем нужно, они будут выбираться случайным образом.'>
+              <button className='cursor-default'>
+                <TbInfoCircle className='size-4 stroke-zinc-400' />
+              </button>
+            </Tooltip>
             <button onClick={() => (memoStore.gameSettings.words = [])} className='ml-auto flex aspect-square h-full items-center justify-center self-center text-zinc-400 duration-100 hover:text-zinc-200'>
               <TbEraser className='size-5' />
             </button>
@@ -173,83 +242,32 @@ export default function MemoGame(props: TComponent<'article', {}>) {
             ))}
           </menu>
           <menu className='flex flex-col overflow-y-auto'>
-            {wordsGroups[wordsGroup].get().map((w) => (
-              <li className='flex' key={w}>
-                <button disabled={memoSnap.gameSettings.words.includes(w)} onClick={() => memoStore.gameSettings.words.push(w)} className='grow py-0.5 pl-3 text-left text-2xl text-zinc-400 duration-100 enabled:hover:text-zinc-200 disabled:opacity-50'>
-                  {w}
-                </button>
-                <button className='flex items-center justify-center px-2 text-zinc-400 duration-100 hover:text-zinc-200'>
-                  <TbDeviceFloppy className='size-5' />
-                </button>
-                <a target='_blank' href={`/search/${w}`} className='flex items-center justify-center px-2 text-zinc-400 duration-100 hover:text-zinc-200'>
-                  <TbExternalLink className='size-5' />
-                </a>
-              </li>
-            ))}
+            {wordsGroups[wordsGroup]
+              .get()
+              .toReversed()
+              .map((w) => (
+                <li className='flex' key={w}>
+                  <button disabled={memoSnap.gameSettings.words.includes(w)} onClick={() => memoStore.gameSettings.words.push(w)} className='grow py-0.5 pl-3 text-left text-2xl text-zinc-400 duration-100 enabled:hover:text-zinc-200 disabled:opacity-50'>
+                    {w}
+                  </button>
+                  <button className='flex items-center justify-center px-2 text-zinc-400 duration-100 hover:text-zinc-200'>
+                    <TbDeviceFloppy className='size-5' />
+                  </button>
+                  <a target='_blank' href={`/search/${w}`} className='flex items-center justify-center px-2 text-zinc-400 duration-100 hover:text-zinc-200'>
+                    <TbExternalLink className='size-5' />
+                  </a>
+                </li>
+              ))}
           </menu>
         </section>
-        <button onClick={() => startGame(memoStore.gameSettings)}>Старт</button>
+        <button
+          disabled={memoSnap.gameSettings.words.length < difficultiesInfo[memoSnap.gameSettings.difficulty].words}
+          onClick={() => startGame(memoStore.gameSettings)}
+          className='rounded-lg bg-zinc-800 px-6 py-1.5 text-lg duration-100 enabled:text-zinc-200 enabled:hover:bg-zinc-700 disabled:opacity-50'
+        >
+          Начать
+        </button>
       </section>
     </article>
   )
-
-  // return (
-  //   <article>
-  //     <header className='relative flex items-center rounded-2xl'>
-  //       <TbDeviceGamepad className='h-8 w-8 stroke-zinc-500 max-md:h-6 max-md:w-6' />
-  //       <p className='ml-3 text-zinc-400 max-md:text-sm'>
-  //         <b>Memo</b> <span className='italic text-zinc-500'>/** не путать с React.memo */</span>
-  //       </p>
-  //       <Tooltip content={'Начать заново'}>
-  //         <button onClick={restart} className='ml-auto h-10 w-10 shrink-0 rounded-full p-2 hover:bg-zinc-800'>
-  //           <TbRefresh className='h-full w-full stroke-zinc-600' />
-  //         </button>
-  //       </Tooltip>
-  //       <Tooltip content={'Завершите игру, чтобы увидеть полный стек 🤗'}>
-  //         <button className='ml-3 aspect-square h-10 shrink-0 cursor-default p-2 max-md:hidden'>
-  //           <TbInfoSquareRounded className='h-full w-full stroke-zinc-600' />
-  //         </button>
-  //       </Tooltip>
-  //     </header>
-  //     <ul className='mt-4 grid grid-cols-8 gap-1 overflow-hidden rounded-2xl border-[0.25rem] border-zinc-900 bg-zinc-900 max-md:grid-cols-4'>
-  //       {cards.length === 0
-  //         ? [...props.cards, ...props.cards].map((_, i) => <div key={i} className='aspect-square bg-zinc-800/50' />)
-  //         : cards.map((card, i) => {
-  //             const selected = i === card1 || i === card2
-  //             const solved = solvedCards.includes(card.text)
-  //             return (
-  //               <button
-  //                 disabled={!clickable}
-  //                 key={i}
-  //                 onClick={() => onCardClick(i)}
-  //                 className={clsx(selected && '!bg-zinc-700', selected || solved ? 'pointer-events-none [transform:rotateY(0deg)]' : '[transform:rotateY(180deg)]', 'grid-stack grid aspect-square bg-zinc-800 duration-200 [perspective:100px] [transform-style:preserve-3d]')}
-  //               >
-  //                 <div className={clsx('stack h-full w-full place-self-center overflow-hidden')}>
-  //                   <div className={clsx(solved ? 'scale-150 duration-500' : 'scale-0', 'bg-accent h-full w-full rounded-full ease-out')} />
-  //                 </div>
-  //                 <p className={clsx(solved && '!text-zinc-900', selected && '!text-zinc-400 duration-1000', 'stack h-8 w-8 place-self-center stroke-zinc-500 [transform:translateZ(1rem)]')}>{card.text}</p>
-  //               </button>
-  //             )
-  //           })}
-  //     </ul>
-  //     <p className='my-4 font-medium text-zinc-500 max-md:my-2 max-md:text-sm'>
-  //       Решено{' '}
-  //       <span className='ml-1 text-xl max-md:text-lg'>
-  //         <span className={clsx(solved ? 'text-accent' : 'text-zinc-400', 'font-bold')}>{solvedCards.length}</span>/{props.cards.length}
-  //       </span>
-  //     </p>
-  //     <ul className='flex flex-wrap gap-3 max-md:gap-2'>
-  //       {solvedCards
-  //         .map((text) => props.cards.find((card) => card.text === text))
-  //         .map((card) => {
-  //           if (!card) return
-  //           return (
-  //             <motion.li initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className='flex items-center rounded-xl bg-zinc-800 px-4 py-2 max-md:px-2 max-md:py-1'>
-  //               <p className='ml-3 text-zinc-300 max-md:ml-2 max-md:text-sm'>{card.text}</p>
-  //             </motion.li>
-  //           )
-  //         })}
-  //     </ul>
-  //   </article>
-  // )
 }

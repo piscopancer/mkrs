@@ -84,7 +84,7 @@ export function clone<O extends object>(obj: O) {
   return JSON.parse(JSON.stringify(obj)) as O
 }
 
-export function getRandomItems<T>(arr: T[], num: number) {
+export function randomItemsFromArray<T>(arr: T[], num: number) {
   let result = []
   let arrCopy = [...arr]
   while (result.length < num) {
