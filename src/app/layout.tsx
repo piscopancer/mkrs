@@ -1,6 +1,6 @@
 'use client'
 
-import { fontVars } from '@/assets/fonts'
+import { fontsVars } from '@/assets/fonts'
 import '@/assets/styles/style.scss'
 import Debug from '@/components/debug'
 import { Tooltip } from '@/components/tooltip'
@@ -30,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang='ru'>
-      <body className={clsx(fontVars, 'bg-zinc-900 font-sans text-base text-zinc-200')}>
+      <body className={clsx(fontsVars, 'bg-zinc-900 font-sans text-base text-zinc-200')}>
         <div
           className={clsx(
             'grid h-svh grid-cols-[min-content,1fr] grid-rows-[min-content,1fr] [grid-template-areas:"logo_header"_"nav_main"] max-md:grid-rows-[min-content,1fr,min-content] max-md:[grid-template-areas:"logo_header"_"main_main"_"nav_nav"]',

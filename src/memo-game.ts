@@ -19,36 +19,40 @@ const memoGameSchema = z.object({
 
 export type MemoGame = z.infer<typeof memoGameSchema>
 
-export const difficultyInfo = {
+export const difficultiesInfo = {
   easy: {
     words: 8,
     name: 'Нормально',
     icon: GiDirewolf,
-    color: theme.colors.zinc[400],
+    color: theme.colors.slate[400],
   },
   medium: {
-    words: 18,
+    words: 12,
     name: 'Сложно',
     icon: GiBearHead,
-    color: theme.colors.amber[600],
+    color: theme.colors.orange[600],
   },
   hard: {
-    words: 32,
+    words: 18,
     name: 'Невыносимо',
     icon: GiSpikedDragonHead,
-    color: theme.colors.red[400],
+    color: theme.colors.red[500],
   },
 } as const satisfies Record<(typeof difficulties)[number], { name: string; icon: IconType; color: string; words: number }>
 
 const storeName = 'memo'
 const memoStoreSchema = z.object({
   currentGame: memoGameSchema.optional(),
-  words: z.array(z.string()),
   gamesPlayed: z.array(memoGameSchema),
+  gameSettings: memoGameSchema.pick({ words: true, seed: true, difficulty: true }),
 })
 const defaultMemoStore: z.infer<typeof memoStoreSchema> = {
   currentGame: undefined,
-  words: ['小', '大'],
+  gameSettings: {
+    difficulty: 'easy',
+    seed: 0,
+    words: ['小', '大'],
+  },
   gamesPlayed: [],
 }
 export const memoStore = proxy({ ...defaultMemoStore })

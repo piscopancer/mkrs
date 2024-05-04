@@ -79,3 +79,18 @@ export function getShuffledArray<T>(array: T[], seed: number) {
   }
   return shuffled
 }
+
+export function clone<O extends object>(obj: O) {
+  return JSON.parse(JSON.stringify(obj)) as O
+}
+
+export function getRandomItems<T>(arr: T[], num: number) {
+  let result = []
+  let arrCopy = [...arr]
+  while (result.length < num) {
+    let randomIndex = Math.floor(Math.random() * arrCopy.length)
+    result.push(arrCopy[randomIndex])
+    arrCopy.splice(randomIndex, 1)
+  }
+  return result
+}
