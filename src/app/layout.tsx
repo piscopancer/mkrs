@@ -16,9 +16,10 @@ import { useRouter } from 'next/navigation'
 import { TbBrandGithub, TbDeviceFloppy, TbHistory, TbKeyboard, TbLineDashed } from 'react-icons/tb'
 import { useSnapshot } from 'valtio'
 import Vibrator from '../components/vibrator'
-import Logo from './(private)/logo'
-import PageSelector from './(private)/page-selector'
-import Settings from './(private)/settings'
+import Game from './()/game'
+import Logo from './()/logo'
+import PageSelector from './()/page-selector'
+import Settings from './()/settings'
 import Store from './store'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -43,10 +44,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           )}
           <header className={clsx('ml-4 mr-4 flex h-20 items-center self-center [grid-area:header] max-md:ml-0', !generalSnap.animeGirls && 'max-md:ml-4')}>
-            <Link href={'/'} className='mr-auto font-display'>
+            <Link href={'/'} className='mr-auto font-display font-bold'>
               <span className='mr-4'>МКРС </span>
               <span className='text-xs text-zinc-600 max-md:hidden'>{'//'} БКРС ПРОКСИ</span>
             </Link>
+            <Game />
             <Settings />
           </header>
           <nav className='flex w-20 justify-between overflow-x-hidden py-6 [grid-area:nav] max-md:w-auto max-md:py-2 md:flex-col md:px-3'>

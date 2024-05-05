@@ -1,6 +1,6 @@
 'use client'
 
-import { UseExpansion } from '@/hooks/use-expansion'
+import useExpansion from '@/hooks/use-expansion'
 import { TMotionComponent, theme } from '@/utils'
 import clsx from 'clsx'
 import { animate, motion, useTransform } from 'framer-motion'
@@ -12,7 +12,7 @@ export default function MemoGameCard(props: TMotionComponent<'article', {}>) {
   const expanderRef = useRef<HTMLDivElement>(null!)
   const expanderChildRef = useRef<HTMLDivElement>(null!)
   const buttonRef = useRef<HTMLButtonElement>(null!)
-  const { expand, shrink, expandMV } = UseExpansion({
+  const { expand, shrink, expandMV } = useExpansion({
     expanderRef,
     initialRef,
     transition: (base) => ({ ...base, duration: 1 }),
@@ -26,7 +26,6 @@ export default function MemoGameCard(props: TMotionComponent<'article', {}>) {
     <>
       <motion.article
         {...props}
-        about='initial'
         ref={initialRef}
         transition={{ type: 'spring', stiffness: 300 }}
         whileTap={{
@@ -100,7 +99,6 @@ export default function MemoGameCard(props: TMotionComponent<'article', {}>) {
           padding: useTransform(expandMV, [0, 1], [theme.padding[2], theme.padding[4]]),
           background: useTransform(expandMV, [0, 1], [theme.colors.zinc[800], theme.colors.zinc[900]]),
         }}
-        about='expander'
         ref={expanderRef}
         className={clsx('fixed hidden rounded-xl')}
       >

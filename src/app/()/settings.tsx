@@ -58,8 +58,8 @@ export default function Settings() {
         </>
       </Dropdown.Content>
       {/* <Tooltip content='Настройки' sideOffset={6}> */}
-      <Dropdown.Trigger className={clsx('flex items-center justify-center rounded-full p-3 px-4 py-2 text-zinc-200 max-md:active:bg-zinc-800 md:hover:bg-zinc-800')}>
-        <TbSettings className='h-6' />
+      <Dropdown.Trigger className={clsx('flex items-center justify-center rounded-full px-4 py-2 text-zinc-200 max-md:active:bg-zinc-800 md:hover:bg-zinc-800')}>
+        <TbSettings className='size-6' />
       </Dropdown.Trigger>
       {/* </Tooltip> */}
     </Dropdown.Root>

@@ -1,4 +1,4 @@
-import { rootMetadata } from '@/app/(private)'
+import { rootMetadata } from '@/app/()'
 import logo from '@/assets/logo.png'
 import womanCat from '@/assets/woman-thinks-she-is-a-cat.gif'
 import { Tooltip } from '@/components/tooltip'

@@ -1,11 +1,19 @@
 import { IconType } from 'react-icons'
 import { GiBearHead, GiDirewolf, GiSpikedDragonHead } from 'react-icons/gi'
+import { TbCheck, TbPlayerPause, TbPlayerPlay, TbX } from 'react-icons/tb'
 import { proxy, subscribe } from 'valtio'
 import { z } from 'zod'
 import { assignObject } from './utils'
 
 const difficulties = ['easy', 'medium', 'hard'] as const
 const states = ['active', 'paused', 'cancelled', 'completed'] as const
+
+export const statesInfo = {
+  active: { name: 'Активно', icon: TbPlayerPlay },
+  paused: { name: 'Приостановлено', icon: TbPlayerPause },
+  cancelled: { name: 'Отменено', icon: TbX },
+  completed: { name: 'Завершено', icon: TbCheck },
+} satisfies Record<(typeof states)[number], { name: string; icon: IconType }>
 
 const memoGameSchema = z.object({
   id: z.string().uuid(),
@@ -18,6 +26,7 @@ const memoGameSchema = z.object({
 })
 
 export type MemoGame = z.infer<typeof memoGameSchema>
+export type MemoStore = typeof memoStore
 
 export const difficultiesInfo = {
   easy: {
@@ -39,12 +48,12 @@ export const difficultiesInfo = {
 
 const storeName = 'memo'
 const memoStoreSchema = z.object({
-  currentGame: memoGameSchema.optional(),
+  currentGame: memoGameSchema.nullable(),
   gamesPlayed: z.array(memoGameSchema),
   gameSettings: memoGameSchema.pick({ words: true, seed: true, difficulty: true }),
 })
 const defaultMemoStore: z.infer<typeof memoStoreSchema> = {
-  currentGame: undefined,
+  currentGame: null,
   gameSettings: {
     difficulty: 'easy',
     seed: 0,

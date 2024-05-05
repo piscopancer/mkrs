@@ -18,7 +18,7 @@ export default function SavedPage() {
 
   return (
     <motion.main animate={selfAnim} className='mb-48'>
-      <h1 className='mb-8 font-display text-lg uppercase text-zinc-200'>сохраненные</h1>
+      <h1 className='mb-8 font-display text-lg font-medium text-zinc-200'>Сохраненные</h1>
       <ul>
         <AnimatePresence mode='popLayout'>
           {savedSnap.saved.toReversed().map((saved) => (

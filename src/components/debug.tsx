@@ -8,9 +8,11 @@ import { proxy, useSnapshot } from 'valtio'
 
 export const debugStore = proxy({
   // querying: false,
-  exp_expanded: false,
-  exp_animating: false,
-  exp_progress: 0,
+  // exp_expanded: false,
+  // exp_animating: false,
+  // exp_progress: 0,
+  memo_rerenders: 0,
+  memo_time: 0,
 })
 
 export default function Debug() {
@@ -18,7 +20,7 @@ export default function Debug() {
 
   if (true)
     return (
-      <ul className='fixed bottom-0 right-0 list-none bg-black/20 p-2 text-sm text-zinc-200'>
+      <ul className='pointer-events-none fixed bottom-0 right-0 list-none bg-black/20 p-2 text-sm text-zinc-200'>
         {objectEntries(debugSnap).map(([k, v]) => (
           <li key={k}>
             <span className='text-zinc-400'>{k}:</span>{' '}

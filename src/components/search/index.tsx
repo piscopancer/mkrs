@@ -189,7 +189,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
       <ul className='flex items-center justify-end gap-6 max-md:hidden'>
         {[hotkeys.focus, hotkeys.search].map(({ name, display }) => (
           <li key={name} className='flex text-xs'>
-            <kbd className='mr-2 rounded-md px-2 font-mono text-zinc-400 shadow-[0_1px_0_2px_theme(colors.zinc.700)]'>{display[0]}</kbd>
+            <kbd className='shadow-key mr-2 rounded-md px-2 font-mono text-zinc-400'>{display[0]}</kbd>
             <span className='font-mono text-zinc-500'>{name}</span>
           </li>
         ))}

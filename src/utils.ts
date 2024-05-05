@@ -59,6 +59,8 @@ export function route<R extends string>(route: Route<R>, searchParams?: Record<s
   }
 }
 
+export const ease = [0.3, 1, 0, 1] as const
+
 export const { theme } = resolveConfig(twConfig)
 
 export function getShuffledArray<T>(array: T[], seed: number) {
@@ -93,4 +95,17 @@ export function randomItemsFromArray<T>(arr: T[], num: number) {
     arrCopy.splice(randomIndex, 1)
   }
   return result
+}
+
+export function groupArray<T extends object, P extends string | number>(arr: T[], by: (item: T) => P): Record<P, T[]> {
+  const groups: any = {}
+  for (let i = 0; i < arr.length; i++) {
+    const prop = by(arr[i])
+    if (!groups[prop]) {
+      groups[prop] = [arr[i]]
+    } else {
+      groups[prop].push(arr[i])
+    }
+  }
+  return groups as Record<P, T[]>
 }

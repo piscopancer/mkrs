@@ -1,6 +1,6 @@
 'use client'
 
-import { debugStore } from '@/components/debug'
+import { ease } from '@/utils'
 import { ValueAnimationTransition, animate, transform, useMotionValue } from 'framer-motion'
 import { MutableRefObject, useEffect, useState } from 'react'
 
@@ -31,9 +31,9 @@ type UseExpansionProps = {
   onShrinkComplete?: () => void | Promise<void>
 }
 
-const baseTransition: ValueAnimationTransition = { duration: 0.7, ease: [0.3, 1, 0, 1] }
+const baseTransition: ValueAnimationTransition = { duration: 0.7, ease: [...ease] }
 
-export function UseExpansion({
+export default function useExpansion({
   offsets = {
     top: '0%',
     right: '0%',
@@ -46,14 +46,14 @@ export function UseExpansion({
   const [animating, setAnimating] = useState(false)
   const expandMV = useMotionValue(0)
 
-  useEffect(() => {
-    debugStore.exp_animating = animating
-    debugStore.exp_expanded = expanded
-  })
+  // useEffect(() => {
+  //   debugStore.exp_animating = animating
+  //   debugStore.exp_expanded = expanded
+  // })
 
   useEffect(() => {
     expandMV.on('change', (v) => {
-      debugStore.exp_progress = Number(v.toFixed(1))
+      // debugStore.exp_progress = Number(v.toFixed(1))
       if (!props.expanderRef || !props.initialRef.current) return
       const offset = getBoundingOffset(props.initialRef.current)
       props.expanderRef.current.style.top = transform(v, [0, 1], [offset.top, offsets.top])

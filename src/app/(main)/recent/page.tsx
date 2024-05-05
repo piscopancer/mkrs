@@ -25,7 +25,7 @@ export default function RecentPage() {
 
   return (
     <motion.main animate={selfAnim} className='mb-48'>
-      <h1 className='mb-8 font-display text-lg uppercase text-zinc-200'>недавние</h1>
+      <h1 className='mb-8 font-display text-lg font-medium text-zinc-200'>Недавние</h1>
       {objectEntries(groupByDate(recentSnap.recent)).map(([id, { name, recent }]) =>
         recent.length ? (
           <Fragment key={id}>

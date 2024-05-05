@@ -1,7 +1,6 @@
 import cqPlugin from '@tailwindcss/container-queries'
 import type { Config } from 'tailwindcss'
 import plugin from 'tailwindcss/plugin'
-import { ThemeConfig } from 'tailwindcss/types/config'
 
 const config: Config = {
   content: ['./src/**/*.{ts,tsx}'],
@@ -11,10 +10,13 @@ const config: Config = {
       display: 'var(--font-display)',
       mono: 'var(--font-mono)',
     },
+    boxShadow: ({ theme }) => ({
+      key: `0 1px 0 2px ${theme('colors.zinc.700')}`,
+    }),
   },
   plugins: [
     cqPlugin,
-    plugin(({ addComponents, matchUtilities, theme }) => {
+    plugin(({ addComponents, matchVariant }) => {
       addComponents({
         '.hopper': {
           display: 'grid',
@@ -24,25 +26,7 @@ const config: Config = {
           },
         },
       }),
-        matchUtilities(
-          {
-            hole: (value) => ({
-              clipPath: `polygon(
-            0 0,
-            100% 0,
-            100% 100%,
-            0 100%,
-            0 0,
-            ${value} 0,
-            ${value} calc(100% - ${value}),
-            calc(100% - ${value}) calc(100% - ${value}),
-            calc(100% - ${value}) ${value},
-            0 ${value}
-          );`,
-            }),
-          },
-          { values: theme('height' as keyof ThemeConfig) },
-        )
+        matchVariant('not', (v) => `&:not(${v})`)
     }),
   ],
 }

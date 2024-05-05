@@ -2,14 +2,14 @@
 
 import { TWord } from '@/search'
 import { stringToReact } from '@/utils'
+import clsx from 'clsx'
 import Link from 'next/link'
 import Header from './header'
-import clsx from 'clsx'
 
 export default function ByWords({ words, ...htmlProps }: React.ComponentProps<'section'> & { words: TWord[] }) {
   return (
     <section {...htmlProps} className={clsx(htmlProps.className)}>
-      <Header text='пословный перевод' className='mb-6' />
+      <Header text='Пословный перевод' className='mb-6' />
       <ul className='grid grid-cols-4 gap-1 max-lg:grid-cols-3 max-md:grid-cols-2'>
         {words.map((word, i) => (
           <li key={i} className={clsx('hopper h-full w-full gap-y-2 rounded-2xl border-2 border-transparent bg-zinc-800/50 hover:border-zinc-700 hover:bg-zinc-800 max-md:rounded-lg')}>

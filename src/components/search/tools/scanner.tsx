@@ -73,7 +73,7 @@ export default function Scanner({ props, ...attr }: TComponent<'article', {}>) {
         <div className={clsx('pointer-events-none flex w-full flex-col items-center justify-center duration-500 ease-out', scannerSnap.imageData ? 'scale-90 opacity-0' : 'group-hover:scale-95')}>
           <GiBrassEye className='mb-6 aspect-square w-1/5' />
           <h1 className='w-2/3 text-center text-sm text-zinc-400'>
-            <b>Выберите</b> файл с устройства, <b>перетащите</b> сюда или <b>вставьте</b> его с <kbd className='mx-1.5 mr-2 rounded-md px-2 font-mono text-xs shadow-[0_1px_0_2px_theme(colors.zinc.700)]'>Ctrl + V</kbd>
+            <b>Выберите</b> файл с устройства, <b>перетащите</b> сюда или <b>вставьте</b> его с <kbd className='shadow-key mx-1.5 mr-2 rounded-md px-2 font-mono text-xs'>Ctrl + V</kbd>
           </h1>
         </div>
         {scannerSnap.imageData && (
