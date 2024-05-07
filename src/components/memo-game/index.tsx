@@ -30,7 +30,7 @@ const columns = {
   medium: 6,
 } as const satisfies Record<keyof typeof difficultiesInfo, number>
 
-const wordsGroups = {
+const suggestedWordsGroups = {
   recent: {
     name: 'Недавние',
     icon: TbHistory,
@@ -43,11 +43,9 @@ const wordsGroups = {
   },
 } as const satisfies Record<string, { name: string; icon: IconType; get: () => string[] }>
 
-const onDestroyAborter = new AbortController()
-
 export default function MemoGame({ props, ...attr }: TComponent<'article', { memoStore: MemoStore }>) {
   const memoSnap = useSnapshot(props.memoStore)
-  const [wordsGroup, setWordsGroup] = useState<keyof typeof wordsGroups>('recent')
+  const [suggestedWordsGroup, setSuggestedWordsGroup] = useState<keyof typeof suggestedWordsGroups>('recent')
   const [cards, setCards] = useState<string[]>([])
   const [card1, setCard1] = useState<number | null>(null)
   const [card2, setCard2] = useState<number | null>(null)
@@ -287,9 +285,9 @@ export default function MemoGame({ props, ...attr }: TComponent<'article', { mem
             </header>
             <header className='border-l-2 border-zinc-800 max-md:row-start-3 max-md:border-l-0'>
               <menu className='flex h-full'>
-                {objectEntries(wordsGroups).map(([group, info]) => (
+                {objectEntries(suggestedWordsGroups).map(([group, info]) => (
                   <li className='contents' key={group}>
-                    <button onClick={() => setWordsGroup(group)} className={clsx('flex flex-1 items-center justify-center max-md:py-2', wordsGroup === group ? 'bg-zinc-800' : '')}>
+                    <button onClick={() => setSuggestedWordsGroup(group)} className={clsx('flex flex-1 items-center justify-center max-md:py-2', suggestedWordsGroup === group ? 'bg-zinc-800' : '')}>
                       <info.icon className='size-5 max-md:size-6' />
                     </button>
                   </li>
@@ -325,12 +323,12 @@ export default function MemoGame({ props, ...attr }: TComponent<'article', { mem
               </menu>
             </div>
             <menu className='flex flex-col overflow-y-auto border-l-2 border-zinc-800 max-md:h-52 max-md:border-l-0'>
-              {wordsGroups[wordsGroup]
+              {suggestedWordsGroups[suggestedWordsGroup]
                 .get()
                 .filter((w) => /\p{Script=Han}/gu.test(w))
                 .toReversed()
-                .map((w) => (
-                  <li className='flex ' key={w}>
+                .map((w, i) => (
+                  <li className='flex ' key={i}>
                     <button disabled={memoSnap.gameSettings.words.includes(w)} onClick={() => props.memoStore.gameSettings.words.push(w)} className='grow py-0.5 pl-3 text-left text-xl text-zinc-400 duration-100 enabled:hover:text-zinc-200 disabled:opacity-50 max-md:text-3xl'>
                       {w}
                     </button>
