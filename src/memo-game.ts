@@ -2,6 +2,7 @@ import { IconType } from 'react-icons'
 import { GiBearHead, GiDirewolf, GiSpikedDragonHead } from 'react-icons/gi'
 import { TbCheck, TbPlayerPause, TbPlayerPlay, TbX } from 'react-icons/tb'
 import { proxy, subscribe } from 'valtio'
+import { devtools } from 'valtio/utils'
 import { z } from 'zod'
 import { assignObject } from './utils'
 
@@ -71,3 +72,4 @@ export function tryLoadMemoStore() {
   }
 }
 subscribe(memoStore, () => localStorage.setItem(storeName, JSON.stringify(memoStore)))
+devtools(memoStore)

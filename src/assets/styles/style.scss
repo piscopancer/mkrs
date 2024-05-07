@@ -3,25 +3,25 @@
 @tailwind utilities;
 @tailwind variants;
 
-@import "./search";
-@import "./mdx";
+@import './search';
+@import './mdx';
 
 ::selection {
   @apply bg-zinc-700 text-zinc-200;
 }
 input {
-  @apply outline-none caret-pink-500;
+  @apply caret-pink-500 outline-none;
 }
 html {
   &::-webkit-scrollbar {
-    @apply w-0 h-0;
+    @apply h-0 w-0;
   }
   scroll-behavior: smooth !important;
 }
 svg {
-  @apply w-auto h-auto aspect-square shrink-0;
+  @apply aspect-square h-auto w-auto shrink-0;
 }
-@media (min-width: 768px) {
+@media (screen(md)) {
   ::-webkit-scrollbar {
     @apply md:h-5 md:w-5;
   }
@@ -39,13 +39,13 @@ input,
 textarea,
 button,
 a {
-  @apply outline outline-0 focus-visible:outline-2 outline-pink-500 focus-visible:duration-100;
+  @apply outline outline-0 outline-pink-500 focus-visible:outline-2 focus-visible:duration-100;
 }
 code {
   @apply font-[unset];
 }
 [data-radix-popper-content-wrapper] > * {
-  &[data-side="top"] {
+  &[data-side='top'] {
     animation: smoothAppearTop 0.2s ease-out forwards;
     @keyframes smoothAppearTop {
       from {
@@ -58,7 +58,7 @@ code {
       }
     }
   }
-  &[data-side="bottom"] {
+  &[data-side='bottom'] {
     animation: smoothAppearBottom 0.2s ease-out forwards;
     @keyframes smoothAppearBottom {
       from {
@@ -71,7 +71,7 @@ code {
       }
     }
   }
-  &[data-side="right"] {
+  &[data-side='right'] {
     animation: smoothAppearRight 0.2s ease-out forwards;
     @keyframes smoothAppearRight {
       from {

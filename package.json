@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "_dev": "next dev -H 192.168.1.192",
+    "_dev": "next dev -H 192.168.1.41",
     "build": "next build",
     "start": "next start",
+    "_start": "next start -H 192.168.1.41",
     "lint": "next lint"
   },
   "dependencies": {
@@ -26,6 +27,7 @@
     "framer-motion": "^10.17.12",
     "html-react-parser": "^5.0.11",
     "jsdom": "^23.2.0",
+    "nanoid": "^5.0.7",
     "next": "^14.2.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

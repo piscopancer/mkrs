@@ -97,7 +97,7 @@ export function randomItemsFromArray<T>(arr: T[], num: number) {
   return result
 }
 
-export function groupArray<T extends object, P extends string | number>(arr: T[], by: (item: T) => P): Record<P, T[]> {
+export function groupArray<T extends object, P extends string>(arr: Readonly<T[]> | T[], by: (item: T) => P): Record<P, T[]> {
   const groups: any = {}
   for (let i = 0; i < arr.length; i++) {
     const prop = by(arr[i])

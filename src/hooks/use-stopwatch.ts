@@ -27,6 +27,7 @@ export default function useStopwatch(props: UseStopwatchProps) {
 
   function start() {
     time.current = 0
+    clearInterval(stopwatchRef.current)
     props.onInterval?.(time.current)
     resume()
   }
@@ -49,7 +50,9 @@ export default function useStopwatch(props: UseStopwatchProps) {
 
   function set(to: number) {
     time.current = to
+    clearInterval(stopwatchRef.current)
     props.onInterval?.(to)
+    resume()
   }
 
   return { start, resume, pause, travel, stop, set }

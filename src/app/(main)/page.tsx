@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import Link from 'next/link'
 import { TbX } from 'react-icons/tb'
 import { getCookie, setCookie } from '../actions'
-import MemoGame from './()/memo-game'
+// import MemoGame from './()/memo-game'
 
 export default async function Home() {
   const ifHideInfoBanner = await getCookie('hide-info-banner')
@@ -37,7 +37,7 @@ export default async function Home() {
           </form>
         </article>
       )}
-      <MemoGame />
+      {/* <MemoGame /> */}
     </main>
   )
 }

@@ -40,6 +40,7 @@ import { randomFromArray } from '@/utils'
 import clsx from 'clsx'
 import { motion, useAnimation, useSpring, useTransform } from 'framer-motion'
 import { ComponentProps, useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { GiCompactDisc } from 'react-icons/gi'
 import { useSnapshot } from 'valtio'
 
@@ -49,6 +50,7 @@ export default function Logo(props: ComponentProps<'div'>) {
   const [full, setFull] = useState(false)
   const [gif, setGif] = useState<null | string>(null!)
   const searchSnap = useSnapshot(searchStore)
+  const smallGifRef = useRef<HTMLDivElement | null>(null)
   const bigGifRef = useRef<HTMLDivElement | null>(null)
 
   const maxPxFromGif = 1000
@@ -76,42 +78,53 @@ export default function Logo(props: ComponentProps<'div'>) {
     }
     addEventListener('mousemove', onMouseMove)
     return () => removeEventListener('mousemove', onMouseMove)
-  }, [pxXFromGif, pxYFromGif])
+  }, [])
 
   useEffect(() => {
     if (searchStore.focused) setFull(false)
   }, [searchSnap.focused])
 
   return (
-    <div {...props} className={clsx(props.className, 'z-[2]')}>
+    <div {...props} className={clsx(props.className)}>
       {!full ? (
         <motion.div
+          ref={smallGifRef}
           layout
           layoutId='logo'
           whileHover={{ scale: 1.1 }}
           whileTap={{
             scaleY: 0.9,
           }}
+          onLayoutAnimationStart={() => {
+            if (smallGifRef.current) smallGifRef.current.style.zIndex = '1'
+          }}
+          onLayoutAnimationComplete={() => {
+            if (smallGifRef.current) smallGifRef.current.style.zIndex = '0'
+          }}
+          transition={{ layout: { duration: 0.3 } }}
           onClick={() => setFull(true)}
-          className='h-12 w-12 overflow-hidden rounded-full bg-zinc-800'
+          className='relative h-12 w-12 overflow-hidden rounded-full bg-zinc-800'
         >
           <motion.div initial={{ x: gif ? 0 : -4 + 'rem' }} animate={{ x: 0 }}>
             {gif && <img fetchPriority='low' draggable={false} src={gif} alt='девчуля танцует' className='aspect-square w-12 rounded-full object-cover saturate-0 duration-100 hover:saturate-100' />}
           </motion.div>
         </motion.div>
       ) : (
-        <div onClick={() => setFull(false)} className={clsx(!full && 'pointer-events-none', 'fixed inset-0 flex items-center justify-evenly')}>
-          <motion.div key='bg' initial={{ opacity: 0 }} animate={{ opacity: 0.8 }} className='absolute inset-0 bg-zinc-950' exit={{ opacity: 0, transition: { duration: 1 } }} />
-          <Disc side='left' />
-          <motion.div layout layoutId='logo' ref={bigGifRef} className='aspect-square h-[80vh] max-md:h-[80vw] '>
-            <motion.div style={{ x: bigGifGlassX, y: bigGifGlassY }} className='h-full w-full overflow-hidden rounded-full'>
-              <motion.div style={{ x: bigGifX, y: bigGifY }} className='h-full w-full '>
-                {gif && <img fetchPriority='low' draggable={false} src={gif} alt='девчуля танцует' className='h-full w-full scale-110 object-cover' />}
+        createPortal(
+          <div onClick={() => setFull(false)} className={clsx(!full && 'pointer-events-none', 'fixed inset-0 flex items-center justify-evenly')}>
+            <motion.div key='bg' initial={{ opacity: 0 }} animate={{ opacity: 0.8 }} className='absolute inset-0 bg-zinc-950' exit={{ opacity: 0, transition: { duration: 1 } }} />
+            <Disc side='left' />
+            <motion.div layout layoutId='logo' ref={bigGifRef} className='aspect-square h-[80vh] max-md:h-[80vw] '>
+              <motion.div style={{ x: bigGifGlassX, y: bigGifGlassY }} className='h-full w-full overflow-hidden rounded-full'>
+                <motion.div style={{ x: bigGifX, y: bigGifY }} className='h-full w-full '>
+                  {gif && <img fetchPriority='low' draggable={false} src={gif} alt='девчуля танцует' className='h-full w-full scale-110 object-cover' />}
+                </motion.div>
               </motion.div>
             </motion.div>
-          </motion.div>
-          <Disc side='right' />
-        </div>
+            <Disc side='right' />
+          </div>,
+          document.body,
+        )
       )}
     </div>
   )

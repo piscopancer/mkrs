@@ -1,6 +1,8 @@
 'use client'
 
+import MemoGame from '@/components/memo-game'
 import useExpansion from '@/hooks/use-expansion'
+import { memoStore } from '@/memo-game'
 import { TMotionComponent, theme } from '@/utils'
 import clsx from 'clsx'
 import { animate, motion, useTransform } from 'framer-motion'
@@ -96,7 +98,6 @@ export default function MemoGameCard(props: TMotionComponent<'article', {}>) {
       </motion.article>
       <motion.div
         style={{
-          padding: useTransform(expandMV, [0, 1], [theme.padding[2], theme.padding[4]]),
           background: useTransform(expandMV, [0, 1], [theme.colors.zinc[800], theme.colors.zinc[900]]),
         }}
         ref={expanderRef}
@@ -104,16 +105,15 @@ export default function MemoGameCard(props: TMotionComponent<'article', {}>) {
       >
         <motion.div
           style={{
-            opacity: useTransform(expandMV, [0.5, 1], ['0', '1']),
-            borderColor: useTransform(expandMV, [0, 1], ['#00000000', theme.colors.zinc[700]]),
+            opacity: useTransform(expandMV, [0.9, 1], ['0', '1']),
           }}
           ref={expanderChildRef}
-          className='relative size-full rounded-md border-2 border-zinc-900'
+          className='relative flex size-full flex-col'
         >
-          <button onClick={shrink} className=' rounded-lg'>
+          <button onClick={shrink} className=' ml-auto block rounded-lg'>
             <TbX className='size-16 stroke-zinc-500 p-4 duration-200 hover:stroke-zinc-100' />
           </button>
-          {/* <MemoGame cards={[{ text: '连' }, { text: '分' }, { text: '手' }, { text: '人' }, { text: '头' }, { text: '个' }, { text: '提' }, { text: '供' }]} /> */}
+          <MemoGame props={{ memoStore }} className='mx-8 grow max-md:mx-4' />
         </motion.div>
       </motion.div>
     </>
