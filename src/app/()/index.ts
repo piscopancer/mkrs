@@ -2,7 +2,7 @@ import logo from '@/assets/logo.png'
 import { project } from '@/project'
 import type { Metadata } from 'next'
 
-export const rootMetadata: Metadata = {
+export const rootMetadata = {
   description: project.description,
   openGraph: {
     title: project.name,
@@ -16,4 +16,4 @@ export const rootMetadata: Metadata = {
   other: {
     'yandex-verification': '80460a4d9f477d0e',
   },
-}
+} as const satisfies Metadata

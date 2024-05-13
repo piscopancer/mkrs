@@ -4,7 +4,6 @@
 @tailwind variants;
 
 @import './search';
-@import './mdx';
 
 ::selection {
   @apply bg-zinc-700 text-zinc-200;

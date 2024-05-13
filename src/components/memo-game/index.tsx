@@ -1,28 +1,29 @@
 'use client'
 
 import useStopwatch from '@/hooks/use-stopwatch'
-import { difficultiesInfo, statesInfo, type MemoGame, type MemoStore } from '@/memo-game'
+import { difficultiesInfo, type MemoGame, type MemoStore } from '@/memo-game'
 import { recentStore } from '@/recent'
 import { savedStore } from '@/saved'
-import { TComponent, clone, ease, getShuffledArray, groupArray, objectEntries, randomItemsFromArray, route, wait } from '@/utils'
-import * as Dialog from '@radix-ui/react-dialog'
+import { TComponent, clone, ease, getShuffledArray, objectEntries, randomItemsFromArray, route, wait } from '@/utils'
 import clsx from 'clsx'
 import { intervalToDuration } from 'date-fns'
 import { AnimatePresence, animate, motion } from 'framer-motion'
 import { nanoid } from 'nanoid'
 import { useEffect, useRef, useState } from 'react'
 import { IconType } from 'react-icons'
-import { TbClock, TbClockPlay, TbDeviceFloppy, TbDeviceGamepad2, TbEraser, TbExternalLink, TbGridPattern, TbHandStop, TbHistory, TbInfoCircle, TbPlayerPause, TbPlayerPlay, TbPlus, TbRepeat, TbTrophy, TbX } from 'react-icons/tb'
+import { TbClockPlay, TbDeviceFloppy, TbEraser, TbExternalLink, TbGridPattern, TbHandStop, TbHistory, TbInfoCircle, TbPlayerPause, TbPlayerPlay, TbPlus } from 'react-icons/tb'
 import { useSnapshot } from 'valtio'
 import { debugStore } from '../debug'
 import { Tooltip } from '../tooltip'
+import Help from './help'
+import Stats from './stats'
 
-type StartGameProps = Pick<MemoGame, 'difficulty' | 'words'> & { seed?: MemoGame['seed'] }
-
-function formatTime(seconds: number, withHours?: true) {
+export function formatTime(seconds: number, withHours?: true) {
   let duration = intervalToDuration({ start: 0, end: seconds * 1000 })
   return (withHours ? [duration.hours, duration.minutes, duration.seconds] : [(duration.minutes ?? 0) + (duration.hours ?? 0) * 60, duration.seconds]).map((dur) => String(dur ?? 0).padStart(2, '0')).join(':')
 }
+
+export type StartGameProps = Pick<MemoGame, 'difficulty' | 'words'> & { seed?: MemoGame['seed'] }
 
 const columns = {
   easy: 4,
@@ -196,7 +197,7 @@ export default function MemoGame({ props, ...attr }: TComponent<'article', { mem
                         id={`card-${i}`}
                         disabled={!clickable}
                         onClick={() => onCardClick(props.memoStore.currentGame!, i)}
-                        className={clsx('hopper bg-zinc-800 duration-200 @container-[size] [perspective:100px] [transform-style:preserve-3d]', selected && '!bg-zinc-700', selected || solved ? 'pointer-events-none [transform:rotateY(0deg)]' : '[transform:rotateY(180deg)]')}
+                        className={clsx('@container-size hopper bg-zinc-800 duration-200 [perspective:100px] [transform-style:preserve-3d]', selected && '!bg-zinc-700', selected || solved ? 'pointer-events-none [transform:rotateY(0deg)]' : '[transform:rotateY(180deg)]')}
                       >
                         <div className={'size-full place-self-center overflow-hidden'}>
                           <div id={`solved-bg-${i}`} className={clsx(solved ? 'scale-150 duration-500' : 'scale-0', 'h-full w-full rounded-full bg-pink-400 ease-out')} />
@@ -240,7 +241,7 @@ export default function MemoGame({ props, ...attr }: TComponent<'article', { mem
           </button>
         </footer>
       </section>
-      <section about='game-settings' className='max-md:flex max-md:flex-col'>
+      <section about='settings' className='@container/settings max-md:flex max-md:flex-col'>
         <section className='mb-6 max-md:order-2'>
           <h2 className='mb-4 font-display'>Сложность</h2>
           <menu className='flex w-full gap-4 max-md:flex-col max-md:gap-0'>
@@ -340,157 +341,23 @@ export default function MemoGame({ props, ...attr }: TComponent<'article', { mem
             </menu>
           </section>
         </section>
-        <section className='flex max-md:order-1 max-md:mb-8 max-md:flex-col max-md:gap-2'>
-          <button disabled={!startButtonEnabled} onClick={() => startGame(props.memoStore.gameSettings)} className='origin-left rounded-lg bg-zinc-800 px-6 py-1.5 text-lg text-zinc-200 duration-100 enabled:hover:bg-zinc-700 disabled:opacity-50'>
+        <section className='flex gap-4 @max-md/settings:order-1 @max-md/settings:grid @max-md/settings:grid-cols-[1fr,auto] @max-md/settings:gap-2 max-md:mb-8'>
+          <button
+            disabled={!startButtonEnabled}
+            onClick={() =>
+              startGame({
+                difficulty: props.memoStore.gameSettings.difficulty,
+                words: props.memoStore.gameSettings.words,
+              })
+            }
+            className='origin-left rounded-lg bg-zinc-800 px-6 py-1.5 text-lg text-zinc-200 duration-100 enabled:hover:bg-zinc-700 disabled:opacity-50 @max-md/settings:col-span-2'
+          >
             Начать
           </button>
-          <Stats props={{ memoStore: props.memoStore, startGame }} className='ml-auto max-md:ml-0' />
+          <Stats props={{ memoStore: props.memoStore, startGame }} className='ml-auto @max-md/settings:ml-0' />
+          <Help />
         </section>
       </section>
     </article>
-  )
-}
-
-function Stats({
-  props,
-  ...attr
-}: {
-  props: { memoStore: MemoStore; startGame: (game: StartGameProps) => void }
-} & Dialog.DialogTriggerProps) {
-  const memoSnap = useSnapshot(props.memoStore)
-  const [open, setOpen] = useState(false)
-  const totalTime = props.memoStore.gamesPlayed.map((g) => g.time).reduce((p, n) => p + n, 0)
-  const completedGames = memoSnap.gamesPlayed.filter((g) => g.state === 'completed')
-  const averageTime = completedGames.map((g) => g.time).reduce((p, n) => p + n, 0) / completedGames.length
-
-  function clearHistory() {
-    const bestGames = objectEntries(groupArray(props.memoStore.gamesPlayed, (g) => g.difficulty))
-      .map(([_, games]) => {
-        const completedGames = games.filter((g) => g.state === 'completed')
-        return completedGames.length ? completedGames.sort((a, b) => a.time - b.time)[0] : undefined
-      })
-      .filter(Boolean) as MemoGame[]
-    props.memoStore.gamesPlayed = bestGames
-  }
-
-  return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger {...attr} className={clsx(attr.className, 'rounded-lg bg-zinc-800 px-6 py-1.5 text-lg text-zinc-200 duration-100 hover:bg-zinc-700')}>
-        Статистика
-      </Dialog.Trigger>
-      <AnimatePresence>
-        {open && (
-          <Dialog.Portal forceMount>
-            <motion.div exit={{ opacity: 0, transition: { duration: 0.1 } }} initial={{ opacity: 0 }} animate={{ opacity: 0.5 }}>
-              <Dialog.Overlay className='fixed inset-0 bg-black' />
-            </motion.div>
-            <Dialog.Content asChild>
-              <motion.div exit={{ opacity: 0, y: 50, transition: { duration: 0.1 } }} initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className='fixed inset-0 mx-auto my-12 flex max-w-screen-md grow flex-col rounded-xl bg-zinc-900 @container max-md:mx-4 max-md:my-4'>
-                <Dialog.Trigger className='ml-auto block text-zinc-400 duration-100 hover:text-zinc-200'>
-                  <TbX className='size-16 p-4' />
-                </Dialog.Trigger>
-                <div className='overflow-y-auto px-8 max-md:px-4'>
-                  <section className='mb-8 grid grid-cols-2 gap-x-4 gap-y-2 text-center max-md:text-sm'>
-                    <div className='row-span-3 grid grid-rows-subgrid'>
-                      <h1 className='text-zinc-400'>Всего игр</h1>
-                      <p className='text-5xl max-md:text-4xl'>{memoSnap.gamesPlayed.length}</p>
-                      <p className='text-zinc-400'>{memoSnap.gamesPlayed.filter((g) => g.state === 'completed').length} завершенных</p>
-                    </div>
-                    <div className='row-span-3 grid grid-rows-subgrid'>
-                      <h1 className='text-zinc-400'>Общее время игр</h1>
-                      <p className='text-5xl max-md:text-4xl'>{formatTime(totalTime)}</p>
-                      <p className='text-zinc-400'>{formatTime(averageTime)} в среднем</p>
-                    </div>
-                  </section>
-                  <section className='mb-10'>
-                    <ul className='grid grid-cols-[auto,1fr,auto,auto,auto] gap-x-2 gap-y-1 @lg:mx-14 @lg:gap-x-6'>
-                      {objectEntries(groupArray(memoSnap.gamesPlayed, (g) => g.difficulty)).map(([difficulty, groupedGames]) => {
-                        const { icon: Icon, name } = difficultiesInfo[difficulty]
-                        const completedGames = groupedGames.filter((g) => g.state === 'completed')
-                        const bestGame = completedGames.length ? completedGames.sort((a, b) => a.time - b.time)[0] : undefined
-                        return (
-                          <li key={difficulty} className='relative col-span-full grid grid-cols-subgrid items-center px-2 max-md:text-sm'>
-                            <motion.div initial={{ opacity: 0.8, scaleX: 0 }} animate={{ opacity: 1, scaleX: groupedGames.length / memoSnap.gamesPlayed.length, transition: { delay: 0.3, duration: 1, ease } }} className='absolute inset-0 origin-left bg-zinc-800' />
-                            <Icon className='relative size-6 self-center max-md:size-5' />
-                            <span className='relative'>{name}</span>
-                            <Tooltip content='Общее кол-во игр'>
-                              <button className='relative flex items-center gap-2 font-mono max-md:gap-1'>
-                                <TbDeviceGamepad2 />
-                                {groupedGames.length}
-                              </button>
-                            </Tooltip>
-                            <Tooltip content='Лучшее время'>
-                              <button className={clsx('relative flex items-center gap-2 font-mono max-md:gap-1', !bestGame && 'opacity-50')}>
-                                <TbTrophy className='text-amber-400' />
-                                {formatTime(bestGame?.time ?? 0)}
-                              </button>
-                            </Tooltip>
-                            <Tooltip content='Переиграть'>
-                              <button
-                                disabled={!bestGame}
-                                onClick={() => {
-                                  if (bestGame) {
-                                    props.startGame(props.memoStore.gamesPlayed.find((game) => game.id === bestGame.id)!)
-                                    setOpen(false)
-                                  }
-                                }}
-                                className='relative text-zinc-400 duration-100 enabled:hover:text-zinc-200 disabled:opacity-50'
-                              >
-                                <TbRepeat className='size-9 p-2' />
-                              </button>
-                            </Tooltip>
-                          </li>
-                        )
-                      })}
-                    </ul>
-                  </section>
-                  <section className='mb-12'>
-                    <header className='mb-6 flex items-center'>
-                      <h2 className='mr-auto font-display text-xl'>История</h2>
-                      <button onClick={clearHistory} className='mr-1 px-2 py-1 text-zinc-400 duration-100 hover:text-zinc-200'>
-                        Очистить
-                      </button>
-                      <Tooltip content='Лучшие результаты сохранятся'>
-                        <button>
-                          <TbInfoCircle className='size-6 stroke-zinc-400 p-1' />
-                        </button>
-                      </Tooltip>
-                    </header>
-                    <ul className='grid grid-cols-[1fr,auto,auto]'>
-                      {memoSnap.gamesPlayed.toReversed().map((g) => {
-                        const stateInfo = statesInfo[g.state]
-                        return (
-                          <li key={g.id} className={clsx('col-span-full grid grid-cols-subgrid gap-x-2 border-zinc-700 py-2 not-[:last-child]:border-b', g.state === 'cancelled' && 'text-zinc-500')}>
-                            <div className='flex items-center gap-2'>
-                              <stateInfo.icon className='size-5' />
-                              {stateInfo.name}
-                            </div>
-                            <div className='flex items-center gap-2 font-mono'>
-                              <TbClock className='size-4' />
-                              {formatTime(g.time)}
-                            </div>
-                            <Tooltip content='Переиграть'>
-                              <button
-                                onClick={() => {
-                                  props.startGame(props.memoStore.gamesPlayed.find((game) => game.id === g.id)!)
-                                  setOpen(false)
-                                }}
-                                className='text-zinc-400 duration-100 hover:text-zinc-200'
-                              >
-                                <TbRepeat className='size-9 p-2' />
-                              </button>
-                            </Tooltip>
-                          </li>
-                        )
-                      })}
-                    </ul>
-                  </section>
-                </div>
-              </motion.div>
-            </Dialog.Content>
-          </Dialog.Portal>
-        )}
-      </AnimatePresence>
-    </Dialog.Root>
   )
 }
