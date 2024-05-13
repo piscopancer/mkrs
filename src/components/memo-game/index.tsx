@@ -6,9 +6,9 @@ import { recentStore } from '@/recent'
 import { savedStore } from '@/saved'
 import { TComponent, clone, ease, getShuffledArray, objectEntries, randomItemsFromArray, route, wait } from '@/utils'
 import clsx from 'clsx'
+import crypto from 'crypto'
 import { intervalToDuration } from 'date-fns'
 import { AnimatePresence, animate, motion } from 'framer-motion'
-import { nanoid } from 'nanoid'
 import { useEffect, useRef, useState } from 'react'
 import { IconType } from 'react-icons'
 import { TbClockPlay, TbDeviceFloppy, TbEraser, TbExternalLink, TbGridPattern, TbHandStop, TbHistory, TbInfoCircle, TbPlayerPause, TbPlayerPlay, TbPlus } from 'react-icons/tb'
@@ -71,7 +71,7 @@ export default function MemoGame({ props, ...attr }: TComponent<'article', { mem
     game.words = words
     props.memoStore.currentGame = {
       ...game,
-      id: nanoid(8),
+      id: crypto.randomBytes(4).toString('hex'),
       seed,
       time: 0,
       state: 'active',
