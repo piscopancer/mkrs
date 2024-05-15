@@ -4,12 +4,12 @@ import { TSearchProps, TSearchType, determineSearchType, parse, queryCharacter }
 import { JSDOM } from 'jsdom'
 import { Metadata } from 'next'
 import { ReactNode } from 'react'
-import Ch from './(private)/(searches)/ch'
-import ChLong from './(private)/(searches)/ch-long'
-import Py from './(private)/(searches)/py'
-import Ru from './(private)/(searches)/ru'
-import SearchError from './(private)/(searches)/search-error'
-import { TSearchPage } from './(private)/util'
+import Ch from './()/(searches)/ch'
+import ChLong from './()/(searches)/ch-long'
+import Py from './()/(searches)/py'
+import Ru from './()/(searches)/ru'
+import SearchError from './()/(searches)/search-error'
+import { TSearchPage } from './()/util'
 
 export async function generateMetadata({ params }: TSearchPage): Promise<Metadata> {
   const slug = decodeURI(params.slug)

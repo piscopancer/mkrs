@@ -13,7 +13,7 @@ export default function Help({ ...attr }: Dialog.DialogTriggerProps) {
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger {...attr} className={clsx(attr.className, 'rounded-lg bg-zinc-800 px-6 py-1.5 text-lg text-zinc-200 duration-100 hover:bg-zinc-700 @max-md/settings:px-4')}>
-        <span className='@max-md/settings:hidden'>Как Играть</span>
+        <span className='@max-md/settings:hidden'>Как играть</span>
         <TbInfoCircle className='size-6 @md/settings:hidden' />
       </Dialog.Trigger>
       <AnimatePresence>
