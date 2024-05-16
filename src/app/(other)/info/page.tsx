@@ -1,5 +1,5 @@
-import Reverso from '@/app/(main)/search/[slug]/()/reverso'
 import MarkdownArticle from '@/components/markdown'
+import Reverso from '@/components/reverso'
 import { hotkeys } from '@/hotkeys'
 import { project } from '@/project'
 

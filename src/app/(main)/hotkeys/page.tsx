@@ -4,7 +4,7 @@ import { objectEntries } from '@/utils'
 export default function HotkeysPage() {
   const shortcutsGroups: Record<string, (keyof typeof hotkeys)[]> = {
     Поиск: ['focus', 'search', 'tools'],
-    'Взаимодействие со словом': ['save', 'copy', 'to-search', 'bkrs'],
+    'Взаимодействие со словом': ['save', 'copy', 'to-search', 'bkrs', 'reverso'],
     Навигация: ['main-page', 'recent-page', 'saved-page'],
   }
 
@@ -22,7 +22,7 @@ export default function HotkeysPage() {
                   .map(([id, shortcut]) => (
                     <li key={shortcut.name} className='contents'>
                       <p className='text-zinc-400'>{shortcut.name}</p>
-                      <kbd className='shadow-key w-fit rounded-md px-2 font-mono text-sm text-zinc-400'>{shortcut.display}</kbd>
+                      <kbd className='w-fit rounded-md px-2 font-mono text-sm text-zinc-400 shadow-key'>{shortcut.display}</kbd>
                       <code className='w-fit justify-self-end rounded-full bg-zinc-800 px-2 py-0.5 font-mono text-xs text-zinc-400'>{id}</code>
                     </li>
                   ))}

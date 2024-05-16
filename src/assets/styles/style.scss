@@ -18,7 +18,7 @@ html {
   scroll-behavior: smooth !important;
 }
 svg {
-  @apply aspect-square h-auto w-auto shrink-0;
+  @apply h-auto w-auto shrink-0;
 }
 @media (screen(md)) {
   ::-webkit-scrollbar {
