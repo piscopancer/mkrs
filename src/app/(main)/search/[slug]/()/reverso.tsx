@@ -31,7 +31,7 @@ export default async function Reverso({ ch, ...htmlProps }: ComponentProps<'arti
       {parsedSearch.type === 'one' && (
         <ul className='flex flex-wrap gap-x-2 text-zinc-400 max-md:max-h-[3lh] max-md:overflow-hidden'>
           {parsedSearch.words.map((w, i) => (
-            <li key={i} className='cursor-default duration-500 hover:text-zinc-200'>
+            <li key={i} className='cursor-default'>
               {w}
             </li>
           ))}
