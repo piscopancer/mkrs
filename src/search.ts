@@ -153,6 +153,10 @@ export async function queryCharacterClient(ch: string): Promise<string | undefin
   }
 }
 
+export async function queryCharacterReverso(ch: string) {
+  return fetch(`https://context.reverso.net/translation/chinese-english/${ch}`, { next: { revalidate: 60 * 60 * 24 * 7 } }).then((res) => res.text())
+}
+
 export async function queryCharacter(ch: string) {
   return fetch(`https://bkrs.info/slovo.php?ch=${ch}`, { next: { revalidate: 60 * 60 * 24 * 7 } }).then((res) => res.text())
 }

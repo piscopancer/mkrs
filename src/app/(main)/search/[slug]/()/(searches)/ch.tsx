@@ -6,6 +6,7 @@ import Copyer from '../copyer'
 import Examples from '../examples'
 import NotFound from '../not-found'
 import RecentWriter from '../recent-writer'
+import Reverso from '../reverso'
 import RuchFulltext from '../ruch-fulltext'
 import Similar from '../similar'
 import WordsWith from '../words-with'
@@ -27,6 +28,7 @@ export default function Ch(props: TSearchProps<'ch'>) {
             {stringToReact(props.search.tr)}
           </div>
         )}
+        {props.search.ch && <Reverso ch={props.search.ch} className='mb-12' />}
         {props.search.inRu && <RuchFulltext examples={props.search.inRu} className='mb-12' />}
         {props.search.byWords && <ByWords words={props.search.byWords} className='mb-12' />}
         {props.search.examples && <Examples examples={props.search.examples} className='mb-12' />}

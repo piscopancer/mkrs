@@ -11,7 +11,7 @@ export function h1(props: ComponentProps<'h1'>) {
 
 export function h2(props: ComponentProps<'h2'>) {
   return (
-    <h1 id={props.children?.toString() ?? ''} className='my-6 font-display text-xl text-zinc-300 max-md:text-lg'>
+    <h1 id={props.children?.toString() ?? ''} className='mb-2 mt-8 font-display text-xl text-zinc-300 max-md:text-lg'>
       {props.children}
     </h1>
   )
