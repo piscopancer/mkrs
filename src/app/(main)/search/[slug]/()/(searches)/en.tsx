@@ -3,5 +3,5 @@ import { TSearchProps } from '@/search'
 
 export default function English(props: TSearchProps<'english'>) {
   if (!props.search.ch) return 'Ошибка'
-  return <Reverso ch={props.search.ch} links />
+  return <Reverso ch={props.search.ch} chMode />
 }

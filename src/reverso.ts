@@ -57,8 +57,12 @@ export function parseReverso(reversoHtml: Element): Searches {
   }
 }
 
-export async function queryCharacterReverso(ch: string) {
-  return fetch(`https://context.reverso.net/translation/chinese-english/${ch}`, { next: { revalidate: 60 * 60 * 24 * 7 } }).then((res) => res.text())
+export async function querySearch(ch: string, mode: 'ch-en' | 'en-ch' = 'ch-en'): Promise<string> {
+  const langPath = {
+    'ch-en': 'chinese-english',
+    'en-ch': 'english-chinese',
+  } satisfies Record<typeof mode, string>
+  return fetch(`https://context.reverso.net/translation/${langPath[mode]}/${ch}`, { next: { revalidate: 60 * 60 * 24 * 7 } }).then((res) => res.text())
 }
 
 function parseExamples(el: Element): Example[] | null {
