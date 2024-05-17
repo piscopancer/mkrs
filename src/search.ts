@@ -34,7 +34,7 @@ export type TSimilar = { search: string; innerHTML: string }
 
 export type TExample = { heading: string; innerHtml: string }
 
-export type TSearchType = 'ch' | 'ru' | 'py' | 'ch-long' | 'error'
+export type TSearchType = 'ch' | 'ru' | 'py' | 'ch-long' | 'english'
 
 type TSearchBase<T extends TSearchType, O extends object> = { type: T } & O
 
@@ -70,18 +70,19 @@ export type TSearches =
     >
   | TSearchBase<'py', Partial<{ found: true; words: TWord[] } | { found: false }>>
   | TSearchBase<'ch-long', Partial<{ ch: string; byWords: TWord[] }>>
-  | TSearchBase<'error', {}>
+  | TSearchBase<'english', { ch: string | null }>
 
 export type TSearch<T extends TSearchType> = TSearches & { type: T }
 
 export type TSearchProps<T extends TSearchType> = { search: TSearch<T> }
 
 export function determineSearchType(el: Element): TSearchType {
-  if (el.querySelector('#py_search_py')) return 'py'
-  if (el.querySelector('#ru_ru')) return 'ru'
+  const hasCyrillic = !!(el.querySelector('#ru_ru')?.textContent ?? '').match(/\p{Script=Cyrillic}/gu)?.length
+  if (el.querySelector('#py_search_py') && !el.querySelector('#no-such-word')) return 'py'
+  if (el.querySelector('#ru_ru') && hasCyrillic) return 'ru'
   if (el.querySelector('#ch')) return 'ch'
   if (el.querySelector('#ch_long')) return 'ch-long'
-  return 'error'
+  return 'english'
 }
 
 export function parse(el: Element, type: TSearchType): TSearches {
@@ -123,7 +124,10 @@ export function parse(el: Element, type: TSearchType): TSearches {
         type: 'ch-long',
         byWords: (el.querySelector('.tbl_bywords') && parseWords(el)) ?? undefined,
       },
-      error: { type: 'error' },
+      english: {
+        type: 'english',
+        ch: el.querySelector('#ru_ru')?.textContent?.trim() ?? el.querySelector('#py_search_py')?.textContent?.trim() ?? null,
+      },
     } satisfies Record<TSearchType, TSearches>
   )[type]
 }
@@ -133,7 +137,7 @@ export const searchDescriptions: Record<TSearches['type'], string> = {
   py: 'Поиск по пининю',
   ru: 'Поиск на русском',
   'ch-long': 'Поиск по тексту',
-  error: 'Ошибка поиска',
+  english: 'Поиск на английском',
 }
 
 export let abortController: AbortController | null = new AbortController()
@@ -228,7 +232,7 @@ const findSuggestionsFunctions: { [T in TSearchType]: (search: TSearch<T>) => st
   ru: (s) => s.startWith ?? s.wordsWith,
   py: (s) => (s.found ? s.words && s.words.map((w) => w.ch?.trim() ?? '') : undefined),
   'ch-long': (s) => s.byWords?.map((w) => w.ch?.trim() ?? '') ?? undefined,
-  error: () => undefined,
+  english: () => undefined,
 }
 
 export function findSuggestions(search: TSearches) {

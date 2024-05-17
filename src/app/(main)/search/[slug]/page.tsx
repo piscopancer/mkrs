@@ -6,9 +6,9 @@ import { Metadata } from 'next'
 import { ReactNode } from 'react'
 import Ch from './()/(searches)/ch'
 import ChLong from './()/(searches)/ch-long'
+import English from './()/(searches)/en'
 import Py from './()/(searches)/py'
 import Ru from './()/(searches)/ru'
-import SearchError from './()/(searches)/search-error'
 import { TSearchPage } from './()/util'
 
 export async function generateMetadata({ params }: TSearchPage): Promise<Metadata> {
@@ -33,9 +33,9 @@ export default async function SearchPage({ params }: TSearchPage) {
   el.querySelectorAll('a').forEach((el) => {
     el.setAttribute('href', `/search/${el.textContent}`)
   })
-  const parsedSearch = parse(el, determineSearchType(el))
+  const search = parse(el, determineSearchType(el))
 
-  return <Search search={parsedSearch} />
+  return <Search search={search} />
 }
 
 const searches = {
@@ -43,7 +43,7 @@ const searches = {
   ru: Ru,
   py: Py,
   'ch-long': ChLong,
-  error: SearchError,
+  english: English,
 } satisfies { [T in TSearchType]: (props: TSearchProps<T>) => ReactNode }
 
 function Search<T extends TSearchType>(props: TSearchProps<T>) {

@@ -14,9 +14,9 @@ import { Tooltip } from '../tooltip'
 import ExactFound from './exact-found'
 import ChSuggestions from './suggestions/ch'
 import ChLongSuggestions from './suggestions/ch-long'
+import English from './suggestions/en'
 import PySuggestions from './suggestions/py'
 import RuSuggestions from './suggestions/ru'
-import SearchError from './suggestions/search-error'
 import Tools from './tools'
 import { findExact, selectSuggestion } from './utils'
 
@@ -189,7 +189,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
       <ul className='flex items-center justify-end gap-6 max-md:hidden'>
         {[hotkeys.focus, hotkeys.search].map(({ name, display }) => (
           <li key={name} className='flex text-xs'>
-            <kbd className='shadow-key mr-2 rounded-md px-2 font-mono text-zinc-400'>{display[0]}</kbd>
+            <kbd className='mr-2 rounded-md px-2 font-mono text-zinc-400 shadow-key'>{display[0]}</kbd>
             <span className='font-mono text-zinc-500'>{name}</span>
           </li>
         ))}
@@ -211,7 +211,7 @@ const suggestions = {
   ru: RuSuggestions,
   py: PySuggestions,
   'ch-long': ChLongSuggestions,
-  error: SearchError,
+  english: English,
 } satisfies { [T in TSearchType]: (props: TSearchProps<T>) => ReactNode }
 
 function Suggestions<T extends TSearchType>(props: ReturnType<typeof useSnapshot<TSearchProps<T>>>) {

@@ -14,7 +14,7 @@ export type Searches =
   | (BaseSearch<
       'many',
       {
-        translations: string[]
+        translations: string[] | null
         groups: { original: string; translations: string[] }[]
       }
     > & { examples: Example[] | null })
@@ -40,9 +40,10 @@ export function parseReverso(reversoHtml: Element): Searches {
         examples: parseExamples(reversoHtml),
       }
     case 'many':
+      const translationsEl = reversoHtml.querySelector('#translations-content')
       return {
         type: 'many',
-        translations: Array.from(reversoHtml.querySelector('#translations-content')!.querySelectorAll('.translation')).map((tr) => tr.textContent!.trim()),
+        translations: translationsEl ? Array.from(translationsEl.querySelectorAll('.translation')).map((tr) => tr.textContent!.trim()) : null,
         groups: Array.from(reversoHtml.querySelectorAll('#splitting-content > .split')!).map((groupEl) => ({
           original: groupEl.querySelector('a.src')!.textContent!.trim(),
           translations: Array.from(groupEl.querySelectorAll('a.translation')).map((tr) => tr.textContent!.trim()),

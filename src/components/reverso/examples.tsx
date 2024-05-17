@@ -13,7 +13,7 @@ export default function Examples({ examples, ...htmlProps }: Dialog.DialogTrigge
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger {...htmlProps} disabled={!examples || !examples.length} className={clsx(htmlProps.className, 'text-zinc-600 enabled:hover:text-zinc-400 disabled:opacity-50')}>
+      <Dialog.Trigger {...htmlProps} disabled={!examples || !examples.length} className={clsx(htmlProps.className, 'text-zinc-400 duration-100 enabled:hover:text-zinc-200 disabled:opacity-50')}>
         Примеры
       </Dialog.Trigger>
       <AnimatePresence>
