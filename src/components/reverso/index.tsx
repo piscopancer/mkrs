@@ -50,15 +50,11 @@ export default async function Reverso({ ch, chMode = false, ...htmlProps }: Comp
               {search.translations.map((tr, i, arr) => (
                 <Fragment key={i}>
                   <li className={clsx(chMode ? 'block' : 'inline')}>
-                    {chMode ? (
-                      <Link href={`/search/${tr}`} className='block px-2 py-0.5 text-lg duration-100 max-md:px-1.5 max-md:text-base max-md:active:text-zinc-200 md:hover:text-zinc-200' key={i}>
-                        {tr}
-                      </Link>
-                    ) : (
-                      <>{tr}</>
-                    )}
+                    <Link href={`/search/${tr}`} className={clsx('duration-100 max-md:active:text-zinc-200 md:hover:text-zinc-200', chMode ? 'block px-2 py-0.5 text-lg max-md:px-1.5 max-md:text-base ' : '')} key={i}>
+                      {tr}
+                    </Link>
                   </li>
-                  {!chMode && <span className='cursor-default'>{i < arr.length - 1 && ', '}</span>}
+                  {!chMode && i < arr.length - 1 && <span className='cursor-default'>{', '}</span>}
                 </Fragment>
               ))}
             </ul>
@@ -74,15 +70,11 @@ export default async function Reverso({ ch, chMode = false, ...htmlProps }: Comp
                       {group.translations.map((tr, i, arr) => (
                         <Fragment key={i}>
                           <li className={clsx(chMode ? 'block' : 'inline')}>
-                            {chMode ? (
-                              <Link href={`/search/${tr}`} className='block px-2 py-0.5 text-lg duration-100 max-md:px-1.5 max-md:text-base max-md:active:text-zinc-200 md:hover:text-zinc-200' key={i}>
-                                {tr}
-                              </Link>
-                            ) : (
-                              <>{tr}</>
-                            )}
+                            <Link href={`/search/${tr}`} className={clsx('duration-100 max-md:active:text-zinc-200 md:hover:text-zinc-200', chMode ? 'block px-2 py-0.5 text-lg max-md:px-1.5 max-md:text-base' : '')} key={i}>
+                              {tr}
+                            </Link>
                           </li>
-                          {!chMode && <span className='cursor-default'>{i < arr.length - 1 && ', '}</span>}
+                          {!chMode && i < arr.length - 1 && <span className='cursor-default'>{', '}</span>}
                         </Fragment>
                       ))}
                     </ul>

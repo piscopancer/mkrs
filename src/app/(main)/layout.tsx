@@ -1,6 +1,7 @@
 import { project } from '@/project'
 import type { Metadata } from 'next'
 import { rootMetadata } from '../()'
+import Background from './()/background'
 import Search from './()/search'
 
 export const metadata: Metadata = {
@@ -11,9 +12,12 @@ export const metadata: Metadata = {
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className='mx-auto max-w-screen-lg'>
-      <Search />
-      {children}
-    </div>
+    <>
+      <Background className='absolute inset-0 overflow-hidden' />
+      <div className='relative mx-auto max-w-screen-lg'>
+        <Search />
+        {children}
+      </div>
+    </>
   )
 }

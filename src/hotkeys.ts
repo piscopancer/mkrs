@@ -1,3 +1,5 @@
+export type Hotkey = { name: string; keys: string[]; display: string }
+
 export const hotkeys = {
   save: { name: 'Сохранить', keys: ['s', 'ы'], display: 'S' },
   focus: { name: 'Фокус', keys: ['f', 'а'], display: 'F' },
@@ -10,4 +12,4 @@ export const hotkeys = {
   'to-search': { name: 'Скопировать в поиск', keys: ['w', 'ц'], display: 'W' },
   bkrs: { name: 'Смотреть на 大БКРС', keys: ['b', 'и'], display: 'B' },
   tools: { name: 'Инструменты', keys: ['t', 'е'], display: 'T' },
-} as const satisfies Record<string, { name: string; keys: string[]; display: string }>
+} as const satisfies Record<string, Hotkey>

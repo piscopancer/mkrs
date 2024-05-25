@@ -8,20 +8,23 @@ import { searchStore } from '@/search'
 import { savedStore } from '@/stores/saved'
 import clsx from 'clsx'
 import { motion, useAnimation, useSpring, useTransform } from 'framer-motion'
+import { ComponentProps } from 'react'
 import { TbDeviceFloppy, TbNorthStar } from 'react-icons/tb'
 import { zinc } from 'tailwindcss/colors'
 import { useSnapshot } from 'valtio'
 
-export default function Save({ ch, ...htmlProps }: React.ComponentProps<'div'> & { ch: string }) {
+export default function Save({ ch, ...htmlProps }: ComponentProps<'div'> & { ch: string }) {
   const savedSnap = useSnapshot(savedStore)
-  const isSaved = !!savedSnap.saved.find((w) => w === ch)
+  const isSaved = !!savedSnap.saved.some((saved) => saved === ch)
   const savedMV = useSpring(isSaved ? 1 : 0)
   savedMV.set(isSaved ? 1 : 0)
 
   const star1Anim = useAnimation()
   const star2Anim = useAnimation()
 
-  useHotkey(hotkeys.save.keys, () => !searchStore.focused && onClick())
+  useHotkey(hotkeys.save.keys, () => {
+    if (!searchStore.focused) onClick()
+  })
 
   function onClick() {
     if (!isSaved) {

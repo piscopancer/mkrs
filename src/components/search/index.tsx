@@ -1,5 +1,6 @@
 'use client'
 
+import * as Article from '@/components/article'
 import useHotkey from '@/hooks/use-hotkey'
 import { hotkeys } from '@/hotkeys'
 import { TSearchProps, TSearchType, determineSearchType, findSuggestions, parse, queryCharacterClient, searchStore, type TSearches } from '@/search'
@@ -44,7 +45,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
     searchStore.showSuggestions = false
   })
   useHotkey(hotkeys.search.keys, () => {
-    if (searchStore.focused && searchStore.inputValue && searchStore.selectedSuggestion === -1) {
+    if (searchStore.inputValue && searchStore.selectedSuggestion === -1) {
       selectSuggestion(router, searchStore.inputValue)
     }
   })
@@ -56,9 +57,20 @@ export default function Search(props: React.ComponentProps<'search'>) {
         searchStore.focused = !searchStore.showTools
       }
     },
-
     { prevent: !searchStore.focused || undefined },
   )
+  useHotkey(['v', 'м'], async (_, e) => {
+    if (e.ctrlKey && !searchStore.focused) {
+      const text = await navigator.clipboard.readText().then((t) => t.trim())
+      if (!text || text === searchStore.inputValue) return
+      searchStore.inputValue = text
+      searchStore.focused = false
+      searchStore.showTools = false
+      searchStore.selectedSuggestion = -1
+      searchStore.showSuggestions = false
+      router.push(`/search/${text}`)
+    }
+  })
 
   useEffect(() => {
     setShowCat(+Math.random().toFixed(2) < catChance)
@@ -119,7 +131,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
 
   return (
     <search {...props} ref={selfRef} className={clsx(props.className, 'relative block')}>
-      <div className='hopper relative mb-3 rounded-full bg-gradient-to-r from-pink-400 to-pink-600 p-0.5'>
+      <div className='hopper relative mb-4 rounded-full'>
         <input
           ref={inputRef}
           onFocus={() => {
@@ -133,7 +145,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
             const input = e.target.value.trim()
             searchStore.inputValue = input
           }}
-          className='w-full rounded-full bg-zinc-800 py-4 pl-6 pr-32 outline-pink-500/50 duration-100 focus-visible:outline-4 max-md:pr-20'
+          className='w-full rounded-full bg-zinc-700/50 py-4 pl-6 pr-32 outline-pink-500/70 duration-100 focus-visible:outline-4 max-md:pr-20'
         />
         <AnimatePresence>
           {querying && (
@@ -181,7 +193,8 @@ export default function Search(props: React.ComponentProps<'search'>) {
       <ul className='flex items-center justify-end gap-6 max-md:hidden'>
         {[hotkeys.focus, hotkeys.search].map(({ name, display }) => (
           <li key={name} className='flex text-xs'>
-            <kbd className='mr-2 rounded-md px-2 font-mono text-zinc-400 shadow-key'>{display[0]}</kbd>
+            <Article.kbd className='mx-0 mr-2 text-xs'>{display}</Article.kbd>
+            {/* <kbd className='mr-2 rounded-md px-2 font-mono text-zinc-400 shadow-key'></kbd> */}
             <span className='font-mono text-zinc-500'>{name}</span>
           </li>
         ))}

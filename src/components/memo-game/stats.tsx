@@ -33,7 +33,7 @@ export default function Stats({
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger {...attr} className={clsx(attr.className, 'rounded-lg bg-zinc-800 px-6 py-1.5 text-lg text-zinc-200 duration-100 hover:bg-zinc-700')}>
+      <Dialog.Trigger {...attr} className={clsx(attr.className, 'rounded-md bg-zinc-800 px-6 py-1.5 text-lg text-zinc-200 duration-100 hover:bg-zinc-700')}>
         Статистика
       </Dialog.Trigger>
       <AnimatePresence>

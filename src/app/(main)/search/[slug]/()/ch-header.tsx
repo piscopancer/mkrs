@@ -82,7 +82,7 @@ export default function ChHeader(props: TSearchProps<'ch'>) {
         {props.search.ch && <Save ch={props.search.ch} />}
       </header>
       <div className='mb-8 flex items-end gap-4'>
-        <h2 className='mr-auto w-fit max-w-full overflow-hidden text-ellipsis text-nowrap font-mono text-sm text-zinc-400'>{props.search.py}</h2>
+        <h2 className='mr-auto w-fit max-w-full overflow-hidden text-ellipsis text-nowrap font-mono text-zinc-400'>{props.search.py}</h2>
         <aside className='flex rounded-full'>
           <Tooltip
             content={

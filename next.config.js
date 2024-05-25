@@ -13,10 +13,34 @@ const nextConfig = {
   reactStrictMode: false,
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'mdx'],
   webpack: (config) => {
-    config.module.rules.push({
-      test: /\.md$/,
-      type: 'asset/source',
-    })
+    config.module.rules.push(
+      {
+        test: /\.md$/,
+        type: 'asset/source',
+      },
+      {
+        test: /\.svg$/,
+        use: [
+          {
+            loader: '@svgr/webpack',
+            options: {
+              svgoConfig: {
+                plugins: [
+                  {
+                    name: 'preset-default',
+                    params: {
+                      overrides: {
+                        removeViewBox: false,
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        ],
+      },
+    )
     return config
   },
 }

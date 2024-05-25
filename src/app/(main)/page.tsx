@@ -36,7 +36,6 @@ export default async function Home() {
           </form>
         </article>
       )}
-      {/* <MemoGame /> */}
     </main>
   )
 }

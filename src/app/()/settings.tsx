@@ -39,29 +39,13 @@ export default function Settings() {
                 }}
               />
             </li>
-            <li className='mb-4 grid grid-cols-[auto,min-content] gap-x-2 px-4'>
-              <span className='mb-1'>Игра</span>
-              <span className='row-start-2 text-xs text-zinc-500'>Показывать игру на главной странице</span>
-              <Switch
-                className='row-span-2'
-                props={{
-                  enabled: generalSnap.showMemoryGame,
-                  action: (prev) => {
-                    generalStore.showMemoryGame = !prev
-                    return !prev
-                  },
-                }}
-              />
-            </li>
           </ul>
           <Dropdown.Arrow className='fill-zinc-800' />
         </>
       </Dropdown.Content>
-      {/* <Tooltip content='Настройки' sideOffset={6}> */}
       <Dropdown.Trigger className={clsx('flex items-center justify-center rounded-full px-4 py-2 text-zinc-200 max-md:active:bg-zinc-800 md:hover:bg-zinc-800')}>
         <TbSettings className='size-6' />
       </Dropdown.Trigger>
-      {/* </Tooltip> */}
     </Dropdown.Root>
   )
 }

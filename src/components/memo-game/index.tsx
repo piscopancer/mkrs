@@ -5,13 +5,14 @@ import { difficultiesInfo, type MemoGame, type MemoStore } from '@/memo-game'
 import { recentStore } from '@/stores/recent'
 import { savedStore } from '@/stores/saved'
 import { TComponent, clone, ease, getShuffledArray, objectEntries, randomItemsFromArray, route, wait } from '@/utils'
+import * as Dropdown from '@radix-ui/react-dropdown-menu'
 import clsx from 'clsx'
 import crypto from 'crypto'
 import { intervalToDuration } from 'date-fns'
 import { AnimatePresence, animate, motion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { IconType } from 'react-icons'
-import { TbClockPlay, TbDeviceFloppy, TbEraser, TbExternalLink, TbGridPattern, TbHandStop, TbHistory, TbInfoCircle, TbPlayerPause, TbPlayerPlay, TbPlus } from 'react-icons/tb'
+import { TbClockPlay, TbCopy, TbDeviceFloppy, TbEraser, TbExternalLink, TbGridPattern, TbHandStop, TbHistory, TbInfoCircle, TbPlayerPause, TbPlayerPlay, TbPlus, TbX } from 'react-icons/tb'
 import { useSnapshot } from 'valtio'
 import { debugStore } from '../debug'
 import { Tooltip } from '../tooltip'
@@ -159,7 +160,7 @@ export default function MemoGame({ props, ...attr }: TComponent<'article', { mem
   })
 
   return (
-    <article {...attr} className={clsx(attr.className, 'grid grid-cols-[1fr,1fr] gap-x-12 max-md:grid-cols-1')}>
+    <article {...attr} className={clsx(attr.className, 'grid grid-cols-[1fr,1fr] gap-x-12 max-md:grid-cols-1 md:overflow-y-auto')}>
       <section className='flex w-full flex-col justify-self-center overflow-hidden'>
         <header className='hopper mb-4'>
           <div className='mx-auto mt-1 h-4 w-4/5 rounded-full bg-zinc-800 max-md:w-full'></div>
@@ -241,10 +242,10 @@ export default function MemoGame({ props, ...attr }: TComponent<'article', { mem
           </button>
         </footer>
       </section>
-      <section about='settings' className='@container/settings max-md:flex max-md:flex-col'>
-        <section className='mb-6 max-md:order-2'>
+      <section about='settings' className='flex flex-col overflow-x-auto overflow-y-auto pb-8 @container/settings'>
+        <section about='difficulty' className='mb-6 max-md:order-2'>
           <h2 className='mb-4 font-display'>Сложность</h2>
-          <menu className='flex w-full gap-4 max-md:flex-col max-md:gap-0'>
+          <menu className='flex w-full gap-4 @max-md/settings:flex-col @max-md/settings:gap-0'>
             {objectEntries(difficultiesInfo).map(([d, info]) => {
               const selected = props.memoStore.gameSettings.difficulty === d
               return (
@@ -253,24 +254,24 @@ export default function MemoGame({ props, ...attr }: TComponent<'article', { mem
                     disabled={selected}
                     onClick={() => (props.memoStore.gameSettings.difficulty = d)}
                     className={clsx(
-                      'hopper h-20 max-w-40 flex-1 rounded-lg border-2 border-zinc-700 bg-zinc-800 duration-100 max-md:flex max-md:max-w-none max-md:items-center max-md:rounded-none max-md:px-3 max-md:py-1 max-md:group-first:rounded-t-lg max-md:group-last:rounded-b-lg',
+                      'hopper h-20 max-w-40 flex-1 rounded-lg  bg-zinc-800 duration-100 @max-md/settings:flex @max-md/settings:max-w-none @max-md/settings:items-center @max-md/settings:rounded-none @max-md/settings:px-3 @max-md/settings:py-1.5 @max-md/settings:group-first:rounded-t-lg @max-md/settings:group-last:rounded-b-lg',
                       selected ? 'opacity-100' : 'opacity-50',
                     )}
                   >
-                    <info.icon className={clsx('size-8 duration-100 max-md:mr-2 md:ml-3 md:mt-2 md:self-start', selected ? 'scale-100' : 'scale-90')} />
-                    <div className={clsx('max-md:mr-auto md:mx-3 md:mb-1 md:self-end md:justify-self-start')}>{info.name}</div>
-                    <span className={clsx('text-xl md:mr-4 md:mt-2 md:justify-self-end')}>{info.words}</span>
+                    <info.icon className={clsx('size-8 duration-100 @md/settings:ml-3 @md/settings:mt-2 @md/settings:self-start @max-md/settings:mr-2', selected ? 'scale-100' : 'scale-90')} />
+                    <div className={clsx('@md/settings:mx-3 @md/settings:mb-1 @md/settings:self-end @md/settings:justify-self-start @max-md/settings:mr-auto')}>{info.name}</div>
+                    <span className={clsx('text-xl @md/settings:mr-4 @md/settings:mt-2 @md/settings:justify-self-end')}>{info.words}</span>
                   </button>
                 </li>
               )
             })}
           </menu>
         </section>
-        <section className='mb-8 max-md:order-3'>
+        <section about='words' className='mb-8 @max-md/settings:order-3'>
           <h2 className='mb-4 font-display'>Слова</h2>
-          <section className='grid h-72 grid-cols-[3fr,2fr] grid-rows-[auto,1fr] overflow-hidden rounded-lg border-2 border-zinc-800 max-md:h-auto max-md:grid-cols-1'>
+          <div className='grid h-72 grid-cols-[3fr,2fr] grid-rows-[auto,1fr] rounded-lg border-2 border-zinc-800 @max-md/settings:h-auto @max-md/settings:grid-cols-1'>
             <header className='flex gap-5'>
-              <h3 className='self-center py-1.5 pl-4 max-md:text-lg'>
+              <h3 className='self-center py-1.5 pl-4 @max-md/settings:text-lg'>
                 <span className={clsx('duration-100', memoSnap.gameSettings.words.length / difficultiesInfo[memoSnap.gameSettings.difficulty].words < 1 ? 'text-zinc-500' : 'text-zinc-200')}>{memoSnap.gameSettings.words.length}</span>
                 <span className='text-zinc-500'>/</span>
                 {difficultiesInfo[memoSnap.gameSettings.difficulty].words}
@@ -281,27 +282,25 @@ export default function MemoGame({ props, ...attr }: TComponent<'article', { mem
                 </button>
               </Tooltip>
               <button onClick={() => (props.memoStore.gameSettings.words = [])} className='ml-auto flex aspect-square h-full items-center justify-center self-center text-zinc-400 duration-100 hover:text-zinc-200'>
-                <TbEraser className='size-5 max-md:size-6' />
+                <TbEraser className='size-5 @max-md/settings:size-6' />
               </button>
             </header>
-            <header className='border-l-2 border-zinc-800 max-md:row-start-3 max-md:border-l-0'>
+            <header className='border-l-2 border-zinc-800 @max-md/settings:row-start-3 @max-md/settings:border-l-0'>
               <menu className='flex h-full'>
                 {objectEntries(suggestedWordsGroups).map(([group, info]) => (
                   <li className='contents' key={group}>
-                    <button onClick={() => setSuggestedWordsGroup(group)} className={clsx('flex flex-1 items-center justify-center max-md:py-2', suggestedWordsGroup === group ? 'bg-zinc-800' : '')}>
-                      <info.icon className='size-5 max-md:size-6' />
+                    <button onClick={() => setSuggestedWordsGroup(group)} className={clsx('flex flex-1 items-center justify-center @max-md/settings:py-2', suggestedWordsGroup === group ? 'bg-zinc-800' : '')}>
+                      <info.icon className='size-5 @max-md/settings:size-6' />
                     </button>
                   </li>
                 ))}
               </menu>
             </header>
-            <div className='px-3 py-2 max-md:h-52'>
+            <div className='px-3 py-2 @max-md/settings:h-52'>
               <menu about='selected-words' className='flex flex-wrap items-center self-start'>
                 {memoSnap.gameSettings.words.map((w) => (
                   <li key={w} className='contents'>
-                    <button onClick={() => (props.memoStore.gameSettings.words = props.memoStore.gameSettings.words.filter((word) => word !== w))} className={clsx('px-2 py-1 text-2xl duration-100', w === wordToAdd ? 'text-red-500 hover:opacity-80' : 'hover:text-zinc-400')}>
-                      {w}
-                    </button>
+                    <SelectedWord memoStore={props.memoStore} word={w} wordToAdd={wordToAdd} />
                   </li>
                 ))}
                 <li className='hopper mx-2 my-[calc(theme(padding.1)-2px)] rounded-lg border-2 border-zinc-800 has-[input:hover]:border-zinc-700'>
@@ -323,25 +322,25 @@ export default function MemoGame({ props, ...attr }: TComponent<'article', { mem
                 </li>
               </menu>
             </div>
-            <menu className='flex flex-col overflow-y-auto border-l-2 border-zinc-800 max-md:h-52 max-md:border-l-0'>
+            <menu className='flex flex-col overflow-y-auto border-l-2 border-zinc-800 @max-md/settings:h-52 @max-md/settings:border-l-0'>
               {suggestedWordsGroups[suggestedWordsGroup]
                 .get()
                 .filter((w) => /\p{Script=Han}/gu.test(w))
                 .toReversed()
                 .map((w, i) => (
                   <li className='flex ' key={i}>
-                    <button disabled={memoSnap.gameSettings.words.includes(w)} onClick={() => props.memoStore.gameSettings.words.push(w)} className='grow py-0.5 pl-3 text-left text-xl text-zinc-400 duration-100 enabled:hover:text-zinc-200 disabled:opacity-50 max-md:text-3xl'>
+                    <button disabled={memoSnap.gameSettings.words.includes(w)} onClick={() => props.memoStore.gameSettings.words.push(w)} className='grow py-0.5 pl-3 text-left text-xl text-zinc-400 duration-100 enabled:hover:text-zinc-200 disabled:opacity-50 @max-md/settings:text-3xl'>
                       {w}
                     </button>
                     <a target='_blank' href={route(`/search/${w}`)} className='flex items-center justify-center px-2 text-zinc-400 duration-100 hover:text-zinc-200'>
-                      <TbExternalLink className='size-5 max-md:size-6' />
+                      <TbExternalLink className='size-5 @max-md/settings:size-6' />
                     </a>
                   </li>
                 ))}
             </menu>
-          </section>
+          </div>
         </section>
-        <section className='flex gap-4 @max-md/settings:order-1 @max-md/settings:grid @max-md/settings:grid-cols-[1fr,auto] @max-md/settings:gap-2 max-md:mb-8'>
+        <section about='controls' className='flex gap-4 @max-md/settings:order-1 @max-md/settings:grid @max-md/settings:grid-cols-[1fr,auto] @max-md/settings:gap-2 max-md:mb-8'>
           <button
             disabled={!startButtonEnabled}
             onClick={() =>
@@ -350,7 +349,7 @@ export default function MemoGame({ props, ...attr }: TComponent<'article', { mem
                 words: props.memoStore.gameSettings.words,
               })
             }
-            className='origin-left rounded-lg bg-zinc-800 px-6 py-1.5 text-lg text-zinc-200 duration-100 enabled:hover:bg-zinc-700 disabled:opacity-50 @max-md/settings:col-span-2'
+            className='origin-left rounded-md bg-zinc-800 px-6 py-1.5 text-lg text-zinc-200 duration-100 enabled:hover:bg-zinc-700 disabled:opacity-50 @max-md/settings:col-span-2'
           >
             Начать
           </button>
@@ -359,5 +358,42 @@ export default function MemoGame({ props, ...attr }: TComponent<'article', { mem
         </section>
       </section>
     </article>
+  )
+}
+
+function SelectedWord({ word, memoStore, wordToAdd, ...props }: Dropdown.DropdownMenuTriggerProps & { memoStore: MemoStore; word: string; wordToAdd: string }) {
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+
+  return (
+    <Dropdown.Root modal={false} onOpenChange={setDropdownOpen} open={dropdownOpen}>
+      <Dropdown.Portal>
+        <Dropdown.Content side='top' className='pointer-events-auto flex rounded-lg border-2 border-zinc-800 bg-zinc-900 p-1'>
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(word)
+              setDropdownOpen(false)
+            }}
+            className='rounded-sm hover:bg-zinc-800'
+          >
+            <TbCopy className='size-8 p-1.5' />
+          </button>
+          <a onClick={() => setDropdownOpen(false)} target='_blank' href={route(`/search/${word}`)} className='rounded-sm hover:bg-zinc-800'>
+            <TbExternalLink className='size-8 p-1.5' />
+          </a>
+          <button
+            onClick={() => {
+              memoStore.gameSettings.words = memoStore.gameSettings.words.filter((w) => w !== word)
+            }}
+            className='rounded-sm hover:bg-zinc-800'
+          >
+            <TbX className='size-8 p-1.5' />
+          </button>
+          <Dropdown.Arrow className='fill-zinc-800' />
+        </Dropdown.Content>
+      </Dropdown.Portal>
+      <Dropdown.Trigger {...props} className={clsx(props.className, 'px-2 py-1 text-2xl duration-100', word === wordToAdd ? 'text-orange-500 hover:opacity-80' : 'hover:text-zinc-400')}>
+        {word}
+      </Dropdown.Trigger>
+    </Dropdown.Root>
   )
 }

@@ -1,5 +1,8 @@
 import { TSearchProps } from '@/search'
 import { stringToReact } from '@/utils'
+import { DOMNode, Element, domToReact } from 'html-react-parser'
+import { Route } from 'next'
+import Link from 'next/link'
 import Copyer from '../copyer'
 import Examples from '../examples'
 import NotFound from '../not-found'
@@ -25,7 +28,13 @@ export default function Ru(props: TSearchProps<'ru'>) {
         {!props.search.found && <NotFound />}
         {props.search.tr && (
           <div data-search className='mb-12 text-lg'>
-            {stringToReact(props.search.tr)}
+            {stringToReact(props.search.tr, {
+              replace: (domNode) => {
+                if (domNode instanceof Element && domNode.tagName === 'a') {
+                  return <Link href={(domNode.attribs as { href: Route }).href}>{domToReact(domNode.children as DOMNode[])}</Link>
+                }
+              },
+            })}
           </div>
         )}
         {props.search.inRu && <RuchFulltext examples={props.search.inRu} className='mb-12' />}

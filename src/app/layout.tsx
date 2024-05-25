@@ -14,13 +14,18 @@ import { route } from '@/utils'
 import clsx from 'clsx'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { RefObject, useEffect, useRef } from 'react'
 import { TbBrandGithub, TbDeviceFloppy, TbHistory, TbKeyboard, TbLineDashed } from 'react-icons/tb'
-import { useSnapshot } from 'valtio'
+import { proxy, ref, useSnapshot } from 'valtio'
 import Vibrator from '../components/vibrator'
 import Game from './()/game'
 import Logo from './()/logo'
 import PageSelector from './()/page-selector'
 import Settings from './()/settings'
+
+export const layoutStore = proxy({
+  mainContainer: null as ReturnType<typeof ref<RefObject<HTMLDivElement>>> | null,
+})
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const generalSnap = useSnapshot(generalStore)
@@ -28,6 +33,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   useHotkey(hotkeys['main-page'].keys, () => !searchStore.focused && router.push('/'))
   useHotkey(hotkeys['recent-page'].keys, () => !searchStore.focused && router.push('/recent'))
   useHotkey(hotkeys['saved-page'].keys, () => !searchStore.focused && router.push('/saved'))
+  const containerRef = useRef<HTMLDivElement>(null!)
+
+  useEffect(() => {
+    if (containerRef.current) {
+      layoutStore.mainContainer = ref(containerRef)
+    }
+  }, [])
 
   return (
     <html lang='ru'>
@@ -95,9 +107,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </a>
             </Tooltip>
           </nav>
-          <section className='overflow-y-auto overflow-x-hidden rounded-lg [grid-area:main] max-md:px-4 md:mb-3 md:mr-3 md:border-2 md:border-zinc-800 md:px-4 md:[scrollbar-gutter:stable]'>{children}</section>
+          <section ref={containerRef} className='relative overflow-y-auto overflow-x-hidden rounded-lg [grid-area:main] max-md:px-4 md:mb-3 md:mr-3 md:border-2 md:border-zinc-800 md:px-4 md:[scrollbar-gutter:stable]'>
+            {children}
+          </section>
         </div>
-        {/* <Store /> */}
         <PersistentStores />
         {process.env.NODE_ENV !== 'production' && <Debug />}
       </body>

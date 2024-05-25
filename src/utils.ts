@@ -1,6 +1,6 @@
 import twConfig from '#/tailwind.config'
 import { HTMLMotionProps } from 'framer-motion'
-import { domToReact, htmlToDOM } from 'html-react-parser'
+import { HTMLReactParserOptions, domToReact, htmlToDOM } from 'html-react-parser'
 import type { Route } from 'next'
 import { ComponentProps, ReactHTML } from 'react'
 import resolveConfig from 'tailwindcss/resolveConfig'
@@ -40,8 +40,8 @@ export function cutStart(whole: string, length: number) {
   return [firstPart, secondPart] as const
 }
 
-export function stringToReact(str: string) {
-  return domToReact(htmlToDOM(str))
+export function stringToReact(str: string, options?: HTMLReactParserOptions) {
+  return domToReact(htmlToDOM(str), options)
 }
 
 export type Snapshot<T extends object> = ReturnType<typeof useSnapshot<T>>

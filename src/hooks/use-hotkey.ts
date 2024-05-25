@@ -8,17 +8,17 @@ export default function useHotkey<Keys extends string[]>(
   },
 ) {
   useEffect(() => {
-    function registerEventListeners(e: KeyboardEvent) {
+    function onKeyDown(e: KeyboardEvent) {
       if (keys.includes(e.key)) {
-        if (!options) {
-          callback(e.key, e)
-        } else {
-          if (options.prevent) e.preventDefault()
-          callback(e.key, e)
+        if (options?.prevent) {
+          e.preventDefault()
         }
+        callback(e.key, e)
       }
     }
-    addEventListener('keydown', registerEventListeners)
-    return () => removeEventListener('keydown', registerEventListeners)
-  }, [keys, options])
+    addEventListener('keydown', onKeyDown)
+    return () => {
+      removeEventListener('keydown', onKeyDown)
+    }
+  }, [keys, options, callback])
 }

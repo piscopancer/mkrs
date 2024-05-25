@@ -4,12 +4,12 @@ import { differenceInDays } from 'date-fns'
 import { useEffect } from 'react'
 import { subscribe } from 'valtio'
 import { ZodType, z } from 'zod'
-import { scannerStore, scannerStoreSchema } from '../scanner'
 import { assignObject } from '../utils'
 import { generalStore, generalStoreSchema } from './general'
 import { memoStore, memoStoreSchema } from './memo'
 import { recentStore, recentStoreSchema } from './recent'
 import { savedStore, savedStoreSchema } from './saved'
+import { scannerStore, scannerStoreSchema } from './scanner'
 
 type PersistentStore<StoreSchema extends ZodType, Store extends z.infer<StoreSchema> = z.infer<StoreSchema>> = {
   name: string
@@ -53,21 +53,21 @@ export const persistentStores = [
   }),
 ] as const satisfies ReturnType<typeof persistStore>[]
 
-function tryLoadStore(store: ReturnType<typeof persistStore>) {
-  const storeString = localStorage.getItem(store.name)
+function tryLoadStore(ps: ReturnType<typeof persistStore>) {
+  const storeString = localStorage.getItem(ps.name)
   if (!storeString) return
-  const parseRes = store.schema.safeParse(JSON.parse(storeString))
+  const parseRes = ps.schema.safeParse(JSON.parse(storeString))
   if (parseRes.success) {
-    const modifiedData = store.onSuccess?.(parseRes.data) || parseRes.data
-    assignObject(store.store, modifiedData || parseRes.data)
+    const modifiedData = ps.onSuccess?.(parseRes.data) || parseRes.data
+    assignObject(ps.store, modifiedData || parseRes.data)
   }
 }
 
 export function PersistentStores() {
   useEffect(() => {
-    for (const store of persistentStores) {
-      tryLoadStore(store)
-      subscribe(store, () => localStorage.setItem(store.name, JSON.stringify(store)))
+    for (const ps of persistentStores) {
+      tryLoadStore(ps)
+      subscribe(ps.store, () => localStorage.setItem(ps.name, JSON.stringify(ps.store)))
     }
   }, [])
   return null
