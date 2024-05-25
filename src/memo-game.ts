@@ -1,10 +1,8 @@
 import { IconType } from 'react-icons'
 import { GiBearHead, GiDirewolf, GiSpikedDragonHead } from 'react-icons/gi'
 import { TbCheck, TbPlayerPause, TbPlayerPlay, TbX } from 'react-icons/tb'
-import { proxy, subscribe } from 'valtio'
-import { devtools } from 'valtio/utils'
 import { z } from 'zod'
-import { assignObject } from './utils'
+import { memoStore } from './stores/memo'
 
 const difficulties = ['easy', 'medium', 'hard'] as const
 const states = ['active', 'paused', 'cancelled', 'completed'] as const
@@ -16,8 +14,8 @@ export const statesInfo = {
   completed: { name: 'Завершено', icon: TbCheck },
 } satisfies Record<(typeof states)[number], { name: string; icon: IconType }>
 
-const memoGameSchema = z.object({
-  id: z.string().uuid(),
+export const memoGameSchema = z.object({
+  id: z.string(),
   difficulty: z.enum(difficulties),
   time: z.number().min(0),
   state: z.enum(states),
@@ -46,30 +44,3 @@ export const difficultiesInfo = {
     icon: GiSpikedDragonHead,
   },
 } as const satisfies Record<(typeof difficulties)[number], { name: string; icon: IconType; words: number }>
-
-const storeName = 'memo'
-const memoStoreSchema = z.object({
-  currentGame: memoGameSchema.nullable(),
-  gamesPlayed: z.array(memoGameSchema),
-  gameSettings: memoGameSchema.pick({ words: true, seed: true, difficulty: true }),
-})
-const defaultMemoStore: z.infer<typeof memoStoreSchema> = {
-  currentGame: null,
-  gameSettings: {
-    difficulty: 'easy',
-    seed: 0,
-    words: ['小', '大'],
-  },
-  gamesPlayed: [],
-}
-export const memoStore = proxy({ ...defaultMemoStore })
-export function tryLoadMemoStore() {
-  const storeString = localStorage.getItem(storeName)
-  if (!storeString) return
-  const parseRes = memoStoreSchema.safeParse(JSON.parse(storeString))
-  if (parseRes.success) {
-    assignObject(memoStore, parseRes.data)
-  }
-}
-subscribe(memoStore, () => localStorage.setItem(storeName, JSON.stringify(memoStore)))
-devtools(memoStore)

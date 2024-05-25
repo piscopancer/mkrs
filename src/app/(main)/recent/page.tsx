@@ -1,8 +1,9 @@
 'use client'
 
 import Vibrator from '@/components/vibrator'
-import { groupByDate, recentStore } from '@/recent'
-import { savedStore } from '@/saved'
+import { groupByDate } from '@/recent'
+import { recentStore } from '@/stores/recent'
+import { savedStore } from '@/stores/saved'
 import { objectEntries } from '@/utils'
 import clsx from 'clsx'
 import { compareDesc, formatDistanceToNowStrict } from 'date-fns'

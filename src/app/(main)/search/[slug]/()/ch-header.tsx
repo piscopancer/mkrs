@@ -19,34 +19,25 @@ export default function ChHeader(props: TSearchProps<'ch'>) {
   const copyBtnAnim = useAnimation()
   const toSearchBtnAnim = useAnimation()
 
-  useHotkey([
-    hotkeys['to-search'].keys,
-    () => {
-      if (!searchSnap.focused) {
-        toSearch()
-        toSearchBtnAnim.start({
-          backgroundColor: [colors.zinc[800], colors.zinc[800], '#00000000'],
-        })
-      }
-    },
-  ])
-  useHotkey([
-    hotkeys.copy.keys,
-    (_, e) => {
-      if (!searchSnap.focused && !e.ctrlKey) {
-        copy()
-        copyBtnAnim.start({
-          backgroundColor: [colors.zinc[800], colors.zinc[800], '#00000000'],
-        })
-      }
-    },
-  ])
-  useHotkey([
-    hotkeys.bkrs.keys,
-    () => {
-      if (!searchSnap.focused) window.open(bkrsUrl, '_blank')?.focus()
-    },
-  ])
+  useHotkey(hotkeys['to-search'].keys, () => {
+    if (!searchSnap.focused) {
+      toSearch()
+      toSearchBtnAnim.start({
+        backgroundColor: [colors.zinc[800], colors.zinc[800], '#00000000'],
+      })
+    }
+  })
+  useHotkey(hotkeys.copy.keys, (_, e) => {
+    if (!searchSnap.focused && !e.ctrlKey) {
+      copy()
+      copyBtnAnim.start({
+        backgroundColor: [colors.zinc[800], colors.zinc[800], '#00000000'],
+      })
+    }
+  })
+  useHotkey(hotkeys.bkrs.keys, () => {
+    if (!searchSnap.focused) window.open(bkrsUrl, '_blank')?.focus()
+  })
 
   function copy() {
     if (!props.search.ch) return
@@ -91,7 +82,7 @@ export default function ChHeader(props: TSearchProps<'ch'>) {
         {props.search.ch && <Save ch={props.search.ch} />}
       </header>
       <div className='mb-8 flex items-end gap-4'>
-        <h2 className='mr-auto w-fit max-w-full overflow-hidden text-ellipsis text-nowrap rounded-full bg-zinc-800 px-3 text-base text-zinc-400'>{props.search.py}</h2>
+        <h2 className='mr-auto w-fit max-w-full overflow-hidden text-ellipsis text-nowrap font-mono text-sm text-zinc-400'>{props.search.py}</h2>
         <aside className='flex rounded-full'>
           <Tooltip
             content={

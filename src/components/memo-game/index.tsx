@@ -2,8 +2,8 @@
 
 import useStopwatch from '@/hooks/use-stopwatch'
 import { difficultiesInfo, type MemoGame, type MemoStore } from '@/memo-game'
-import { recentStore } from '@/recent'
-import { savedStore } from '@/saved'
+import { recentStore } from '@/stores/recent'
+import { savedStore } from '@/stores/saved'
 import { TComponent, clone, ease, getShuffledArray, objectEntries, randomItemsFromArray, route, wait } from '@/utils'
 import clsx from 'clsx'
 import crypto from 'crypto'
@@ -197,7 +197,7 @@ export default function MemoGame({ props, ...attr }: TComponent<'article', { mem
                         id={`card-${i}`}
                         disabled={!clickable}
                         onClick={() => onCardClick(props.memoStore.currentGame!, i)}
-                        className={clsx('@container-size hopper bg-zinc-800 duration-200 [perspective:100px] [transform-style:preserve-3d]', selected && '!bg-zinc-700', selected || solved ? 'pointer-events-none [transform:rotateY(0deg)]' : '[transform:rotateY(180deg)]')}
+                        className={clsx('hopper bg-zinc-800 duration-200 @container-size [perspective:100px] [transform-style:preserve-3d]', selected && '!bg-zinc-700', selected || solved ? 'pointer-events-none [transform:rotateY(0deg)]' : '[transform:rotateY(180deg)]')}
                       >
                         <div className={'size-full place-self-center overflow-hidden'}>
                           <div id={`solved-bg-${i}`} className={clsx(solved ? 'scale-150 duration-500' : 'scale-0', 'h-full w-full rounded-full bg-pink-400 ease-out')} />

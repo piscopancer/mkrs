@@ -29,16 +29,13 @@ export default function Suggestions<T extends TSearchType, S extends TSearch<T>,
 
   const display = props.display(props.search)
 
-  useHotkey([['ArrowUp'], () => suggestions && suggestions.length > 0 && moveSelection(suggestions, -1)], { prevent: true })
-  useHotkey([['ArrowDown'], () => suggestions && suggestions.length > 0 && moveSelection(suggestions, 1)], { prevent: true })
-  useHotkey([
-    ['Enter'],
-    () => {
-      if (suggestions && searchSnap.selectedSuggestion !== -1) {
-        selectSuggestion(router, suggestions[searchSnap.selectedSuggestion])
-      }
-    },
-  ])
+  useHotkey(['ArrowUp'], () => suggestions && suggestions.length > 0 && moveSelection(suggestions, -1), { prevent: true })
+  useHotkey(['ArrowDown'], () => suggestions && suggestions.length > 0 && moveSelection(suggestions, 1), { prevent: true })
+  useHotkey(['Enter'], () => {
+    if (suggestions && searchSnap.selectedSuggestion !== -1) {
+      selectSuggestion(router, suggestions[searchSnap.selectedSuggestion])
+    }
+  })
 
   function moveSelection(suggestions: string[], by: -1 | 1) {
     const current = searchStore.selectedSuggestion

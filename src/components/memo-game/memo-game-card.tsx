@@ -2,7 +2,7 @@
 
 import MemoGame from '@/components/memo-game'
 import useExpansion from '@/hooks/use-expansion'
-import { memoStore } from '@/memo-game'
+import { memoStore } from '@/stores/memo'
 import { TMotionComponent, theme } from '@/utils'
 import clsx from 'clsx'
 import { animate, motion, useTransform } from 'framer-motion'

@@ -30,41 +30,33 @@ export default function Search(props: React.ComponentProps<'search'>) {
   const [showCat, setShowCat] = useState(false)
 
   useHotkey(
-    [
-      hotkeys.focus.keys,
-      () => {
-        searchStore.focused = true
-        if (searchStore.search) searchStore.showSuggestions = true
-      },
-    ],
+    hotkeys.focus.keys,
+    () => {
+      searchStore.focused = true
+      if (searchStore.search) searchStore.showSuggestions = true
+    },
+
     { prevent: !searchSnap.focused || undefined },
   )
-  useHotkey([
-    ['Escape'],
+  useHotkey(['Escape'], () => {
+    searchStore.focused = false
+    searchStore.showTools = false
+    searchStore.showSuggestions = false
+  })
+  useHotkey(hotkeys.search.keys, () => {
+    if (searchStore.focused && searchStore.inputValue && searchStore.selectedSuggestion === -1) {
+      selectSuggestion(router, searchStore.inputValue)
+    }
+  })
+  useHotkey(
+    hotkeys.tools.keys,
     () => {
-      searchStore.focused = false
-      searchStore.showTools = false
-      searchStore.showSuggestions = false
-    },
-  ])
-  useHotkey([
-    hotkeys.search.keys,
-    () => {
-      if (searchStore.focused && searchStore.inputValue && searchStore.selectedSuggestion === -1) {
-        selectSuggestion(router, searchStore.inputValue)
+      if (!searchStore.focused) {
+        searchStore.showTools = !searchStore.showTools
+        searchStore.focused = !searchStore.showTools
       }
     },
-  ])
-  useHotkey(
-    [
-      hotkeys.tools.keys,
-      () => {
-        if (!searchStore.focused) {
-          searchStore.showTools = !searchStore.showTools
-          searchStore.focused = !searchStore.showTools
-        }
-      },
-    ],
+
     { prevent: !searchStore.focused || undefined },
   )
 

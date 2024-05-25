@@ -65,7 +65,7 @@ export default function Logo(props: ComponentProps<'div'>) {
   const bigGifX = useTransform(pxXFromGif, [maxPxFromGif, -maxPxFromGif], [-maxGifPxMovement / 2, maxGifPxMovement / 2])
   const bigGifY = useTransform(pxYFromGif, [maxPxFromGif, -maxPxFromGif], [-maxGifPxMovement / 2, maxGifPxMovement / 2])
 
-  useHotkey([['Escape'], () => full && setFull(false)])
+  useHotkey(['Escape'] as const, () => full && setFull(false))
 
   useEffect(() => {
     setGif(randomFromArray(gifs).src)

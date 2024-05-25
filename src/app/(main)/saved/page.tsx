@@ -1,6 +1,6 @@
 'use client'
 
-import { savedStore } from '@/saved'
+import { savedStore } from '@/stores/saved'
 import { AnimatePresence, motion, useAnimation } from 'framer-motion'
 import Link from 'next/link'
 import { useEffect } from 'react'

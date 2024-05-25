@@ -11,26 +11,22 @@ export default function ByWords(props: { words: TWord[] }) {
   const router = useRouter()
   const searchSnap = useSnapshot(searchStore)
 
-  useHotkey([['ArrowLeft'], () => searchStore.selectedSuggestion !== -1 && moveSelection(-1)], { prevent: searchStore.selectedSuggestion !== -1 || undefined })
-  useHotkey([['ArrowRight'], () => searchStore.selectedSuggestion !== -1 && moveSelection(1)], { prevent: searchStore.selectedSuggestion !== -1 || undefined })
+  useHotkey(['ArrowLeft'], () => searchStore.selectedSuggestion !== -1 && moveSelection(-1), { prevent: searchStore.selectedSuggestion !== -1 || undefined })
+  useHotkey(['ArrowRight'], () => searchStore.selectedSuggestion !== -1 && moveSelection(1), { prevent: searchStore.selectedSuggestion !== -1 || undefined })
   useHotkey(
-    [
-      ['ArrowUp', 'ArrowDown'],
-      () => {
-        searchStore.selectedSuggestion = searchStore.selectedSuggestion === -1 ? 0 : -1
-      },
-    ],
+    ['ArrowUp', 'ArrowDown'],
+    () => {
+      searchStore.selectedSuggestion = searchStore.selectedSuggestion === -1 ? 0 : -1
+    },
+
     { prevent: true },
   )
-  useHotkey([
-    ['Enter'],
-    () => {
-      if (searchStore.selectedSuggestion !== -1) {
-        const suggestion = props.words[searchStore.selectedSuggestion]
-        if (suggestion.ch) selectSuggestion(router, suggestion.ch)
-      }
-    },
-  ])
+  useHotkey(['Enter'], () => {
+    if (searchStore.selectedSuggestion !== -1) {
+      const suggestion = props.words[searchStore.selectedSuggestion]
+      if (suggestion.ch) selectSuggestion(router, suggestion.ch)
+    }
+  })
 
   function moveSelection(by: -1 | 1) {
     switch (searchStore.selectedSuggestion) {

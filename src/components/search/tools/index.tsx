@@ -5,7 +5,6 @@ import { objectEntries, type TComponent } from '@/utils'
 import clsx from 'clsx'
 import type { ReactNode } from 'react'
 import { useSnapshot } from 'valtio'
-import Handwriting from './handwriting'
 import Scanner from './scanner'
 
 export default function Tools({ props, ...attr }: TComponent<'article', {}>) {
@@ -17,7 +16,6 @@ export default function Tools({ props, ...attr }: TComponent<'article', {}>) {
         {objectEntries(searchTools).map(([tool, toolInfo]) => (
           <li key={tool} className='group'>
             <button
-              disabled={tool === 'handwriting'}
               onClick={() => {
                 if (tool === searchStore.tool) {
                   searchStore.showTools = false
@@ -43,7 +41,6 @@ export default function Tools({ props, ...attr }: TComponent<'article', {}>) {
 
 const toolsMap = {
   scanner: Scanner,
-  handwriting: Handwriting,
 } satisfies Record<keyof typeof searchTools, (comp: TComponent<any, any>) => ReactNode>
 
 function Tool({ props, ...attr }: TComponent<'article', { tool: keyof typeof searchTools }>) {

@@ -1,7 +1,7 @@
 'use client'
 
 import Switch from '@/components/switch'
-import { generalStore } from '@/general-store'
+import { generalStore } from '@/stores/general'
 import * as Dropdown from '@radix-ui/react-dropdown-menu'
 import clsx from 'clsx'
 import type { Route } from 'next'

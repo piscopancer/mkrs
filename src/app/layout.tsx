@@ -4,11 +4,12 @@ import { fontsVars } from '@/assets/fonts'
 import '@/assets/styles/style.scss'
 import Debug from '@/components/debug'
 import { Tooltip } from '@/components/tooltip'
-import { generalStore } from '@/general-store'
 import useHotkey from '@/hooks/use-hotkey'
 import { hotkeys } from '@/hotkeys'
 import { project } from '@/project'
 import { searchStore } from '@/search'
+import { generalStore } from '@/stores/general'
+import { PersistentStores } from '@/stores/persistent-stores'
 import { route } from '@/utils'
 import clsx from 'clsx'
 import Link from 'next/link'
@@ -20,14 +21,13 @@ import Game from './()/game'
 import Logo from './()/logo'
 import PageSelector from './()/page-selector'
 import Settings from './()/settings'
-import Store from './store'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const generalSnap = useSnapshot(generalStore)
   const router = useRouter()
-  useHotkey([hotkeys['main-page'].keys, () => !searchStore.focused && router.push('/')])
-  useHotkey([hotkeys['recent-page'].keys, () => !searchStore.focused && router.push('/recent')])
-  useHotkey([hotkeys['saved-page'].keys, () => !searchStore.focused && router.push('/saved')])
+  useHotkey(hotkeys['main-page'].keys, () => !searchStore.focused && router.push('/'))
+  useHotkey(hotkeys['recent-page'].keys, () => !searchStore.focused && router.push('/recent'))
+  useHotkey(hotkeys['saved-page'].keys, () => !searchStore.focused && router.push('/saved'))
 
   return (
     <html lang='ru'>
@@ -97,7 +97,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </nav>
           <section className='overflow-y-auto overflow-x-hidden rounded-lg [grid-area:main] max-md:px-4 md:mb-3 md:mr-3 md:border-2 md:border-zinc-800 md:px-4 md:[scrollbar-gutter:stable]'>{children}</section>
         </div>
-        <Store />
+        {/* <Store /> */}
+        <PersistentStores />
         {process.env.NODE_ENV !== 'production' && <Debug />}
       </body>
     </html>

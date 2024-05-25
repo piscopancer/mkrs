@@ -44,7 +44,7 @@ export function stringToReact(str: string) {
   return domToReact(htmlToDOM(str))
 }
 
-export type TSnapshot<T extends object> = ReturnType<typeof useSnapshot<T>>
+export type Snapshot<T extends object> = ReturnType<typeof useSnapshot<T>>
 
 export type TComponent<T extends keyof ReactHTML, P extends object> = ComponentProps<T> & { props: P }
 

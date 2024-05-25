@@ -1,5 +1,5 @@
 import type { IconType } from 'react-icons'
-import { TbPencil, TbScan } from 'react-icons/tb'
+import { TbScan } from 'react-icons/tb'
 import { proxy } from 'valtio'
 import { route } from './utils'
 
@@ -7,10 +7,6 @@ export const tools = {
   scanner: {
     name: 'сканер',
     icon: TbScan,
-  },
-  handwriting: {
-    name: 'рукописный ввод',
-    icon: TbPencil,
   },
 } as const satisfies Record<string, { name: string; icon: IconType }>
 

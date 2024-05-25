@@ -1,7 +1,7 @@
 'use client'
 
 import MemoGame from '@/components/memo-game'
-import { memoStore } from '@/memo-game'
+import { memoStore } from '@/stores/memo'
 import { ease } from '@/utils'
 import * as Dialog from '@radix-ui/react-dialog'
 import clsx from 'clsx'
