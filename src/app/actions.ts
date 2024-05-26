@@ -4,7 +4,7 @@ import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies'
 import { cookies } from 'next/headers'
 
 type TCookies = {
-  'hide-info-banner': true | undefined
+  'hide-welcoming-banner': true | undefined
 }
 
 export async function getCookie<N extends keyof TCookies>(name: N) {

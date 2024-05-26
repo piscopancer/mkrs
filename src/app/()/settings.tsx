@@ -1,5 +1,6 @@
 'use client'
 
+import { backgrounds } from '@/assets/bg'
 import Switch from '@/components/switch'
 import { generalStore } from '@/stores/general'
 import * as Dropdown from '@radix-ui/react-dropdown-menu'
@@ -26,7 +27,7 @@ export default function Settings() {
               </Dropdown.Item>
             </li>
             <li className='mb-4 grid grid-cols-[auto,min-content] gap-x-2 px-4'>
-              <span className='mb-1'>Аниме девочки</span>
+              <span className='mb-1 block'>Аниме девочки</span>
               <span className='row-start-2 text-xs text-zinc-500'>Включение может снизить скорость поиска: браузер сначала грузит гифки, только потом слово. Ваш интернет должен быть быстрым!</span>
               <Switch
                 className='row-span-2'
@@ -38,6 +39,49 @@ export default function Settings() {
                   },
                 }}
               />
+            </li>
+            <li className='mb-4 px-4'>
+              <div className='mb-2 flex items-center gap-x-2'>
+                <span className='block grow'>Менять обои ежедневно</span>
+                <Switch
+                  props={{
+                    enabled: generalSnap.autoChangeBackground,
+                    action: (prev) => {
+                      generalStore.autoChangeBackground = !prev
+                      return !prev
+                    },
+                  }}
+                />
+              </div>
+              <div className='flex items-center gap-x-2'>
+                <span className='mr-auto block'>Текущие обои</span>
+                <div className={clsx('flex items-center duration-100', generalSnap.autoChangeBackground && 'opacity-50')}>
+                  <button
+                    disabled={generalSnap.autoChangeBackground}
+                    onClick={() => {
+                      const nextIndex = backgrounds.indexOf(generalStore.background) - 1
+                      generalStore.background = backgrounds[nextIndex === -1 ? backgrounds.length - 1 : nextIndex]
+                    }}
+                    className='rounded-l-md bg-zinc-800 px-2 py-1 font-mono duration-100 enabled:hover:bg-zinc-700'
+                  >
+                    {'<-'}
+                  </button>
+                  <span className='bg-zinc-800/50 px-3 py-1 font-mono'>
+                    {backgrounds.indexOf(generalSnap.background) + 1}
+                    <span className='text-zinc-400'>/{backgrounds.length}</span>
+                  </span>
+                  <button
+                    disabled={generalSnap.autoChangeBackground}
+                    onClick={() => {
+                      const nextIndex = backgrounds.indexOf(generalStore.background) + 1
+                      generalStore.background = backgrounds[nextIndex === backgrounds.length ? 0 : nextIndex]
+                    }}
+                    className='rounded-r-md bg-zinc-800 px-2 py-1 font-mono duration-100 enabled:hover:bg-zinc-700'
+                  >
+                    {'->'}
+                  </button>
+                </div>
+              </div>
             </li>
           </ul>
           <Dropdown.Arrow className='fill-zinc-800' />

@@ -63,7 +63,7 @@ export const ease = [0.3, 1, 0, 1] as const
 
 export const { theme } = resolveConfig(twConfig)
 
-export function getShuffledArray<T>(array: T[], seed: number) {
+export function getShuffledArray<T extends unknown>(array: readonly T[] | T[], seed: number): T[] {
   function random(seed: number) {
     var x = Math.sin(seed++) * 10000
     return x - Math.floor(x)
