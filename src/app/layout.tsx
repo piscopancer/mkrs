@@ -51,7 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           )}
         >
           {generalSnap.animeGirls && (
-            <div className={'flex h-20 w-20 items-center justify-center [grid-area:logo]'}>
+            <div className={'flex size-20 items-center justify-center [grid-area:logo]'}>
               <Logo />
             </div>
           )}
