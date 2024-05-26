@@ -64,7 +64,7 @@ export default function Background(props: ComponentProps<'div'>) {
         animate={{ opacity: 1 }}
         className='absolute inset-0 min-h-full max-md:aspect-[1/1.5] max-md:w-full'
         style={{
-          y: useTransform(() => scrollY.get() * (mobile ? 0.7 : 1)),
+          y: useTransform(() => scrollY.get() * (mobile ? 0.7 : 0)),
         }}
       >
         <Bg />
