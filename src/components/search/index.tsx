@@ -31,6 +31,8 @@ export default function Search(props: React.ComponentProps<'search'>) {
   const [querying, setQuerying] = useState(false)
   const catChance = 0.01
   const [showCat, setShowCat] = useState(false)
+  const searchTimer = useRef<NodeJS.Timeout | null>(null)
+  const searchTimeout = 0.5
 
   useHotkey(
     hotkeys.focus.keys,
@@ -90,24 +92,25 @@ export default function Search(props: React.ComponentProps<'search'>) {
   }, [])
 
   useEffect(() => {
-    if (!inputRef.current) {
-      return
-    }
-    inputRef.current.value = searchStore.search
+    if (!inputRef.current) return
+    searchTimer.current && clearTimeout(searchTimer.current)
     if (!searchStore.search) {
       setQuerying(false)
       searchStore.bkrsResponse = undefined
       searchStore.showSuggestions = false
-    } else {
-      !querying && setQuerying(true)
-      queryBkrs(searchStore.search).then((search) => {
+      return
+    }
+    inputRef.current.value = searchStore.search
+    searchTimer.current = setTimeout(() => {
+      setQuerying(true)
+      queryBkrs(searchStore.search).then((response) => {
         setQuerying(false)
-        searchStore.bkrsResponse = searchStore.search ? search : undefined
-        const suggestionsFound = searchStore.search && search ? !!findSuggestions(search) : false
+        searchStore.bkrsResponse = searchStore.search ? response : undefined
+        const suggestionsFound = searchStore.search && response ? !!findSuggestions(response) : false
         searchStore.showSuggestions = suggestionsFound && searchStore.focused
         if (!suggestionsFound) searchStore.selectedSuggestion = -1
       })
-    }
+    }, searchTimeout * 1000)
   }, [searchSnap.search])
 
   useEffect(() => {
