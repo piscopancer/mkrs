@@ -1,13 +1,13 @@
-import { TSearchProps } from '@/search'
-import Save from '../save'
+import { BkrsResponseProps } from '@/bkrs'
 import ByWords from '../by-words'
+import Save from '../save'
 
-export default function ChLong(props: TSearchProps<'ch-long'>) {
+export default function ChLong(props: BkrsResponseProps<'ch-long'>) {
   return (
-    <article className='mb-24 relative'>
-      {props.search.ch && <Save ch={props.search.ch} className='absolute top-0 right-0' />}
-      <h1 className='text-5xl mb-4'>{props.search.ch}</h1>
-      {props.search.byWords && <ByWords words={props.search.byWords} className='mb-12' />}
+    <article className='relative mb-24'>
+      {props.response.ch && <Save ch={props.response.ch} className='absolute right-0 top-0' />}
+      <h1 className='mb-4 text-5xl'>{props.response.ch}</h1>
+      {props.response.byWords && <ByWords words={props.response.byWords} className='mb-12' />}
     </article>
   )
 }

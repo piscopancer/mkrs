@@ -1,18 +1,19 @@
 'use client'
 
+import { type BkrsResponseProps } from '@/bkrs'
 import { Tooltip } from '@/components/tooltip'
 import useHotkey from '@/hooks/use-hotkey'
 import { hotkeys } from '@/hotkeys'
-import { searchStore, type TSearchProps } from '@/search'
+import { searchStore } from '@/search'
 import { motion, useAnimation } from 'framer-motion'
 import { TbArrowUp, TbCopy } from 'react-icons/tb'
 import colors from 'tailwindcss/colors'
 import { useSnapshot } from 'valtio'
 import Save from './save'
 
-export default function ChHeader(props: TSearchProps<'ch'>) {
+export default function ChHeader(props: BkrsResponseProps<'ch'>) {
   const searchSnap = useSnapshot(searchStore)
-  const bkrsUrl = `https://bkrs.info/slovo.php?ch=${props.search.ch}`
+  const bkrsUrl = `https://bkrs.info/slovo.php?ch=${props.response.ch}`
 
   const chAnim = useAnimation()
   const ch2Anim = useAnimation()
@@ -40,8 +41,8 @@ export default function ChHeader(props: TSearchProps<'ch'>) {
   })
 
   function copy() {
-    if (!props.search.ch) return
-    navigator.clipboard.writeText(props.search.ch)
+    if (!props.response.ch) return
+    navigator.clipboard.writeText(props.response.ch)
     ch2Anim.set({ scale: 1, y: 0 })
     ch2Anim
       .start({
@@ -58,8 +59,8 @@ export default function ChHeader(props: TSearchProps<'ch'>) {
   }
 
   function toSearch() {
-    if (!props.search.ch) return
-    searchStore.inputValue = props.search.ch
+    if (!props.response.ch) return
+    searchStore.search = props.response.ch
     chAnim.set({ scale: 1, y: 0, x: 0 })
     chAnim.start({ scaleY: 1.2, y: -20, transition: { ease: 'easeInOut', duration: 0.1 } }).then(() => {
       chAnim.start({ scaleY: 1, y: 0, transition: { type: 'spring', stiffness: 200 } })
@@ -73,16 +74,16 @@ export default function ChHeader(props: TSearchProps<'ch'>) {
       <header className='mb-8 flex items-start gap-4'>
         <div className='hopper mr-auto'>
           <motion.span animate={ch2Anim} className='pointer-events-none text-5xl'>
-            {props.search.ch}
+            {props.response.ch}
           </motion.span>
           <motion.h1 animate={chAnim} className='relative text-5xl'>
-            {props.search.ch}
+            {props.response.ch}
           </motion.h1>
         </div>
-        {props.search.ch && <Save ch={props.search.ch} />}
+        {props.response.ch && <Save ch={props.response.ch} />}
       </header>
       <div className='mb-8 flex items-end gap-4'>
-        <h2 className='mr-auto w-fit max-w-full overflow-hidden text-ellipsis text-nowrap font-mono text-zinc-400'>{props.search.py}</h2>
+        <h2 className='mr-auto w-fit max-w-full overflow-hidden text-ellipsis text-nowrap font-mono text-zinc-400'>{props.response.py}</h2>
         <aside className='flex rounded-full'>
           <Tooltip
             content={

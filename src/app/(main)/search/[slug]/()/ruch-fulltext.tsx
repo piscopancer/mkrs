@@ -1,10 +1,10 @@
-import { TExample } from '@/search'
+import { Example } from '@/bkrs'
 import { stringToReact } from '@/utils'
 import clsx from 'clsx'
 import Link from 'next/link'
 import Header from './header'
 
-export default function RuchFulltext(props: React.ComponentProps<'section'> & { examples: TExample[] }) {
+export default function RuchFulltext(props: React.ComponentProps<'section'> & { examples: Example[] }) {
   const { examples, ...htmlProps } = props
   return (
     <section {...htmlProps} className={clsx(htmlProps.className)}>

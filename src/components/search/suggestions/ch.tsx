@@ -1,14 +1,14 @@
-import { TSearchProps } from '@/search'
+import { BkrsResponseProps } from '@/bkrs'
 import clsx from 'clsx'
 import { TbAsterisk } from 'react-icons/tb'
 import Suggestions from '.'
 import SuggestionSelection from './selection'
 
-export default function ChSuggestions(props: TSearchProps<'ch'>) {
+export default function ChSuggestions(props: BkrsResponseProps<'ch'>) {
   return (
     <Suggestions
       suggestions={8}
-      search={props.search}
+      search={props.response}
       display={(search) => search.startWith ?? search.wordsWith ?? []}
       button={({ isSelected, i, display, ...htmlProps }) => {
         return (

@@ -1,7 +1,8 @@
+import { BkrsResponseProps } from '@/bkrs'
 import Reverso from '@/components/reverso'
-import { TSearchProps } from '@/search'
 
-export default function English(props: TSearchProps<'english'>) {
-  if (!props.search.ch) return 'Ошибка'
-  return <Reverso ch={props.search.ch} chMode />
+export default function English(props: BkrsResponseProps<'english'>) {
+  if (!props.response.ch) return 'Ошибка'
+
+  return <Reverso search={props.response.ch} mode='en-ch' />
 }

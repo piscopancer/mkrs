@@ -1,22 +1,17 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 export default function TestPage() {
   const [data, setData] = useState('')
+  const [pending, setPending] = useState(false)
+  const searchRef = useRef<HTMLInputElement>(null!)
 
   return (
     <>
-      <button
-        onClick={async () => {
-          const json = await fetch('https://jsonplaceholder.typicode.com/todos/1').then((res) => res.json())
-          const d = JSON.stringify(json, null, 2)
-          setData(d)
-        }}
-      >
-        get data
-      </button>
-      <pre>{data}</pre>
+      <input type='text' ref={searchRef} />
+      <button onClick={async () => {}}>get data</button>
+      <pre>{(pending && 'pending') || data}</pre>
     </>
   )
 }

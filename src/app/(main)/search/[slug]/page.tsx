@@ -1,7 +1,7 @@
+import { queryBkrs } from '@/app/actions'
 import Logo from '@/assets/logo.png'
+import { BkrsResponseProps, BkrsResponseType } from '@/bkrs'
 import { project } from '@/project'
-import { TSearchProps, TSearchType, determineSearchType, parse, queryCharacter } from '@/search'
-import { JSDOM } from 'jsdom'
 import { Metadata } from 'next'
 import { ReactNode } from 'react'
 import Ch from './()/(searches)/ch'
@@ -27,25 +27,23 @@ export async function generateMetadata({ params }: TSearchPage): Promise<Metadat
 }
 
 export default async function SearchPage({ params }: TSearchPage) {
-  const resText = await queryCharacter(params.slug)
-  if (!resText) return
-  const el = new JSDOM(resText).window.document.body
-  el.querySelectorAll('a').forEach((el) => {
-    el.setAttribute('href', `/search/${el.textContent}`)
-  })
-  const search = parse(el, determineSearchType(el))
+  const response = await queryBkrs(params.slug.trim())
 
-  return <Search search={search} />
+  if (!response) {
+    return null
+  }
+
+  return <Response response={response} />
 }
 
-const searches = {
+const responses = {
   ch: Ch,
   ru: Ru,
   py: Py,
   'ch-long': ChLong,
   english: English,
-} satisfies { [T in TSearchType]: (props: TSearchProps<T>) => ReactNode }
+} satisfies { [T in BkrsResponseType]: (props: BkrsResponseProps<T>) => ReactNode }
 
-function Search<T extends TSearchType>(props: TSearchProps<T>) {
-  return searches[props.search.type](props as never)
+function Response<T extends BkrsResponseType>(props: BkrsResponseProps<T>) {
+  return responses[props.response.type](props as never)
 }

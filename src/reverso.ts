@@ -1,36 +1,38 @@
-export type SearchType = 'one' | 'many' | 'error'
+export type ReversoResponseType = 'one' | 'many' | 'error'
 import { JSDOM } from 'jsdom'
 
-type BaseSearch<T extends SearchType, O extends object> = { type: T } & O
+export type ReversoSearchMode = 'en-ch' | 'ch-en'
+
+type ReversoResponseBase<T extends ReversoResponseType, O extends object> = { type: T } & O
 export type Example = { original: string; translation: string }
 
-export type Searches =
-  | (BaseSearch<
+export type ReversoResponses =
+  | (ReversoResponseBase<
       'one',
       {
         translations: string[]
       }
     > & { examples: Example[] | null })
-  | (BaseSearch<
+  | (ReversoResponseBase<
       'many',
       {
         translations: string[] | null
         groups: { original: string; translations: string[] }[]
       }
     > & { examples: Example[] | null })
-  | BaseSearch<'error', {}>
+  | ReversoResponseBase<'error', {}>
 
-export type Search<T extends SearchType> = Searches & { type: T }
+export type ReversoResponse<T extends ReversoResponseType> = ReversoResponses & { type: T }
 
-export type SearchProps<T extends SearchType> = { search: Search<T> }
+export type ReversoResponseProps<T extends ReversoResponseType> = { search: ReversoResponse<T> }
 
-function determineSearchType(el: Element): SearchType {
+function determineSearchType(el: Element): ReversoResponseType {
   if (el.querySelector('#translations-content') && !el.querySelector('#splitting-content')) return 'one'
   if (el.querySelector('#splitting-content')) return 'many'
   return 'error'
 }
 
-export function parseReverso(reversoHtml: Element): Searches {
+export function parseReverso(reversoHtml: Element): ReversoResponses {
   const type = determineSearchType(reversoHtml)
   switch (type) {
     case 'one':
@@ -55,14 +57,6 @@ export function parseReverso(reversoHtml: Element): Searches {
         type: 'error',
       }
   }
-}
-
-export async function querySearch(ch: string, mode: 'ch-en' | 'en-ch' = 'ch-en'): Promise<string> {
-  const langPath = {
-    'ch-en': 'chinese-english',
-    'en-ch': 'english-chinese',
-  } satisfies Record<typeof mode, string>
-  return fetch(`https://context.reverso.net/translation/${langPath[mode]}/${ch}`, { next: { revalidate: 60 * 60 * 24 * 7 } }).then((res) => res.text())
 }
 
 function parseExamples(el: Element): Example[] | null {

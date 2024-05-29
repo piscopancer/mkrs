@@ -1,9 +1,9 @@
-import { TExample } from '@/search'
+import { Example } from '@/bkrs'
 import { stringToReact } from '@/utils'
 import clsx from 'clsx'
 import Header from './header'
 
-export default function Examples(props: React.ComponentProps<'section'> & { examples: TExample[] }) {
+export default function Examples(props: React.ComponentProps<'section'> & { examples: Example[] }) {
   const { examples, ...htmlProps } = props
   return (
     <section {...htmlProps} className={clsx(htmlProps.className)}>

@@ -1,10 +1,11 @@
-import { TSearches, searchStore } from '@/search'
+import { BkrsResponses } from '@/bkrs'
+import { searchStore } from '@/search'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 import { useSnapshot } from 'valtio'
 
 export type TExact = { ch: string; tr: string } | undefined
 
-export function findExact(search: ReturnType<typeof useSnapshot<TSearches>>): TExact {
+export function findExact(search: ReturnType<typeof useSnapshot<BkrsResponses>>): TExact {
   if (search.type === 'ch') {
     if (search.tr)
       return {

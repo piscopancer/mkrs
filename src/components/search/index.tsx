@@ -1,9 +1,11 @@
 'use client'
 
+import { queryBkrs } from '@/app/actions'
+import { BkrsResponseProps, BkrsResponseType, findSuggestions } from '@/bkrs'
 import * as Article from '@/components/article'
 import useHotkey from '@/hooks/use-hotkey'
 import { hotkeys } from '@/hotkeys'
-import { TSearchProps, TSearchType, determineSearchType, findSuggestions, parse, queryCharacterClient, searchStore, type TSearches } from '@/search'
+import { searchStore } from '@/search'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
@@ -34,7 +36,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
     hotkeys.focus.keys,
     () => {
       searchStore.focused = true
-      if (searchStore.search) searchStore.showSuggestions = true
+      if (searchStore.bkrsResponse) searchStore.showSuggestions = true
     },
 
     { prevent: !searchSnap.focused || undefined },
@@ -45,8 +47,8 @@ export default function Search(props: React.ComponentProps<'search'>) {
     searchStore.showSuggestions = false
   })
   useHotkey(hotkeys.search.keys, () => {
-    if (searchStore.inputValue && searchStore.selectedSuggestion === -1) {
-      selectSuggestion(router, searchStore.inputValue)
+    if (searchStore.search && searchStore.selectedSuggestion === -1) {
+      selectSuggestion(router, searchStore.search)
     }
   })
   useHotkey(
@@ -62,8 +64,8 @@ export default function Search(props: React.ComponentProps<'search'>) {
   useHotkey(['v', 'м'], async (_, e) => {
     if (e.ctrlKey && !searchStore.focused) {
       const text = await navigator.clipboard.readText().then((t) => t.trim())
-      if (!text || text === searchStore.inputValue) return
-      searchStore.inputValue = text
+      if (!text || text === searchStore.search) return
+      searchStore.search = text
       searchStore.focused = false
       searchStore.showTools = false
       searchStore.selectedSuggestion = -1
@@ -91,22 +93,22 @@ export default function Search(props: React.ComponentProps<'search'>) {
     if (!inputRef.current) {
       return
     }
-    inputRef.current.value = searchStore.inputValue
-    if (!searchStore.inputValue) {
+    inputRef.current.value = searchStore.search
+    if (!searchStore.search) {
       setQuerying(false)
-      searchStore.search = undefined
+      searchStore.bkrsResponse = undefined
       searchStore.showSuggestions = false
     } else {
       !querying && setQuerying(true)
-      query(searchStore.inputValue).then((search) => {
+      queryBkrs(searchStore.search).then((search) => {
         setQuerying(false)
-        searchStore.search = searchStore.inputValue ? search : undefined
-        const suggestionsFound = searchStore.inputValue && search ? !!findSuggestions(search) : false
+        searchStore.bkrsResponse = searchStore.search ? search : undefined
+        const suggestionsFound = searchStore.search && search ? !!findSuggestions(search) : false
         searchStore.showSuggestions = suggestionsFound && searchStore.focused
         if (!suggestionsFound) searchStore.selectedSuggestion = -1
       })
     }
-  }, [searchSnap.inputValue])
+  }, [searchSnap.search])
 
   useEffect(() => {
     if (searchStore.focused) {
@@ -116,18 +118,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
     }
   }, [searchSnap.focused])
 
-  async function query(input: string): Promise<TSearches | undefined> {
-    const text = await queryCharacterClient(input)
-    if (!text) return
-    const el = document.createElement('div')
-    el.innerHTML = text
-    el.querySelectorAll('img').forEach((i) => i.remove())
-    const search = parse(el, determineSearchType(el))
-    el.remove()
-    return search
-  }
-
-  const exact = searchSnap.search && findExact(searchSnap.search)
+  const exact = searchSnap.bkrsResponse && findExact(searchSnap.bkrsResponse)
 
   return (
     <search {...props} ref={selfRef} className={clsx(props.className, 'relative block')}>
@@ -136,14 +127,14 @@ export default function Search(props: React.ComponentProps<'search'>) {
           ref={inputRef}
           onFocus={() => {
             searchStore.focused = true
-            if (searchStore.search) searchStore.showSuggestions = true
+            if (searchStore.bkrsResponse) searchStore.showSuggestions = true
           }}
           onBlur={() => (searchStore.focused = false)}
           spellCheck={false}
           type='text'
           onChange={(e) => {
             const input = e.target.value.trim()
-            searchStore.inputValue = input
+            searchStore.search = input
           }}
           className='w-full rounded-full bg-zinc-700/50 py-4 pl-6 pr-32 outline-pink-500/70 duration-100 focus-visible:outline-4 max-md:pr-20'
         />
@@ -175,13 +166,13 @@ export default function Search(props: React.ComponentProps<'search'>) {
           </button>
         </Tooltip>
         <button
-          disabled={!!!searchSnap.inputValue.trim()}
-          onClick={() => selectSuggestion(router, searchStore.inputValue)}
+          disabled={!!!searchSnap.search.trim()}
+          onClick={() => selectSuggestion(router, searchStore.search)}
           className='group flex h-full items-center justify-center justify-self-end rounded-full pl-2 pr-6 text-zinc-400 duration-100 focus-visible:text-pink-500 focus-visible:outline-0 enabled:hover:text-pink-500 disabled:opacity-50'
         >
           <TbSearch className='size-4' />
         </button>
-        {searchSnap.search && searchSnap.showSuggestions && !searchSnap.showTools && <Suggestions search={searchSnap.search} />}
+        {searchSnap.bkrsResponse && searchSnap.showSuggestions && !searchSnap.showTools && <Suggestions response={searchSnap.bkrsResponse} />}
         <AnimatePresence>
           {searchSnap.showTools && (
             <motion.div initial={{ opacity: 1, y: -2 }} animate={{ y: 0, opacity: 1, transition: { duration: 0.1 } }} key='handwriting' exit={{ opacity: 0, y: -2, transition: { duration: 0.1 } }} className='absolute inset-x-0 top-full z-[1] mt-2 '>
@@ -217,8 +208,8 @@ const suggestions = {
   py: PySuggestions,
   'ch-long': ChLongSuggestions,
   english: English,
-} satisfies { [T in TSearchType]: (props: TSearchProps<T>) => ReactNode }
+} satisfies { [T in BkrsResponseType]: (props: BkrsResponseProps<T>) => ReactNode }
 
-function Suggestions<T extends TSearchType>(props: ReturnType<typeof useSnapshot<TSearchProps<T>>>) {
-  return suggestions[props.search.type](props as never)
+function Suggestions<T extends BkrsResponseType>(props: ReturnType<typeof useSnapshot<BkrsResponseProps<T>>>) {
+  return suggestions[props.response.type](props as never)
 }

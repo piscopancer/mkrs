@@ -1,11 +1,12 @@
+import { BkrsResponse, BkrsResponseType, findSuggestions, responsesDescriptions } from '@/bkrs'
 import useHotkey from '@/hooks/use-hotkey'
-import { TSearch, TSearchType, findSuggestions, searchDescriptions, searchStore } from '@/search'
+import { searchStore } from '@/search'
 import { useRouter } from 'next/navigation'
 import { ReactNode } from 'react'
 import { useSnapshot } from 'valtio'
 import { selectSuggestion } from '../utils'
 
-export default function Suggestions<T extends TSearchType, S extends TSearch<T>, Display extends unknown>(props: {
+export default function Suggestions<T extends BkrsResponseType, S extends BkrsResponse<T>, Display extends unknown>(props: {
   suggestions: number
   search: S
   display: (search: S) => Display[]
@@ -56,7 +57,7 @@ export default function Suggestions<T extends TSearchType, S extends TSearch<T>,
 
   return (
     <aside className='absolute inset-x-0 top-full z-[1] mt-2 rounded-xl border-2 border-zinc-800 bg-zinc-900/90 pb-2.5'>
-      <h1 className='mx-4 mb-2 mt-3 block font-mono text-xs text-zinc-500 max-md:mb-2'>{searchDescriptions[props.search.type]}</h1>
+      <h1 className='mx-4 mb-2 mt-3 block font-mono text-xs text-zinc-500 max-md:mb-2'>{responsesDescriptions[props.search.type]}</h1>
       <ul>
         {suggestions.map((suggestion, i) => {
           const isSelected = searchSnap.selectedSuggestion === i

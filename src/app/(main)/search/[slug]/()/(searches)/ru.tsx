@@ -1,4 +1,4 @@
-import { TSearchProps } from '@/search'
+import { BkrsResponseProps } from '@/bkrs'
 import { stringToReact } from '@/utils'
 import { DOMNode, Element, domToReact } from 'html-react-parser'
 import { Route } from 'next'
@@ -11,24 +11,24 @@ import RuchFulltext from '../ruch-fulltext'
 import Save from '../save'
 import StartWith from '../start-with'
 
-export default function Ru(props: TSearchProps<'ru'>) {
+export default function Ru(props: BkrsResponseProps<'ru'>) {
   return (
     <>
-      {props.search.ru && (
+      {props.response.ru && (
         <>
-          <Copyer search={props.search.ru} />
-          <RecentWriter search={props.search.ru} />
+          <Copyer search={props.response.ru} />
+          <RecentWriter search={props.response.ru} />
         </>
       )}
       <article className='relative mb-24'>
         <header className='mb-8 flex items-start gap-4'>
-          <h1 className='grow text-3xl'>{props.search.ru}</h1>
-          {props.search.ru && <Save ch={props.search.ru} className='ml-auto' />}
+          <h1 className='grow text-3xl'>{props.response.ru}</h1>
+          {props.response.ru && <Save ch={props.response.ru} className='ml-auto' />}
         </header>
-        {!props.search.found && <NotFound />}
-        {props.search.tr && (
+        {!props.response.found && <NotFound />}
+        {props.response.tr && (
           <div data-search className='mb-12 text-lg'>
-            {stringToReact(props.search.tr, {
+            {stringToReact(props.response.tr, {
               replace: (domNode) => {
                 if (domNode instanceof Element && domNode.tagName === 'a') {
                   return <Link href={(domNode.attribs as { href: Route }).href}>{domToReact(domNode.children as DOMNode[])}</Link>
@@ -37,9 +37,9 @@ export default function Ru(props: TSearchProps<'ru'>) {
             })}
           </div>
         )}
-        {props.search.inRu && <RuchFulltext examples={props.search.inRu} className='mb-12' />}
-        {props.search.startWith && <StartWith words={props.search.startWith} className='mb-12' />}
-        {props.search.examples && <Examples examples={props.search.examples} className='mb-12' />}
+        {props.response.inRu && <RuchFulltext examples={props.response.inRu} className='mb-12' />}
+        {props.response.startWith && <StartWith words={props.response.startWith} className='mb-12' />}
+        {props.response.examples && <Examples examples={props.response.examples} className='mb-12' />}
       </article>
     </>
   )

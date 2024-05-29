@@ -1,13 +1,14 @@
 'use client'
 
+import { Word, responsesDescriptions } from '@/bkrs'
 import useHotkey from '@/hooks/use-hotkey'
-import { TWord, searchDescriptions, searchStore } from '@/search'
+import { searchStore } from '@/search'
 import clsx from 'clsx'
 import { useRouter } from 'next/navigation'
 import { useSnapshot } from 'valtio'
 import { selectSuggestion } from '../utils'
 
-export default function ByWords(props: { words: TWord[] }) {
+export default function ByWords(props: { words: Word[] }) {
   const router = useRouter()
   const searchSnap = useSnapshot(searchStore)
 
@@ -44,7 +45,7 @@ export default function ByWords(props: { words: TWord[] }) {
 
   return (
     <aside className='absolute inset-x-0 top-full z-[1] mt-2 rounded-xl border-2 border-zinc-800 bg-zinc-900/90 pb-4'>
-      <h1 className='mx-4 mb-2 mt-3 block font-mono text-xs text-zinc-500 max-md:mb-2'>{searchDescriptions['ch-long']}</h1>
+      <h1 className='mx-4 mb-2 mt-3 block font-mono text-xs text-zinc-500 max-md:mb-2'>{responsesDescriptions['ch-long']}</h1>
       <ul className='mx-4 flex flex-wrap gap-1'>
         {props.words.map((word, i) => (
           <li key={i}>

@@ -1,12 +1,12 @@
 'use client'
 
-import { TWord } from '@/search'
+import { Word } from '@/bkrs'
 import { stringToReact } from '@/utils'
 import clsx from 'clsx'
 import Link from 'next/link'
 import Header from './header'
 
-export default function ByWords({ words, ...htmlProps }: React.ComponentProps<'section'> & { words: TWord[] }) {
+export default function ByWords({ words, ...htmlProps }: React.ComponentProps<'section'> & { words: Word[] }) {
   return (
     <section {...htmlProps} className={clsx(htmlProps.className)}>
       <Header text='Пословный перевод' className='mb-6' />

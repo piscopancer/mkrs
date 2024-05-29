@@ -1,10 +1,55 @@
 'use server'
 
+import { BkrsResponses, determineBkrsSearchType, parseBkrsPage } from '@/bkrs'
+import { ReversoResponses, ReversoSearchMode, parseReverso } from '@/reverso'
+import { JSDOM } from 'jsdom'
 import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies'
 import { cookies } from 'next/headers'
 
 type TCookies = {
   'hide-welcoming-banner': true | undefined
+}
+
+async function _queryReverso(search: string, mode: ReversoSearchMode): Promise<ReversoResponses | undefined> {
+  const langPath = {
+    'ch-en': 'chinese-english',
+    'en-ch': 'english-chinese',
+  } satisfies Record<ReversoSearchMode, string>
+  try {
+    const reversoHtml = await fetch(`https://context.reverso.net/translation/${langPath[mode]}/${search}`, { next: { revalidate: 60 * 60 * 24 * 7 } }).then((res) => res.text())
+
+    const bodyEl = new JSDOM(reversoHtml).window.document.body
+    const res = parseReverso(bodyEl)
+    return res
+  } catch (error) {
+    console.error('Reverso error', error)
+    return undefined
+  }
+}
+
+export async function queryReverso(search: string, mode: ReversoSearchMode) {
+  return _queryReverso.bind(null, search, mode)()
+}
+
+async function _queryBkrs(search: string): Promise<BkrsResponses | undefined> {
+  try {
+    const html = await fetch(`https://bkrs.info/slovo.php?ch=${search}`).then((res) => res.text())
+    const bodyEl = new JSDOM(html).window.document.body
+    bodyEl.querySelectorAll('a').forEach((el) => {
+      el.setAttribute('href', `/search/${el.textContent}`)
+    })
+    bodyEl.querySelectorAll('img').forEach((i) => i.remove())
+    const res = parseBkrsPage(bodyEl, determineBkrsSearchType(bodyEl))
+    bodyEl.remove()
+    return res
+  } catch (error) {
+    console.error('Bkrs error', error)
+    return undefined
+  }
+}
+
+export async function queryBkrs(search: string) {
+  return _queryBkrs.bind(null, search)()
 }
 
 export async function getCookie<N extends keyof TCookies>(name: N) {

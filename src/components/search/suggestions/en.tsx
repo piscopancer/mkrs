@@ -1,5 +1,5 @@
-import { TSearchProps } from '@/search'
+import { BkrsResponseProps } from '@/bkrs'
 
-export default function English(props: TSearchProps<'english'>) {
+export default function English(props: BkrsResponseProps<'english'>) {
   return null
 }

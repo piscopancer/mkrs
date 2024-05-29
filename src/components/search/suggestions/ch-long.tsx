@@ -1,6 +1,6 @@
-import { TSearchProps } from '@/search'
+import { BkrsResponseProps } from '@/bkrs'
 import ByWords from './by-words'
 
-export default function ChLongSuggestions(props: TSearchProps<'ch-long'>) {
-  return props.search.byWords && <ByWords words={props.search.byWords} />
+export default function ChLongSuggestions(props: BkrsResponseProps<'ch-long'>) {
+  return props.response.byWords && <ByWords words={props.response.byWords} />
 }

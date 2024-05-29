@@ -1,13 +1,13 @@
-import { TSearchProps } from '@/search'
+import { BkrsResponseProps } from '@/bkrs'
 import clsx from 'clsx'
 import Suggestions from '.'
 import SuggestionSelection from './selection'
 
-export default function RuSuggestions(props: TSearchProps<'ru'>) {
+export default function RuSuggestions(props: BkrsResponseProps<'ru'>) {
   return (
     <Suggestions
       suggestions={8}
-      search={props.search}
+      search={props.response}
       display={(search) => search.startWith ?? search.wordsWith ?? []}
       button={({ isSelected, i, display, ...htmlProps }) => {
         return (

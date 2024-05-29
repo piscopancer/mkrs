@@ -1,9 +1,9 @@
-import { TSimilar } from '@/search'
+import { type Similar } from '@/bkrs'
 import clsx from 'clsx'
 import Link from 'next/link'
 import Header from './header'
 
-export default function Similar({ similar, ...htmlProps }: React.ComponentProps<'section'> & { similar: TSimilar[] }) {
+export default function Similar({ similar, ...htmlProps }: React.ComponentProps<'section'> & { similar: Similar[] }) {
   return (
     <section {...htmlProps} className={clsx(htmlProps.className)}>
       <Header text='Похожие' className='mb-6' />

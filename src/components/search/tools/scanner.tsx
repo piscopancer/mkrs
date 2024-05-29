@@ -129,7 +129,7 @@ export default function Scanner({ props, ...attr }: TComponent<'article', {}>) {
               <li key={i}>
                 <button
                   onClick={() => {
-                    searchStore.inputValue = searchStore.inputValue + r
+                    searchStore.search = searchStore.search + r
                   }}
                   className='border-b-2 border-dashed border-zinc-800 px-1 pb-1 text-2xl text-zinc-400 hover:border-zinc-600 hover:text-zinc-200'
                 >

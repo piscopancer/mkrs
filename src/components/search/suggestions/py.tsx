@@ -1,13 +1,13 @@
-import { TSearchProps } from '@/search'
+import { BkrsResponseProps } from '@/bkrs'
 import clsx from 'clsx'
 import Suggestions from '.'
 import SuggestionSelection from './selection'
 
-export default function PySuggestions(props: TSearchProps<'py'>) {
+export default function PySuggestions(props: BkrsResponseProps<'py'>) {
   return (
     <Suggestions
       suggestions={8}
-      search={props.search}
+      search={props.response}
       display={(search) => (search.found ? search.words ?? [] : [])}
       button={({ isSelected, i, display, ...htmlProps }) => {
         return (
