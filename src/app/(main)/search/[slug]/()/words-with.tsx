@@ -10,7 +10,7 @@ export default function WordsWith({ words, ...htmlProps }: ComponentProps<'secti
       <ul className='grid grid-cols-3 gap-1 max-md:grid-cols-2' data-search>
         {words.map((word) => (
           <li key={word}>
-            <Link href={`/search/${word}`} className='text-lg max-md:text-sm'>
+            <Link prefetch={false} href={`/search/${word}`} className='text-lg max-md:text-sm'>
               {word}
             </Link>
           </li>

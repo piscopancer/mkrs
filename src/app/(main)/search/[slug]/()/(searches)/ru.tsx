@@ -31,7 +31,11 @@ export default function Ru(props: BkrsResponseProps<'ru'>) {
             {stringToReact(props.response.tr, {
               replace: (domNode) => {
                 if (domNode instanceof Element && domNode.tagName === 'a') {
-                  return <Link href={(domNode.attribs as { href: Route }).href}>{domToReact(domNode.children as DOMNode[])}</Link>
+                  return (
+                    <Link prefetch={false} href={(domNode.attribs as { href: Route }).href}>
+                      {domToReact(domNode.children as DOMNode[])}
+                    </Link>
+                  )
                 }
               },
             })}

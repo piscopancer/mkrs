@@ -47,7 +47,7 @@ export default async function Reverso({ search, mode, ...htmlProps }: ComponentP
               {response.translations.map((tr, i, arr) => (
                 <Fragment key={i}>
                   <li className={clsx(mode === 'en-ch' ? 'block' : 'inline')}>
-                    <Link href={`/search/${tr}`} className={clsx('duration-100 max-md:active:text-zinc-200 md:hover:text-zinc-200', mode === 'en-ch' ? 'block px-2 py-0.5 text-lg max-md:px-1.5 max-md:text-base ' : '')} key={i}>
+                    <Link prefetch={false} href={`/search/${tr}`} className={clsx('duration-100 max-md:active:text-zinc-200 md:hover:text-zinc-200', mode === 'en-ch' ? 'block px-2 py-0.5 text-lg max-md:px-1.5 max-md:text-base ' : '')} key={i}>
                       {tr}
                     </Link>
                   </li>
@@ -67,7 +67,7 @@ export default async function Reverso({ search, mode, ...htmlProps }: ComponentP
                       {group.translations.map((tr, i, arr) => (
                         <Fragment key={i}>
                           <li className={clsx(mode === 'en-ch' ? 'block' : 'inline')}>
-                            <Link href={`/search/${tr}`} className={clsx('duration-100 max-md:active:text-zinc-200 md:hover:text-zinc-200', mode === 'en-ch' ? 'block px-2 py-0.5 text-lg max-md:px-1.5 max-md:text-base' : '')} key={i}>
+                            <Link prefetch={false} href={`/search/${tr}`} className={clsx('duration-100 max-md:active:text-zinc-200 md:hover:text-zinc-200', mode === 'en-ch' ? 'block px-2 py-0.5 text-lg max-md:px-1.5 max-md:text-base' : '')} key={i}>
                               {tr}
                             </Link>
                           </li>

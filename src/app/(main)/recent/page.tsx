@@ -47,7 +47,7 @@ export default function RecentPage() {
                         <TbDeviceFloppy className='duration-100 group-hover:scale-110' />
                         <Vibrator />
                       </button>
-                      <Link href={`/search/${r.search}`} className='group flex min-w-0 flex-1 items-center py-0.5'>
+                      <Link prefetch={false} href={`/search/${r.search}`} className='group flex min-w-0 flex-1 items-center py-0.5'>
                         <span className='overflow-hidden text-ellipsis text-nowrap text-lg text-pink-500 duration-100 max-md:group-active:text-pink-300 md:text-lg md:group-hover:text-pink-300'>{r.search}</span>
                         <span className='ml-auto text-nowrap rounded-full text-xs text-zinc-400 duration-100 max-md:group-active:text-zinc-200 md:group-hover:text-zinc-200'>{formatDistanceToNowStrict(r.date, { locale: ru, roundingMethod: 'floor' })}</span>
                       </Link>
