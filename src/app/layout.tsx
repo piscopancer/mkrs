@@ -11,6 +11,7 @@ import { searchStore } from '@/search'
 import { generalStore } from '@/stores/general'
 import { PersistentStores } from '@/stores/persistent-stores'
 import { route } from '@/utils'
+import { Analytics } from '@vercel/analytics/react'
 import clsx from 'clsx'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -111,6 +112,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {children}
           </section>
         </div>
+        <Analytics />
         <PersistentStores />
         {process.env.NODE_ENV !== 'production' && <Debug />}
       </body>
