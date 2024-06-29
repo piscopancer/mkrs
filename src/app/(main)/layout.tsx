@@ -1,5 +1,4 @@
 import { project } from '@/project'
-import fs from 'fs/promises'
 import type { Metadata } from 'next'
 import { headers } from 'next/headers'
 import { rootMetadata } from '../()'
@@ -13,7 +12,7 @@ export const metadata: Metadata = {
 }
 
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
-  await writeIp()
+  await logIp()
 
   return (
     <>
@@ -26,15 +25,10 @@ export default async function MainLayout({ children }: { children: React.ReactNo
   )
 }
 
-async function writeIp() {
+async function logIp() {
   const h = headers()
   const ip = h.get('X-Forwarded-For')
   if (ip) {
-    try {
-      const content = await fs.readFile(process.cwd() + '/ips.txt', 'utf-8')
-      await fs.writeFile(process.cwd() + '/ips.txt', content + '\n' + ip)
-    } catch (error) {
-      await fs.writeFile(process.cwd() + '/ips.txt', ip)
-    }
+    console.log('IP: ', ip)
   }
 }
