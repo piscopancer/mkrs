@@ -30,7 +30,11 @@ async function writeIp() {
   const h = headers()
   const ip = h.get('X-Forwarded-For')
   if (ip) {
-    const content = await fs.readFile(process.cwd() + '/ips.txt')
-    await fs.writeFile(process.cwd() + '/ips.txt', content + '\n' + ip)
+    try {
+      const content = await fs.readFile(process.cwd() + '/ips.txt', 'utf-8')
+      await fs.writeFile(process.cwd() + '/ips.txt', content + '\n' + ip)
+    } catch (error) {
+      await fs.writeFile(process.cwd() + '/ips.txt', ip)
+    }
   }
 }
