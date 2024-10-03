@@ -1,6 +1,6 @@
 'use client'
 
-import { layoutStore } from '@/app/layout'
+import { layoutStore } from '@/app/()/store'
 import { backgrounds } from '@/assets/bg'
 import Bamboo from '@/assets/bg/bamboo.svg'
 import Dragon from '@/assets/bg/dragon.svg'

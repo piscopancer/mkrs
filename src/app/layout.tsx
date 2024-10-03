@@ -15,18 +15,15 @@ import { Analytics } from '@vercel/analytics/react'
 import clsx from 'clsx'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { RefObject, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { TbBrandGithub, TbDeviceFloppy, TbHistory, TbKeyboard, TbLineDashed } from 'react-icons/tb'
-import { proxy, ref, useSnapshot } from 'valtio'
+import { ref, useSnapshot } from 'valtio'
 import Vibrator from '../components/vibrator'
-import Game from './()/game'
 import Logo from './()/logo'
 import PageSelector from './()/page-selector'
 import Settings from './()/settings'
-
-export const layoutStore = proxy({
-  mainContainer: null as ReturnType<typeof ref<RefObject<HTMLDivElement>>> | null,
-})
+import { layoutStore } from './()/store'
+// import Game from './()/game'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const generalSnap = useSnapshot(generalStore)
@@ -61,7 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <span className='mr-4'>МКРС </span>
               <span className='text-xs text-zinc-600 max-md:hidden'>{'//'} БКРС ПРОКСИ</span>
             </Link>
-            <Game />
+            {/* <Game /> */}
             <Settings />
           </header>
           <nav className='flex w-20 justify-between overflow-x-hidden py-6 [grid-area:nav] max-md:w-auto max-md:py-2 md:flex-col md:px-3'>
