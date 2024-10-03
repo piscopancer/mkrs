@@ -82,7 +82,7 @@ export function parseBkrsPage(el: HTMLElement, type: BkrsResponseType): BkrsResp
       ru: {
         type: 'ru',
         ru: el.querySelector('#ru_ru')?.innerHTML.trim() ?? undefined,
-        tr: !!!el.querySelector('#no-such-word') ? el.querySelector('.ch_ru')?.innerHTML.trim() : undefined ?? undefined,
+        tr: !!!el.querySelector('#no-such-word') ? el.querySelector('.ch_ru')?.innerHTML.trim() ?? undefined : undefined,
         found: el.querySelector('#no-such-word') ? undefined : true,
         startWith: el.querySelector('#ru_from') ? Array.from(el.querySelectorAll('#ru_from a')).map((a) => a.textContent?.trim() ?? '') : undefined,
         wordsWith: el.querySelector('#words_start_with') ? Array.from(el.querySelectorAll('#words_start_with a')).map((a) => a.textContent?.trim() ?? '') : undefined,
