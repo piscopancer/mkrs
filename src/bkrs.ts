@@ -1,3 +1,5 @@
+import { ResponseType } from './search'
+
 export type Word = Partial<{
   ch: string
   py: string
@@ -106,12 +108,15 @@ export function parseBkrsPage(el: HTMLElement, type: BkrsResponseType): BkrsResp
   )[type]
 }
 
-export const responsesDescriptions: Record<BkrsResponses['type'], string> = {
+export const responsesDescriptions: Record<ResponseType, string> = {
   ch: 'Поиск на китайском',
   py: 'Поиск по пининю',
   ru: 'Поиск на русском',
   'ch-long': 'Поиск по тексту',
   english: 'Поиск на английском',
+  error: 'Ошибка',
+  one: 'Поиск на английском',
+  many: 'Поиск по тексту',
 }
 
 export function parseWords(el: Element) {
@@ -174,18 +179,6 @@ function parseInRu(el: Element, _for: 'ch' | 'ru'): Example[] | undefined {
         } else return { innerHtml: '', heading: '' }
       })
     : undefined
-}
-
-const findSuggestions: { [T in BkrsResponseType]: (search: BkrsResponse<T>) => string[] | undefined } = {
-  ch: (s) => s.startWith ?? s.wordsWith,
-  ru: (s) => s.startWith ?? s.wordsWith,
-  py: (s) => (s.found ? s.words && s.words.map((w) => w.ch?.trim() ?? '') : undefined),
-  'ch-long': (s) => s.byWords?.map((w) => w.ch?.trim() ?? '') ?? undefined,
-  english: () => undefined,
-}
-
-export function findSuggestionsRaw(search: BkrsResponses): string[] | undefined {
-  return findSuggestions[search.type](search as never)
 }
 
 export function parseSimilar(el: Element): Similar[] | undefined {

@@ -23,7 +23,14 @@ export default function Examples({ examples, ...htmlProps }: Dialog.DialogTrigge
               <Dialog.Overlay className='fixed inset-0 bg-black' />
             </motion.div>
             <Dialog.Content asChild>
-              <motion.article exit={{ opacity: 0, y: 50, transition: { duration: 0.1 } }} initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className='fixed inset-0 mx-auto my-12 flex max-w-screen-md grow flex-col rounded-xl bg-zinc-900 max-md:mx-4 max-md:my-4'>
+              <motion.article
+                //
+                exit={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+                className='fixed inset-0 mx-auto my-4 flex max-w-screen-md grow flex-col rounded-xl bg-zinc-900 max-md:mx-4 max-md:my-4'
+              >
                 <header className='flex items-center'>
                   <h1 className='ml-8 mr-auto font-display text-lg max-md:ml-4'>Примеры</h1>
                   <Dialog.Trigger className='block text-zinc-400 duration-100 hover:text-zinc-200'>

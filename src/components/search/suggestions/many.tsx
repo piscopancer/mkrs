@@ -1,15 +1,15 @@
-import { BkrsResponseProps } from '@/bkrs'
+import { ReversoResponseProps } from '@/reverso'
 import clsx from 'clsx'
 import { TbAsterisk } from 'react-icons/tb'
 import Suggestions from '.'
 import SuggestionSelection from './selection'
 
-export default function ChSuggestions(props: BkrsResponseProps<'ch'>) {
+export default function ManySuggestions(props: ReversoResponseProps<'many'>) {
   return (
     <Suggestions
       suggestions={8}
       res={props.response}
-      display={(search) => search.startWith ?? search.wordsWith ?? []}
+      display={(res) => res.translations ?? []}
       button={({ isSelected, i, display, ...htmlProps }) => {
         return (
           <button key={i} {...htmlProps} className='group relative flex w-full items-center gap-4 px-2 py-1'>

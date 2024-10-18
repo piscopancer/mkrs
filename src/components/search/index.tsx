@@ -1,11 +1,12 @@
 'use client'
 
-import { queryBkrs } from '@/app/actions'
-import { BkrsResponseProps, BkrsResponseType, findSuggestionsRaw } from '@/bkrs'
+import { queryBkrs, queryReverso } from '@/app/actions'
+import { BkrsResponseProps, BkrsResponseType } from '@/bkrs'
 import * as Article from '@/components/article'
 import useHotkey from '@/hooks/use-hotkey'
 import { hotkeys } from '@/hotkeys'
-import { searchStore } from '@/search'
+import { ReversoResponseProps, ReversoResponseType } from '@/reverso'
+import { findSuggestions, ResponseProps, searchStore } from '@/search'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
@@ -17,7 +18,8 @@ import { Tooltip } from '../tooltip'
 import ExactFound from './exact-found'
 import ChSuggestions from './suggestions/ch'
 import ChLongSuggestions from './suggestions/ch-long'
-import English from './suggestions/en'
+import ManySuggestions from './suggestions/many'
+import OneSuggestions from './suggestions/one'
 import PySuggestions from './suggestions/py'
 import RuSuggestions from './suggestions/ru'
 import Tools from './tools'
@@ -38,7 +40,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
     hotkeys.focus.keys,
     () => {
       searchStore.focused = true
-      if (searchStore.bkrsResponse) searchStore.showSuggestions = true
+      if (searchStore.response) searchStore.showSuggestions = true
     },
 
     { prevent: !searchSnap.focused || undefined },
@@ -96,17 +98,24 @@ export default function Search(props: React.ComponentProps<'search'>) {
     searchTimer.current && clearTimeout(searchTimer.current)
     if (!searchStore.search) {
       setQuerying(false)
-      searchStore.bkrsResponse = undefined
+      searchStore.response = undefined
       searchStore.showSuggestions = false
       return
     }
     inputRef.current.value = searchStore.search
     searchTimer.current = setTimeout(() => {
       setQuerying(true)
-      queryBkrs(searchStore.search).then((res) => {
+      Promise.all([
+        //
+        queryBkrs(searchStore.search),
+        queryReverso(searchStore.search, 'en-ch'),
+      ]).then(([bkrsRes, reversoRes]) => {
+        let res = bkrsRes ?? reversoRes ?? undefined
+        if (res?.type === 'english') res = reversoRes
+        console.log(res)
         setQuerying(false)
-        searchStore.bkrsResponse = searchStore.search ? res : undefined
-        const suggestionsFound = searchStore.search && res ? !!findSuggestionsRaw(res) : false
+        searchStore.response = searchStore.search ? res : undefined
+        const suggestionsFound = searchStore.search && res ? !!findSuggestions(res) : false
         searchStore.showSuggestions = suggestionsFound && searchStore.focused
         if (!suggestionsFound) searchStore.selectedSuggestion = -1
       })
@@ -121,7 +130,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
     }
   }, [searchSnap.focused])
 
-  const exact = searchSnap.bkrsResponse && findExact(searchSnap.bkrsResponse)
+  const exact = searchSnap.response && findExact(searchSnap.response)
 
   return (
     <search {...props} ref={selfRef} className={clsx(props.className, 'relative block')}>
@@ -130,7 +139,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
           ref={inputRef}
           onFocus={() => {
             searchStore.focused = true
-            if (searchStore.bkrsResponse) searchStore.showSuggestions = true
+            if (searchStore.response) searchStore.showSuggestions = true
           }}
           onBlur={() => (searchStore.focused = false)}
           spellCheck={false}
@@ -175,7 +184,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
         >
           <TbSearch className='size-4' />
         </button>
-        {searchSnap.bkrsResponse && searchSnap.showSuggestions && !searchSnap.showTools && <Suggestions response={searchSnap.bkrsResponse} />}
+        {searchSnap.response && searchSnap.showSuggestions && !searchSnap.showTools && <Suggestions response={searchSnap.response} />}
         <AnimatePresence>
           {searchSnap.showTools && (
             <motion.div initial={{ opacity: 1, y: -2 }} animate={{ y: 0, opacity: 1, transition: { duration: 0.1 } }} key='handwriting' exit={{ opacity: 0, y: -2, transition: { duration: 0.1 } }} className='absolute inset-x-0 top-full z-[1] mt-2 '>
@@ -210,9 +219,12 @@ const suggestions = {
   ru: RuSuggestions,
   py: PySuggestions,
   'ch-long': ChLongSuggestions,
-  english: English,
-} satisfies { [T in BkrsResponseType]: (props: BkrsResponseProps<T>) => ReactNode }
+  english: undefined,
+  error: undefined,
+  many: ManySuggestions,
+  one: OneSuggestions,
+} satisfies { [T in BkrsResponseType]: ((props: BkrsResponseProps<T>) => ReactNode) | undefined } & { [T in ReversoResponseType]: ((props: ReversoResponseProps<T>) => ReactNode) | undefined }
 
-function Suggestions<T extends BkrsResponseType>(props: ReturnType<typeof useSnapshot<BkrsResponseProps<T>>>) {
-  return suggestions[props.response.type](props as never)
+function Suggestions(props: ReturnType<typeof useSnapshot<ResponseProps>>) {
+  return suggestions[props.response.type]?.(props as never)
 }

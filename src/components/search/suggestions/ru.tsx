@@ -7,7 +7,7 @@ export default function RuSuggestions(props: BkrsResponseProps<'ru'>) {
   return (
     <Suggestions
       suggestions={8}
-      search={props.response}
+      res={props.response}
       display={(search) => search.startWith ?? search.wordsWith ?? []}
       button={({ isSelected, i, display, ...htmlProps }) => {
         return (

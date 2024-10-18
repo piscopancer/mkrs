@@ -24,7 +24,7 @@ export type ReversoResponses =
 
 export type ReversoResponse<T extends ReversoResponseType> = ReversoResponses & { type: T }
 
-export type ReversoResponseProps<T extends ReversoResponseType> = { search: ReversoResponse<T> }
+export type ReversoResponseProps<T extends ReversoResponseType> = { response: ReversoResponse<T> }
 
 function determineSearchType(el: Element): ReversoResponseType {
   if (el.querySelector('#translations-content') && !el.querySelector('#splitting-content')) return 'one'

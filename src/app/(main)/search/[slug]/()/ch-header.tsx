@@ -83,7 +83,7 @@ export default function ChHeader(props: BkrsResponseProps<'ch'>) {
         {props.response.ch && <Save ch={props.response.ch} />}
       </header>
       <div className='mb-8 flex items-end gap-4'>
-        <h2 className='mr-auto w-fit max-w-full overflow-hidden text-ellipsis text-nowrap font-mono text-zinc-400'>{props.response.py}</h2>
+        <h2 className='mr-auto w-fit max-w-full overflow-hidden text-ellipsis text-nowrap font-mono text-lg text-zinc-400'>{props.response.py}</h2>
         <aside className='flex rounded-full'>
           <Tooltip
             content={

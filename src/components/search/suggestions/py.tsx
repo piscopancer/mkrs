@@ -7,7 +7,7 @@ export default function PySuggestions(props: BkrsResponseProps<'py'>) {
   return (
     <Suggestions
       suggestions={8}
-      search={props.response}
+      res={props.response}
       display={(search) => (search.found ? search.words ?? [] : [])}
       button={({ isSelected, i, display, ...htmlProps }) => {
         return (
