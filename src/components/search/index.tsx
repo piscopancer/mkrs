@@ -1,7 +1,7 @@
 'use client'
 
 import { queryBkrs } from '@/app/actions'
-import { BkrsResponseProps, BkrsResponseType, findSuggestions } from '@/bkrs'
+import { BkrsResponseProps, BkrsResponseType, findSuggestionsRaw } from '@/bkrs'
 import * as Article from '@/components/article'
 import useHotkey from '@/hooks/use-hotkey'
 import { hotkeys } from '@/hotkeys'
@@ -103,10 +103,10 @@ export default function Search(props: React.ComponentProps<'search'>) {
     inputRef.current.value = searchStore.search
     searchTimer.current = setTimeout(() => {
       setQuerying(true)
-      queryBkrs(searchStore.search).then((response) => {
+      queryBkrs(searchStore.search).then((res) => {
         setQuerying(false)
-        searchStore.bkrsResponse = searchStore.search ? response : undefined
-        const suggestionsFound = searchStore.search && response ? !!findSuggestions(response) : false
+        searchStore.bkrsResponse = searchStore.search ? res : undefined
+        const suggestionsFound = searchStore.search && res ? !!findSuggestionsRaw(res) : false
         searchStore.showSuggestions = suggestionsFound && searchStore.focused
         if (!suggestionsFound) searchStore.selectedSuggestion = -1
       })

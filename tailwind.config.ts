@@ -7,7 +7,7 @@ const config: Config = {
     fontFamily: {
       sans: 'var(--font-sans)',
       display: 'var(--font-display)',
-      mono: 'var(--font-mono)',
+      mono: 'var(--font-geist-mono)',
     },
     boxShadow: ({ theme }) => ({
       key: `0 1px 0 2px ${theme('colors.zinc.700')}`,

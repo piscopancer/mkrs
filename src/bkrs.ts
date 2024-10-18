@@ -176,7 +176,7 @@ function parseInRu(el: Element, _for: 'ch' | 'ru'): Example[] | undefined {
     : undefined
 }
 
-const findSuggestionsFunctions: { [T in BkrsResponseType]: (search: BkrsResponse<T>) => string[] | undefined } = {
+const findSuggestions: { [T in BkrsResponseType]: (search: BkrsResponse<T>) => string[] | undefined } = {
   ch: (s) => s.startWith ?? s.wordsWith,
   ru: (s) => s.startWith ?? s.wordsWith,
   py: (s) => (s.found ? s.words && s.words.map((w) => w.ch?.trim() ?? '') : undefined),
@@ -184,8 +184,8 @@ const findSuggestionsFunctions: { [T in BkrsResponseType]: (search: BkrsResponse
   english: () => undefined,
 }
 
-export function findSuggestions(search: BkrsResponses): string[] | undefined {
-  return findSuggestionsFunctions[search.type](search as never)
+export function findSuggestionsRaw(search: BkrsResponses): string[] | undefined {
+  return findSuggestions[search.type](search as never)
 }
 
 export function parseSimilar(el: Element): Similar[] | undefined {

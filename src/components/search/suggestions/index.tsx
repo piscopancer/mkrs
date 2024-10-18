@@ -1,4 +1,4 @@
-import { BkrsResponse, BkrsResponseType, findSuggestions, responsesDescriptions } from '@/bkrs'
+import { BkrsResponse, BkrsResponseType, findSuggestionsRaw, responsesDescriptions } from '@/bkrs'
 import useHotkey from '@/hooks/use-hotkey'
 import { searchStore } from '@/search'
 import { useRouter } from 'next/navigation'
@@ -21,7 +21,7 @@ export default function Suggestions<T extends BkrsResponseType, S extends BkrsRe
   //   selfAnim.start({ opacity: 1, y: 0 })
   // }, [])
 
-  const suggestions = findSuggestions(props.search)?.slice(0, props.suggestions) ?? undefined
+  const suggestions = findSuggestionsRaw(props.search)?.slice(0, props.suggestions) ?? undefined
   if (suggestions) {
     if (searchStore.selectedSuggestion > suggestions.length - 1) searchStore.selectedSuggestion = 0
   } else {
