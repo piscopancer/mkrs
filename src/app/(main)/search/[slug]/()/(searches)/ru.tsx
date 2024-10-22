@@ -11,24 +11,24 @@ import RuchFulltext from '../ruch-fulltext'
 import Save from '../save'
 import StartWith from '../start-with'
 
-export default function Ru(props: BkrsResponseProps<'ru'>) {
+export default function Ru({ response }: BkrsResponseProps<'ru'>) {
   return (
     <>
-      {props.response.ru && (
+      {response.ru && (
         <>
-          <Copyer search={props.response.ru} />
-          <RecentWriter search={props.response.ru} />
+          <Copyer search={response.ru} />
+          <RecentWriter search={response.ru} />
         </>
       )}
       <article className='relative mb-24'>
         <header className='mb-8 flex items-start gap-4'>
-          <h1 className='grow text-3xl'>{props.response.ru}</h1>
-          {props.response.ru && <Save ch={props.response.ru} className='ml-auto' />}
+          <h1 className='grow text-3xl'>{response.ru}</h1>
+          {response.ru && <Save ch={response.ru} className='ml-auto' />}
         </header>
-        {!props.response.found && <NotFound />}
-        {props.response.tr && (
+        {!response.found && <NotFound />}
+        {response.tr && (
           <div data-search className='mb-12 text-lg'>
-            {stringToReact(props.response.tr, {
+            {stringToReact(response.tr, {
               replace: (domNode) => {
                 if (domNode instanceof Element && domNode.tagName === 'a') {
                   return (
@@ -41,9 +41,9 @@ export default function Ru(props: BkrsResponseProps<'ru'>) {
             })}
           </div>
         )}
-        {props.response.inRu && <RuchFulltext examples={props.response.inRu} className='mb-12' />}
-        {props.response.startWith && <StartWith words={props.response.startWith} className='mb-12' />}
-        {props.response.examples && <Examples examples={props.response.examples} className='mb-12' />}
+        {response.inRu && <RuchFulltext examples={response.inRu} className='mb-12' />}
+        {response.startWith && <StartWith words={response.startWith} className='mb-12' />}
+        {response.examples && <Examples examples={response.examples} className='mb-12' />}
       </article>
     </>
   )
