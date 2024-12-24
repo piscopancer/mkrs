@@ -20,7 +20,7 @@ export default function ChLink({ search, ...attrs }: React.ComponentProps<'a'> &
         translation && (
           <>
             {translation.py && <p className='mb-0.5 font-mono text-zinc-400'>{translation.py}</p>}
-            {translation.ru && <div>{stringToReact(translation.ru)}</div>}
+            {translation.ru && <div className='line-clamp-5'>{stringToReact(translation.ru)}</div>}
           </>
         )
       }

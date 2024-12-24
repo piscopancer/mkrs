@@ -92,8 +92,8 @@ export default function ChHeader(props: BkrsResponseProps<'ch'>) {
               </>
             }
           >
-            <motion.button animate={toSearchBtnAnim} className='rounded-l-full border-y-2 border-l-2 border-zinc-800 p-2 pl-2.5 duration-100 max-md:active:!bg-zinc-800 md:hover:!bg-zinc-800' onClick={toSearch}>
-              <TbArrowUp className='stroke-zinc-400' />
+            <motion.button animate={toSearchBtnAnim} className='rounded-l-full border-y-2 border-l-2 border-zinc-800 p-2 pl-2.5 max-md:active:!bg-zinc-800 md:hover:!bg-zinc-800' onClick={toSearch}>
+              <TbArrowUp className='stroke-zinc-200' />
             </motion.button>
           </Tooltip>
           <Tooltip
@@ -103,8 +103,8 @@ export default function ChHeader(props: BkrsResponseProps<'ch'>) {
               </>
             }
           >
-            <motion.button animate={copyBtnAnim} className='border-y-2 border-zinc-800 p-2 duration-100 max-md:active:!bg-zinc-800 md:hover:!bg-zinc-800' onClick={copy}>
-              <TbCopy className='stroke-zinc-400' />
+            <motion.button animate={copyBtnAnim} className='border-y-2 border-zinc-800 p-2 max-md:active:!bg-zinc-800 md:hover:!bg-zinc-800' onClick={copy}>
+              <TbCopy className='stroke-zinc-200' />
             </motion.button>
           </Tooltip>
           <Tooltip
@@ -114,7 +114,7 @@ export default function ChHeader(props: BkrsResponseProps<'ch'>) {
               </>
             }
           >
-            <a target='_blank' href={bkrsUrl} className='rounded-r-full border-y-2 border-r-2 border-zinc-800 p-2 pr-2.5 leading-4 text-zinc-400 duration-100 max-md:active:bg-zinc-800 md:hover:bg-zinc-800'>
+            <a target='_blank' href={bkrsUrl} className='rounded-r-full border-y-2 border-r-2 border-zinc-800 p-2 pr-3 text-sm font-light leading-4 text-zinc-200 max-md:active:bg-zinc-800 md:hover:bg-zinc-800'>
               大
             </a>
           </Tooltip>

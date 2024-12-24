@@ -14,8 +14,18 @@ const config: Config = {
     }),
   },
   plugins: [
-    plugin(({ addComponents, matchVariant }) => {
+    plugin(({ addComponents, matchVariant, theme }) => {
       addComponents({
+        '.bg-halftone': {
+          background: `radial-gradient(${theme('colors.zinc.700')} 20%, transparent 20%) 0 0`,
+          backgroundSize: '1vmin 1vmin',
+          animation: 'slide infinite 5s linear',
+          '@keyframes slide': {
+            to: {
+              backgroundPosition: '2vmin 1vmin',
+            },
+          },
+        },
         '.hopper': {
           display: 'grid',
           gridTemplateAreas: '"hopper"',

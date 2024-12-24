@@ -45,16 +45,19 @@ export default function Search(props: React.ComponentProps<'search'>) {
 
     { prevent: !searchSnap.focused || undefined },
   )
+
   useHotkey(['Escape'], () => {
     searchStore.focused = false
     searchStore.showTools = false
     searchStore.showSuggestions = false
   })
+
   useHotkey(hotkeys.search.keys, () => {
     if (searchStore.search && searchStore.selectedSuggestion === -1) {
       selectSuggestion(router, searchStore.search)
     }
   })
+
   useHotkey(
     hotkeys.tools.keys,
     () => {
@@ -65,6 +68,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
     },
     { prevent: !searchStore.focused || undefined },
   )
+
   useHotkey(['v', 'м'], async (_, e) => {
     if (e.ctrlKey && !searchStore.focused) {
       const text = await navigator.clipboard.readText().then((t) => t.trim())

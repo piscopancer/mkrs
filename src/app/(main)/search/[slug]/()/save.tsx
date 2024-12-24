@@ -10,7 +10,6 @@ import clsx from 'clsx'
 import { motion, useAnimation, useSpring, useTransform } from 'framer-motion'
 import { ComponentProps } from 'react'
 import { TbDeviceFloppy, TbNorthStar } from 'react-icons/tb'
-import { zinc } from 'tailwindcss/colors'
 import { useSnapshot } from 'valtio'
 
 export default function Save({ ch, ...htmlProps }: ComponentProps<'div'> & { ch: string }) {
@@ -32,11 +31,9 @@ export default function Save({ ch, ...htmlProps }: ComponentProps<'div'> & { ch:
       savedMV.set(1)
       star1Anim.start({
         scale: [0, 1.2, 0],
-        stroke: [zinc[500], zinc[300], zinc[500]],
       })
       star2Anim.start({
         scale: [0, 0.8, 0],
-        stroke: [zinc[500], zinc[300], zinc[500]],
         transition: { delay: 0.2 },
       })
     } else {
@@ -84,7 +81,7 @@ export default function Save({ ch, ...htmlProps }: ComponentProps<'div'> & { ch:
               }}
               className='place-self-center'
             >
-              <TbDeviceFloppy className='h-6 w-6  stroke-zinc-500 ' />
+              <TbDeviceFloppy className='h-6 w-6  stroke-zinc-200 ' />
             </motion.div>
             <motion.div
               style={{

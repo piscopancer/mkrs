@@ -3,19 +3,16 @@
 import { Example } from '@/reverso'
 import { stringToReact } from '@/utils'
 import * as Dialog from '@radix-ui/react-dialog'
-import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useState } from 'react'
+import { PropsWithChildren, useState } from 'react'
 import { TbX } from 'react-icons/tb'
 
-export default function Examples({ examples, ...htmlProps }: Dialog.DialogTriggerProps & { examples: Example[] | null }) {
+export default function Examples({ examples, children }: PropsWithChildren & { examples: Example[] | null }) {
   const [open, setOpen] = useState(false)
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger {...htmlProps} disabled={!examples || !examples.length} className={clsx(htmlProps.className, 'text-zinc-400 duration-100 enabled:hover:text-zinc-200 disabled:opacity-50')}>
-        Примеры
-      </Dialog.Trigger>
+      {children}
       <AnimatePresence>
         {open && !!examples && (
           <Dialog.Portal forceMount>
