@@ -9,14 +9,13 @@ import { useEffect, useRef, useState } from 'react'
 import { GiBrassEye } from 'react-icons/gi'
 import { TbInfoCircle, TbX } from 'react-icons/tb'
 import { createWorker } from 'tesseract.js'
-import { useSnapshot } from 'valtio'
 
 const nonChRegex = /\P{Script=Han}/gu
 
 export default function Scanner({ props, ...attr }: TComponent<'article', {}>) {
   const workerRef = useRef<Tesseract.Worker | undefined>(undefined)
   const [scanning, setScanning] = useState(false)
-  const scannerSnap = useSnapshot(scannerStore)
+  const scannerSnap = scannerStore.use()
 
   useEffect(() => {
     createWorker('chi_sim', 1).then((w) => {
@@ -33,21 +32,22 @@ export default function Scanner({ props, ...attr }: TComponent<'article', {}>) {
     const file = e.clipboardData?.files[0]
     if (file && ['image/png', 'image/jpeg'].includes(file.type) && workerRef.current) {
       const imageData = URL.createObjectURL(file)
-      scannerStore.imageData = imageData
+      scannerStore.assign({
+        imageData,
+      })
       recognize(workerRef.current, imageData)
     }
   }
 
   async function recognize(worker: Tesseract.Worker, image: string) {
     setScanning(true)
-    const {
-      data: { words },
-    } = await worker.recognize(image, {}, {})
+    const { data } = await worker.recognize(image, {}, {})
     setScanning(false)
-    scannerStore.recognitions = words
+    const words = data.words
       .flatMap((c) => c.text)
       .map((w) => w.replace(nonChRegex, ''))
       .filter(Boolean)
+    scannerStore.recognitions.set(words)
   }
 
   return (
@@ -61,11 +61,13 @@ export default function Scanner({ props, ...attr }: TComponent<'article', {}>) {
           onChange={(e) => {
             const file = e.target.files?.[0]
             const imageData = file ? URL.createObjectURL(file) : undefined
-            scannerStore.imageData = imageData
+            scannerStore.assign({
+              imageData,
+            })
             if (imageData && workerRef.current) {
               recognize(workerRef.current, imageData)
             } else {
-              scannerStore.recognitions = []
+              scannerStore.recognitions.set([])
             }
             e.target.value = ''
           }}
@@ -79,14 +81,16 @@ export default function Scanner({ props, ...attr }: TComponent<'article', {}>) {
         {scannerSnap.imageData && (
           <>
             <div className='pointer-events-none overflow-hidden'>
-              <img src={scannerSnap.imageData} alt='Изображение из кэша' className='size-full object-contain p-8 saturate-0' />
+              <img src={scannerSnap.imageData ?? undefined} alt='Изображение из кэша' className='size-full object-contain p-8 saturate-0' />
             </div>
             <Tooltip content='Убрать изображение'>
               <button
                 onClick={(e) => {
                   e.stopPropagation()
-                  scannerStore.imageData = undefined
-                  scannerStore.recognitions = []
+                  scannerStore.assign({
+                    imageData: undefined,
+                  })
+                  scannerStore.recognitions.set([])
                 }}
                 className='relative mr-2 mt-2 flex size-8 items-center justify-center justify-self-end rounded-full bg-zinc-800 hover:bg-zinc-700'
               >
@@ -113,8 +117,8 @@ export default function Scanner({ props, ...attr }: TComponent<'article', {}>) {
           </Tooltip>
           <button
             onClick={() => {
-              searchStore.showSuggestions = false
-              searchStore.showTools = false
+              searchStore.showSuggestions.set(false)
+              searchStore.showTools.set(false)
             }}
             className='flex size-8 items-center justify-center rounded-full hover:bg-zinc-800'
           >
@@ -129,7 +133,7 @@ export default function Scanner({ props, ...attr }: TComponent<'article', {}>) {
               <li key={i}>
                 <button
                   onClick={() => {
-                    searchStore.search = searchStore.search + r
+                    searchStore.search.set((prev) => prev + r)
                   }}
                   className='border-b-2 border-dashed border-zinc-800 px-1 pb-1 text-2xl text-zinc-400 hover:border-zinc-600 hover:text-zinc-200'
                 >

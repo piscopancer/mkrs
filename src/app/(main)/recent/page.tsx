@@ -12,11 +12,10 @@ import { motion, useAnimation } from 'framer-motion'
 import Link from 'next/link'
 import { Fragment, useEffect } from 'react'
 import { TbDeviceFloppy } from 'react-icons/tb'
-import { useSnapshot } from 'valtio'
 
 export default function RecentPage() {
-  const recentSnap = useSnapshot(recentStore)
-  const savedSnap = useSnapshot(savedStore)
+  const recentSnap = recentStore.use()
+  const savedSnap = savedStore.use()
   const selfAnim = useAnimation()
 
   useEffect(() => {
@@ -40,7 +39,13 @@ export default function RecentPage() {
                     <li key={r.search + '_' + i} className='flex items-center'>
                       <button
                         onClick={() => {
-                          saved ? (savedStore.saved = savedStore.saved.filter((s) => s !== r.search)) : savedStore.saved.push(r.search)
+                          if (saved) {
+                            savedStore.saved.set(savedStore.saved.get().filter((s) => s !== r.search))
+                          } else {
+                            savedStore.saved.set((draft) => {
+                              draft.push(r.search)
+                            })
+                          }
                         }}
                         className={clsx(saved ? 'text-pink-500 max-md:active:text-pink-300 md:hover:text-pink-300' : 'text-zinc-600 max-md:active:text-zinc-400 md:hover:text-zinc-400', 'group -ml-2 mr-2 flex h-8 w-8 items-center justify-center py-0.5')}
                       >

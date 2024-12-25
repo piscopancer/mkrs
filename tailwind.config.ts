@@ -14,6 +14,7 @@ const config: Config = {
     }),
   },
   plugins: [
+    require('tailwindcss-motion'),
     plugin(({ addComponents, matchVariant, theme }) => {
       addComponents({
         '.bg-halftone': {

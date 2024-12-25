@@ -8,11 +8,10 @@ import { searchStore } from '@/search'
 import { motion, useAnimation } from 'framer-motion'
 import { TbArrowUp, TbCopy } from 'react-icons/tb'
 import colors from 'tailwindcss/colors'
-import { useSnapshot } from 'valtio'
 import Save from './save'
 
 export default function ChHeader(props: BkrsResponseProps<'ch'>) {
-  const searchSnap = useSnapshot(searchStore)
+  const searchFocusedSnap = searchStore.focused.use()
   const bkrsUrl = `https://bkrs.info/slovo.php?ch=${props.response.ch}`
 
   const chAnim = useAnimation()
@@ -21,7 +20,7 @@ export default function ChHeader(props: BkrsResponseProps<'ch'>) {
   const toSearchBtnAnim = useAnimation()
 
   useHotkey(hotkeys['to-search'].keys, () => {
-    if (!searchSnap.focused) {
+    if (!searchFocusedSnap) {
       toSearch()
       toSearchBtnAnim.start({
         backgroundColor: [colors.zinc[800], colors.zinc[800], '#00000000'],
@@ -29,7 +28,7 @@ export default function ChHeader(props: BkrsResponseProps<'ch'>) {
     }
   })
   useHotkey(hotkeys.copy.keys, (_, e) => {
-    if (!searchSnap.focused && !e.ctrlKey) {
+    if (!searchFocusedSnap && !e.ctrlKey) {
       copy()
       copyBtnAnim.start({
         backgroundColor: [colors.zinc[800], colors.zinc[800], '#00000000'],
@@ -37,7 +36,7 @@ export default function ChHeader(props: BkrsResponseProps<'ch'>) {
     }
   })
   useHotkey(hotkeys.bkrs.keys, () => {
-    if (!searchSnap.focused) window.open(bkrsUrl, '_blank')?.focus()
+    if (!searchFocusedSnap) window.open(bkrsUrl, '_blank')?.focus()
   })
 
   function copy() {
@@ -60,7 +59,7 @@ export default function ChHeader(props: BkrsResponseProps<'ch'>) {
 
   function toSearch() {
     if (!props.response.ch) return
-    searchStore.search = props.response.ch
+    searchStore.search.set(props.response.ch)
     chAnim.set({ scale: 1, y: 0, x: 0 })
     chAnim.start({ scaleY: 1.2, y: -20, transition: { ease: 'easeInOut', duration: 0.1 } }).then(() => {
       chAnim.start({ scaleY: 1, y: 0, transition: { type: 'spring', stiffness: 200 } })

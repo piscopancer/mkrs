@@ -13,7 +13,6 @@ import { useRouter } from 'next/navigation'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { GiCat } from 'react-icons/gi'
 import { TbApps, TbLoader, TbSearch } from 'react-icons/tb'
-import { useSnapshot } from 'valtio'
 import { Tooltip } from '../tooltip'
 import ExactFound from './exact-found'
 import ChSuggestions from './suggestions/ch'
@@ -25,70 +24,72 @@ import RuSuggestions from './suggestions/ru'
 import Tools from './tools'
 import { findExact, selectSuggestion } from './utils'
 
+const catChance = 0.01
+const searchTimeout = 0.5
+
 export default function Search(props: React.ComponentProps<'search'>) {
-  const searchSnap = useSnapshot(searchStore)
+  const searchSnap = searchStore.use()
   const inputRef = useRef<HTMLInputElement>(null)
   const selfRef = useRef<HTMLElement>(null!)
   const router = useRouter()
   const [querying, setQuerying] = useState(false)
-  const catChance = 0.01
   const [showCat, setShowCat] = useState(false)
   const searchTimer = useRef<NodeJS.Timeout | null>(null)
-  const searchTimeout = 0.5
 
   useHotkey(
     hotkeys.focus.keys,
     () => {
-      searchStore.focused = true
-      if (searchStore.response) searchStore.showSuggestions = true
+      searchStore.focused.set(true)
+      if (searchStore.response) {
+        searchStore.showSuggestions.set(true)
+      }
     },
-
-    { prevent: !searchSnap.focused || undefined },
+    { preventDefault: !searchStore.focused.get() || undefined },
   )
 
   useHotkey(['Escape'], () => {
-    searchStore.focused = false
-    searchStore.showTools = false
-    searchStore.showSuggestions = false
+    searchStore.focused.set(false)
+    searchStore.showTools.set(false)
+    searchStore.showSuggestions.set(false)
   })
 
   useHotkey(hotkeys.search.keys, () => {
-    if (searchStore.search && searchStore.selectedSuggestion === -1) {
-      selectSuggestion(router, searchStore.search)
+    if (searchStore.search && searchStore.selectedSuggestion.get() === -1) {
+      selectSuggestion(router, searchStore.search.get())
     }
   })
 
   useHotkey(
     hotkeys.tools.keys,
     () => {
-      if (!searchStore.focused) {
-        searchStore.showTools = !searchStore.showTools
-        searchStore.focused = !searchStore.showTools
+      if (!searchStore.focused.get()) {
+        searchStore.showTools.set(!searchStore.showTools.get())
+        searchStore.focused.set(!searchStore.showTools.get())
       }
     },
-    { prevent: !searchStore.focused || undefined },
+    { preventDefault: !searchStore.focused.get() || undefined },
   )
 
   useHotkey(['v', 'м'], async (_, e) => {
-    if (e.ctrlKey && !searchStore.focused) {
+    if (e.ctrlKey && !searchStore.focused.get()) {
       const text = await navigator.clipboard.readText().then((t) => t.trim())
-      if (!text || text === searchStore.search) return
-      searchStore.search = text
-      searchStore.focused = false
-      searchStore.showTools = false
-      searchStore.selectedSuggestion = -1
-      searchStore.showSuggestions = false
+      if (!text || text === searchStore.search.get()) return
+      searchStore.search.set(text)
+      searchStore.focused.set(false)
+      searchStore.showTools.set(false)
+      searchStore.selectedSuggestion.set(-1)
+      searchStore.showSuggestions.set(false)
       router.push(`/search/${text}`)
     }
   })
 
   useEffect(() => {
     setShowCat(+Math.random().toFixed(2) < catChance)
-    searchStore.focused = true
+    searchStore.focused.set(true)
     function hideOnClickOutside(e: MouseEvent) {
       if (!selfRef.current.contains(e.target as Node)) {
-        searchStore.showSuggestions = false
-        searchStore.showTools = false
+        searchStore.showSuggestions.set(false)
+        searchStore.showTools.set(false)
       }
     }
     addEventListener('click', hideOnClickOutside)
@@ -102,32 +103,33 @@ export default function Search(props: React.ComponentProps<'search'>) {
     searchTimer.current && clearTimeout(searchTimer.current)
     if (!searchStore.search) {
       setQuerying(false)
-      searchStore.response = undefined
-      searchStore.showSuggestions = false
+      searchStore.response.set(undefined)
+      searchStore.showSuggestions.set(false)
       return
     }
-    inputRef.current.value = searchStore.search
+    inputRef.current.value = searchStore.search.get()
     searchTimer.current = setTimeout(() => {
       setQuerying(true)
       Promise.all([
         //
-        queryBkrs(searchStore.search),
-        queryReverso(searchStore.search, 'en-ch'),
+        queryBkrs(searchStore.search.get()),
+        queryReverso(searchStore.search.get(), 'en-ch'),
       ]).then(([bkrsRes, reversoRes]) => {
         let res = bkrsRes ?? reversoRes ?? undefined
         if (res?.type === 'english') res = reversoRes
-        console.log(res)
         setQuerying(false)
-        searchStore.response = searchStore.search ? res : undefined
+        searchStore.response.set(searchStore.search ? res : undefined)
         const suggestionsFound = searchStore.search && res ? !!findSuggestions(res) : false
-        searchStore.showSuggestions = suggestionsFound && searchStore.focused
-        if (!suggestionsFound) searchStore.selectedSuggestion = -1
+        searchStore.showSuggestions.set(suggestionsFound && searchStore.focused.get())
+        if (!suggestionsFound) {
+          searchStore.selectedSuggestion.set(-1)
+        }
       })
     }, searchTimeout * 1000)
   }, [searchSnap.search])
 
   useEffect(() => {
-    if (searchStore.focused) {
+    if (searchStore.focused.get()) {
       inputRef.current?.focus()
     } else {
       inputRef.current?.blur()
@@ -142,15 +144,15 @@ export default function Search(props: React.ComponentProps<'search'>) {
         <input
           ref={inputRef}
           onFocus={() => {
-            searchStore.focused = true
-            if (searchStore.response) searchStore.showSuggestions = true
+            searchStore.focused.set(true)
+            if (searchStore.response) searchStore.showSuggestions.set(true)
           }}
-          onBlur={() => (searchStore.focused = false)}
+          onBlur={() => searchStore.focused.set(false)}
           spellCheck={false}
           type='text'
           onChange={(e) => {
             const input = e.target.value.trim()
-            searchStore.search = input
+            searchStore.search.set(input)
           }}
           className='w-full rounded-full bg-zinc-700/50 py-4 pl-6 pr-32 outline-pink-500/70 duration-100 focus-visible:outline-4 max-md:pr-20'
         />
@@ -170,8 +172,8 @@ export default function Search(props: React.ComponentProps<'search'>) {
         >
           <button
             onClick={() => {
-              searchStore.showTools = !searchStore.showTools
-              searchStore.focused = !searchStore.showTools
+              searchStore.showTools.set(!searchStore.showTools.get())
+              searchStore.focused.set(!searchStore.showTools.get())
             }}
             className={clsx(
               'group mr-12 flex h-full items-center justify-center justify-self-end rounded-full pl-4 pr-2 duration-100  focus-visible:outline-0 disabled:opacity-50 max-md:hidden',
@@ -183,7 +185,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
         </Tooltip>
         <button
           disabled={!!!searchSnap.search.trim()}
-          onClick={() => selectSuggestion(router, searchStore.search)}
+          onClick={() => selectSuggestion(router, searchStore.search.get())}
           className='group flex h-full items-center justify-center justify-self-end rounded-full pl-2 pr-6 text-zinc-400 duration-100 focus-visible:text-pink-500 focus-visible:outline-0 enabled:hover:text-pink-500 disabled:opacity-50'
         >
           <TbSearch className='size-4' />
@@ -229,6 +231,6 @@ const suggestions = {
   one: OneSuggestions,
 } satisfies { [T in BkrsResponseType]: ((props: BkrsResponseProps<T>) => ReactNode) | undefined } & { [T in ReversoResponseType]: ((props: ReversoResponseProps<T>) => ReactNode) | undefined }
 
-function Suggestions(props: ReturnType<typeof useSnapshot<ResponseProps>>) {
+function Suggestions(props: ResponseProps) {
   return suggestions[props.response.type]?.(props as never)
 }

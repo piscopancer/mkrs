@@ -1,6 +1,7 @@
 import type { IconType } from 'react-icons'
 import { TbScan } from 'react-icons/tb'
-import { proxy } from 'valtio'
+// import { proxy } from 'valtio'
+import { store } from '@davstack/store'
 import { BkrsResponse, BkrsResponses, BkrsResponseType } from './bkrs'
 import { ReversoResponse, ReversoResponses, ReversoResponseType } from './reverso'
 
@@ -11,7 +12,7 @@ export const tools = {
   },
 } as const satisfies Record<string, { name: string; icon: IconType }>
 
-export const searchStore = proxy({
+export const searchStore = store({
   focused: false,
   search: '',
   response: undefined as BkrsResponses | ReversoResponses | undefined,

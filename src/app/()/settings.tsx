@@ -8,10 +8,9 @@ import clsx from 'clsx'
 import type { Route } from 'next'
 import Link from 'next/link'
 import { TbInfoSquareRounded, TbSettings } from 'react-icons/tb'
-import { useSnapshot } from 'valtio'
 
 export default function Settings() {
-  const generalSnap = useSnapshot(generalStore)
+  const generalSnap = generalStore.use()
 
   return (
     <Dropdown.Root>
@@ -34,7 +33,7 @@ export default function Settings() {
                 props={{
                   enabled: generalSnap.animeGirls,
                   action: (prev) => {
-                    generalStore.animeGirls = !prev
+                    generalStore.animeGirls.set(!prev)
                     return !prev
                   },
                 }}
@@ -47,7 +46,7 @@ export default function Settings() {
                   props={{
                     enabled: generalSnap.autoChangeBackground,
                     action: (prev) => {
-                      generalStore.autoChangeBackground = !prev
+                      generalStore.autoChangeBackground.set(!prev)
                       return !prev
                     },
                   }}
@@ -59,8 +58,8 @@ export default function Settings() {
                   <button
                     disabled={generalSnap.autoChangeBackground}
                     onClick={() => {
-                      const nextIndex = backgrounds.indexOf(generalStore.background) - 1
-                      generalStore.background = backgrounds[nextIndex === -1 ? backgrounds.length - 1 : nextIndex]
+                      const nextIndex = backgrounds.indexOf(generalStore.background.get()) - 1
+                      generalStore.background.set(backgrounds[nextIndex === -1 ? backgrounds.length - 1 : nextIndex])
                     }}
                     className='rounded-l-md bg-zinc-800 px-2 py-1 font-mono duration-100 enabled:hover:bg-zinc-700'
                   >
@@ -73,8 +72,8 @@ export default function Settings() {
                   <button
                     disabled={generalSnap.autoChangeBackground}
                     onClick={() => {
-                      const nextIndex = backgrounds.indexOf(generalStore.background) + 1
-                      generalStore.background = backgrounds[nextIndex === backgrounds.length ? 0 : nextIndex]
+                      const nextIndex = backgrounds.indexOf(generalStore.background.get()) + 1
+                      generalStore.background.set(backgrounds[nextIndex === backgrounds.length ? 0 : nextIndex])
                     }}
                     className='rounded-r-md bg-zinc-800 px-2 py-1 font-mono duration-100 enabled:hover:bg-zinc-700'
                   >

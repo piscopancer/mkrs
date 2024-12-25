@@ -23,7 +23,6 @@ import clsx from 'clsx'
 import { getDayOfYear } from 'date-fns'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { ComponentProps, ReactNode, useEffect, useState } from 'react'
-import { useSnapshot } from 'valtio'
 
 const backgroundsInfo = {
   none: { component: () => null },
@@ -45,11 +44,12 @@ const backgroundsInfo = {
 } as const satisfies Record<(typeof backgrounds)[number], { component: () => ReactNode }>
 
 export default function Background(props: ComponentProps<'div'>) {
-  const layoutSnap = useSnapshot(layoutStore)
-  const generalSnap = useSnapshot(generalStore)
+  const mainContainerSnap = layoutStore.mainContainer.use()
+  const autoChangeBgSnap = generalStore.autoChangeBackground.use()
+  const bgSnap = generalStore.background.use()
   const [mobile, setMobile] = useState(true)
-  const { scrollY } = useScroll({ container: layoutSnap.mainContainer ?? undefined })
-  const Bg = backgroundsInfo[generalSnap.autoChangeBackground ? getShuffledArray(backgrounds, getDayOfYear(new Date()))[0] : generalSnap.background].component
+  const { scrollY } = useScroll({ container: mainContainerSnap ?? undefined })
+  const Bg = backgroundsInfo[autoChangeBgSnap ? getShuffledArray(backgrounds, getDayOfYear(new Date()))[0] : bgSnap].component
 
   useEffect(() => {
     const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
@@ -59,7 +59,7 @@ export default function Background(props: ComponentProps<'div'>) {
   return (
     <div {...props} about='background' className={clsx(props.className)}>
       <motion.div
-        key={generalSnap.background}
+        key={bgSnap}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className='absolute inset-0 min-h-full max-md:aspect-[1/1.5] max-md:w-full'

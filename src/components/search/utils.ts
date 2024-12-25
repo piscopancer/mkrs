@@ -1,10 +1,11 @@
+import { BkrsResponses } from '@/bkrs'
+import { ReversoResponses } from '@/reverso'
 import { searchStore } from '@/search'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
-import { useSnapshot } from 'valtio'
 
 export type TExact = { ch: string; tr: string } | undefined
 
-export function findExact(search: ReturnType<typeof useSnapshot<NonNullable<typeof searchStore.response>>>): TExact {
+export function findExact(search: BkrsResponses | ReversoResponses): TExact {
   if (search.type === 'ch') {
     if (search.tr)
       return {
@@ -24,6 +25,6 @@ export function findExact(search: ReturnType<typeof useSnapshot<NonNullable<type
 
 export function selectSuggestion(router: AppRouterInstance, ch: string) {
   router.push(`/search/${ch}`)
-  searchStore.focused = false
-  searchStore.showSuggestions = false
+  searchStore.focused.set(false)
+  searchStore.showSuggestions.set(false)
 }

@@ -4,13 +4,13 @@ export default function useHotkey<Keys extends string[]>(
   keys: Keys,
   callback: (key: Keys[number], event: KeyboardEvent) => void,
   options?: {
-    prevent?: true
+    preventDefault?: true
   },
 ) {
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (keys.includes(e.key)) {
-        if (options?.prevent) {
+        if (options?.preventDefault) {
           e.preventDefault()
         }
         callback(e.key, e)

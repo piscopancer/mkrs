@@ -14,7 +14,6 @@ import clsx from 'clsx'
 import Link from 'next/link'
 import { ComponentProps, Fragment, useState } from 'react'
 import { TbChevronDown, TbChevronUp, TbExternalLink, TbLoader } from 'react-icons/tb'
-import { useSnapshot } from 'valtio'
 import Examples from './examples'
 
 export default function Reverso({ search, mode, ...htmlProps }: ComponentProps<'article'> & { search: string; mode: ReversoSearchMode }) {
@@ -24,9 +23,9 @@ export default function Reverso({ search, mode, ...htmlProps }: ComponentProps<'
   })
   const [collapsed, setCollapsed] = useState(false)
   const CollapsedIcon = collapsed ? TbChevronDown : TbChevronUp
-  const searchSnap = useSnapshot(searchStore)
+  const searchFocusedSnap = searchStore.focused.use()
   useHotkey(hotkeys.reverso.keys, (_, e) => {
-    if (!searchSnap.focused && !e.ctrlKey) window.open(`https://context.reverso.net/translation/chinese-english/${search}`, '_blank')?.focus()
+    if (!searchFocusedSnap && !e.ctrlKey) window.open(`https://context.reverso.net/translation/chinese-english/${search}`, '_blank')?.focus()
   })
 
   return (

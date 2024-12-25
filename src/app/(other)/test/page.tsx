@@ -1,58 +1,40 @@
-import { queryBkrs } from '@/app/actions'
+'use client'
+
 import Reverso from '@/components/reverso'
-import { stringToReact } from '@/utils'
-import { DOMNode, domToReact, Element } from 'html-react-parser'
-import { Route } from 'next'
-import Link from 'next/link'
+import { autoUpdate, flip, offset, size, useFloating } from '@floating-ui/react'
 
-const chineseCharactersStringMatcher = /(\p{Script=Han}+)/gmu
-
-function split(chinese: string) {
-  const segmenter = new Intl.Segmenter([], { granularity: 'word' })
-  const segmentedText = segmenter.segment(chinese)
-  const words = [...segmentedText].filter((s) => s.isWordLike).map((s) => s.segment)
-  return words
-}
-
-export default async function TestPage() {
-  const res = await queryBkrs('看得') // 便
-  if (!res) return 'bruh'
-  if (res.type !== 'ch') {
-    return 'not ch :('
-  }
-  if (!res.tr) return 'no tr :('
-
-  let modTr = res.tr
-
-  const extractedChinese = modTr.match(chineseCharactersStringMatcher)
-  const extractedChineseWords = extractedChinese?.map(split) ?? []
-  const extractedChineseWordsFlat = extractedChineseWords.flat()
-
-  for (let i = 0; i < extractedChineseWordsFlat.length; i++) {
-    const chWord = extractedChineseWordsFlat[i]
-    modTr = modTr.replace(new RegExp(`(?<!\\[{\\d,}\\|)(${chWord})(?!\\])`), `[${i}|${chWord}]`)
-  }
-
-  const modChineseWordsMatcher = /\[\d+\|(\p{Script=Han}+)\]/gu
-  modTr = modTr.replace(modChineseWordsMatcher, `<a href="/search/$1">$1</a>`)
+export default function TestPage() {
+  const { refs, floatingStyles } = useFloating({
+    whileElementsMounted: autoUpdate,
+    middleware: [
+      flip(),
+      offset({ mainAxis: 16 }),
+      size({
+        padding: 16,
+        apply({ availableHeight }) {
+          if (refs.floating.current) {
+            refs.floating.current.style.height = availableHeight + 'px'
+          }
+        },
+      }),
+    ],
+  })
 
   return (
-    <div className='mx-auto mt-24 max-w-screen-md'>
-      <section className='mb-12'>
-        {stringToReact(modTr, {
-          replace: (domNode) => {
-            if (domNode instanceof Element && domNode.tagName === 'a') {
-              console.log(domNode.children[0].data)
-              return (
-                <Link className='inline-block border-b-2 border-zinc-800 px-0.5 py-0.5 hover:border-zinc-700 hover:bg-zinc-800' prefetch={false} href={(domNode.attribs as { href: Route }).href}>
-                  {domToReact(domNode.children as DOMNode[])}
-                </Link>
-              )
-            }
-          },
-        })}
-      </section>
-      <Reverso mode='ch-en' search='看得' />
+    <div className='mx-auto mt-24 h-[300vh] max-w-screen-md'>
+      <Reverso mode='ch-en' search='看得' className='mb-[100vh]' />
+      <div ref={refs.setReference} className='bg-rose-500 p-12' style={{}}>
+        sex
+      </div>
+      <div ref={refs.setFloating} className='w-48 overflow-scroll rounded-lg bg-blue-400' style={floatingStyles}>
+        <ul>
+          {Array.from({ length: 30 }).map((_, i) => (
+            <li key={i} className='my-2 rounded-md bg-blue-300 p-2'>
+              🚁
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   )
 }

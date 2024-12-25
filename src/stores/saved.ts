@@ -1,4 +1,4 @@
-import { proxy } from 'valtio'
+import { store } from '@davstack/store'
 import { z } from 'zod'
 
 export const savedStoreSchema = z.object({
@@ -8,4 +8,16 @@ const defaultSavedStore: z.infer<typeof savedStoreSchema> = {
   saved: [],
 }
 
-export const savedStore = proxy({ ...defaultSavedStore })
+export const savedStore = store(defaultSavedStore, {
+  persist: {
+    name: 'saved',
+    onRehydrateStorage(persisted) {
+      const parseRes = savedStoreSchema.safeParse(persisted)
+      if (parseRes.error) {
+        savedStore.set(defaultSavedStore)
+      } else {
+        savedStore.set(persisted)
+      }
+    },
+  },
+})

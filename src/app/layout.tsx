@@ -2,14 +2,14 @@
 
 import { fontsVars } from '@/assets/fonts'
 import '@/assets/styles/style.scss'
-import Debug from '@/components/debug'
+// import Debug from '@/components/debug'
 import { Tooltip } from '@/components/tooltip'
 import useHotkey from '@/hooks/use-hotkey'
 import { hotkeys } from '@/hotkeys'
 import { project } from '@/project'
 import { searchStore } from '@/search'
 import { generalStore } from '@/stores/general'
-import { PersistentStores } from '@/stores/persistent-stores'
+// import { PersistentStores } from '@/stores/persistent-stores'
 import { route } from '@/utils'
 import { Analytics } from '@vercel/analytics/react'
 import clsx from 'clsx'
@@ -17,30 +17,28 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef } from 'react'
 import { TbBrandGithub, TbDeviceFloppy, TbHistory, TbKeyboard, TbLineDashed } from 'react-icons/tb'
-import { ref, useSnapshot } from 'valtio'
+// import { ref, useSnapshot } from 'valtio'
 import Vibrator from '../components/vibrator'
 import Logo from './()/logo'
 import PageSelector from './()/page-selector'
 import Settings from './()/settings'
-import { layoutStore } from './()/store'
 // import Game from './()/game'
 import { qc } from '@/query'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { IconContext } from 'react-icons'
+import SelectedWordMenu from './(main)/search/[slug]/()/selected-words-menu'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const generalSnap = useSnapshot(generalStore)
+  const animeGirlsSnap = generalStore.animeGirls.use()
   const router = useRouter()
-  useHotkey(hotkeys['main-page'].keys, () => !searchStore.focused && router.push('/'))
-  useHotkey(hotkeys['recent-page'].keys, () => !searchStore.focused && router.push('/recent'))
-  useHotkey(hotkeys['saved-page'].keys, () => !searchStore.focused && router.push('/saved'))
+  useHotkey(hotkeys['main-page'].keys, () => !searchStore.focused.get() && router.push('/'))
+  useHotkey(hotkeys['recent-page'].keys, () => !searchStore.focused.get() && router.push('/recent'))
+  useHotkey(hotkeys['saved-page'].keys, () => !searchStore.focused.get() && router.push('/saved'))
   const containerRef = useRef<HTMLDivElement>(null!)
 
   useEffect(() => {
-    if (containerRef.current) {
-      layoutStore.mainContainer = ref(containerRef)
-    }
-  }, [])
+    // layoutStore.mainContainer.set(containerRef)
+  }, [containerRef.current])
 
   return (
     <html lang='ru'>
@@ -50,15 +48,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div
               className={clsx(
                 'grid h-svh grid-cols-[min-content,1fr] grid-rows-[min-content,1fr] [grid-template-areas:"logo_header"_"nav_main"] max-md:grid-rows-[min-content,1fr,min-content] max-md:[grid-template-areas:"logo_header"_"main_main"_"nav_nav"]',
-                !generalSnap.animeGirls && 'max-md:[grid-template-areas:"header_header"_"main_main"_"nav_nav"]',
+                !animeGirlsSnap && 'max-md:[grid-template-areas:"header_header"_"main_main"_"nav_nav"]',
               )}
             >
-              {generalSnap.animeGirls && (
+              {animeGirlsSnap && (
                 <div className={'flex size-20 items-center justify-center [grid-area:logo]'}>
                   <Logo />
                 </div>
               )}
-              <header className={clsx('ml-4 mr-4 flex h-20 items-center self-center [grid-area:header] max-md:ml-0', !generalSnap.animeGirls && 'max-md:ml-4')}>
+              <header className={clsx('ml-4 mr-4 flex h-20 items-center self-center [grid-area:header] max-md:ml-0', !animeGirlsSnap && 'max-md:ml-4')}>
                 <Link href={'/'} className='mr-auto font-display font-bold'>
                   <span className='mr-4'>МКРС </span>
                   <span className='text-xs text-zinc-600 max-md:hidden'>{'//'} БКРС-ИК</span>
@@ -117,9 +115,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </IconContext.Provider>
         </QueryClientProvider>
         {/*  */}
+        <SelectedWordMenu />
         <Analytics />
-        <PersistentStores />
-        {process.env.NODE_ENV !== 'production' && <Debug />}
+        {/* <PersistentStores /> */}
+        {/* {process.env.NODE_ENV !== 'production' && <Debug />} */}
       </body>
     </html>
   )

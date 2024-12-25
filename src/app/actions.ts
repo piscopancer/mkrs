@@ -36,7 +36,10 @@ async function _queryBkrs(search: string): Promise<BkrsResponses | undefined> {
     const html = await fetch(`https://bkrs.info/slovo.php?ch=${search}`).then((res) => res.text())
     const bodyEl = new JSDOM(html).window.document.body
     bodyEl.querySelectorAll('a').forEach((el) => {
-      el.setAttribute('href', `/search/${el.textContent}`)
+      const span = new JSDOM(html).window.document.createElement('span')
+      span.innerHTML = el.innerHTML
+      span.setAttribute('href', el.textContent ?? '/')
+      el.replaceWith(span)
     })
     bodyEl.querySelectorAll('img').forEach((i) => i.remove())
     const res = parseBkrsPage(bodyEl, determineBkrsSearchType(bodyEl))

@@ -10,11 +10,11 @@ import clsx from 'clsx'
 import { motion, useAnimation, useSpring, useTransform } from 'framer-motion'
 import { ComponentProps } from 'react'
 import { TbDeviceFloppy, TbNorthStar } from 'react-icons/tb'
-import { useSnapshot } from 'valtio'
 
 export default function Save({ ch, ...htmlProps }: ComponentProps<'div'> & { ch: string }) {
-  const savedSnap = useSnapshot(savedStore)
-  const isSaved = !!savedSnap.saved.some((saved) => saved === ch)
+  // const savedSnap = useSnapshot(savedStore)
+  // const isSaved = !!savedSnap.saved.some((saved) => saved === ch)
+  const isSaved = savedStore.use((store) => store.saved.some((saved) => saved === ch))
   const savedMV = useSpring(isSaved ? 1 : 0)
   savedMV.set(isSaved ? 1 : 0)
 
@@ -27,7 +27,9 @@ export default function Save({ ch, ...htmlProps }: ComponentProps<'div'> & { ch:
 
   function onClick() {
     if (!isSaved) {
-      savedStore.saved.push(ch)
+      savedStore.saved.set((draft) => {
+        draft.push(ch)
+      })
       savedMV.set(1)
       star1Anim.start({
         scale: [0, 1.2, 0],
@@ -37,7 +39,7 @@ export default function Save({ ch, ...htmlProps }: ComponentProps<'div'> & { ch:
         transition: { delay: 0.2 },
       })
     } else {
-      savedStore.saved = savedStore.saved.filter((s) => s !== ch)
+      savedStore.saved.set(savedStore.saved.get().filter((s) => s !== ch))
       savedMV.set(0)
     }
   }

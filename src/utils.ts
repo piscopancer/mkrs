@@ -4,7 +4,7 @@ import { HTMLReactParserOptions, domToReact, htmlToDOM } from 'html-react-parser
 import type { Route } from 'next'
 import { ComponentProps, ReactHTML } from 'react'
 import resolveConfig from 'tailwindcss/resolveConfig'
-import { useSnapshot } from 'valtio'
+// import { useSnapshot } from 'valtio'
 
 export type TNextPage<ParamsAlias extends string | never = never, SearchParams extends string[] = []> = {
   params: ParamsAlias extends never ? never : Record<ParamsAlias, string>
@@ -44,7 +44,7 @@ export function stringToReact(str: string, options?: HTMLReactParserOptions) {
   return domToReact(htmlToDOM(str), options)
 }
 
-export type Snapshot<T extends object> = ReturnType<typeof useSnapshot<T>>
+// export type Snapshot<T extends object> = ReturnType<typeof useSnapshot<T>>
 
 export type TComponent<T extends keyof ReactHTML, P extends object> = ComponentProps<T> & { props: P }
 

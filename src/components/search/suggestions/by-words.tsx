@@ -5,40 +5,38 @@ import useHotkey from '@/hooks/use-hotkey'
 import { searchStore } from '@/search'
 import clsx from 'clsx'
 import { useRouter } from 'next/navigation'
-import { useSnapshot } from 'valtio'
 import { selectSuggestion } from '../utils'
 
 export default function ByWords(props: { words: Word[] }) {
   const router = useRouter()
-  const searchSnap = useSnapshot(searchStore)
+  const selectedSuggestionSnap = searchStore.selectedSuggestion.use()
 
-  useHotkey(['ArrowLeft'], () => searchStore.selectedSuggestion !== -1 && moveSelection(-1), { prevent: searchStore.selectedSuggestion !== -1 || undefined })
-  useHotkey(['ArrowRight'], () => searchStore.selectedSuggestion !== -1 && moveSelection(1), { prevent: searchStore.selectedSuggestion !== -1 || undefined })
+  useHotkey(['ArrowLeft'], () => searchStore.selectedSuggestion.get() !== -1 && moveSelection(-1), { preventDefault: searchStore.selectedSuggestion.get() !== -1 || undefined })
+  useHotkey(['ArrowRight'], () => searchStore.selectedSuggestion.get() !== -1 && moveSelection(1), { preventDefault: searchStore.selectedSuggestion.get() !== -1 || undefined })
   useHotkey(
     ['ArrowUp', 'ArrowDown'],
     () => {
-      searchStore.selectedSuggestion = searchStore.selectedSuggestion === -1 ? 0 : -1
+      searchStore.selectedSuggestion.set(searchStore.selectedSuggestion.get() === -1 ? 0 : -1)
     },
-
-    { prevent: true },
+    { preventDefault: true },
   )
   useHotkey(['Enter'], () => {
-    if (searchStore.selectedSuggestion !== -1) {
-      const suggestion = props.words[searchStore.selectedSuggestion]
+    if (searchStore.selectedSuggestion.get() !== -1) {
+      const suggestion = props.words[searchStore.selectedSuggestion.get()]
       if (suggestion.ch) selectSuggestion(router, suggestion.ch)
     }
   })
 
   function moveSelection(by: -1 | 1) {
-    switch (searchStore.selectedSuggestion) {
+    switch (searchStore.selectedSuggestion.get()) {
       case props.words.length - 1:
-        by > 0 ? (searchStore.selectedSuggestion = 0) : (searchStore.selectedSuggestion += by)
+        by > 0 ? searchStore.selectedSuggestion.set(0) : searchStore.selectedSuggestion.set((prev) => prev + by)
         break
       case 0:
-        by > 0 ? (searchStore.selectedSuggestion = 1) : (searchStore.selectedSuggestion = props.words.length - 1)
+        by > 0 ? searchStore.selectedSuggestion.set(1) : searchStore.selectedSuggestion.set(props.words.length - 1)
         break
       default:
-        searchStore.selectedSuggestion += by
+        searchStore.selectedSuggestion.set((prev) => prev + by)
         break
     }
   }
@@ -51,7 +49,7 @@ export default function ByWords(props: { words: Word[] }) {
           <li key={i}>
             <button
               onMouseDown={() => word.ch && selectSuggestion(router, word.ch)}
-              className={clsx(searchSnap.selectedSuggestion === i ? 'border-zinc-600 text-zinc-200' : 'border-zinc-800 text-zinc-400', 'text-md block border-b-2 border-dashed px-2 py-1 text-xl hover:border-zinc-600 hover:text-zinc-200')}
+              className={clsx(selectedSuggestionSnap === i ? 'border-zinc-600 text-zinc-200' : 'border-zinc-800 text-zinc-400', 'text-md block border-b-2 border-dashed px-2 py-1 text-xl hover:border-zinc-600 hover:text-zinc-200')}
             >
               {word.ch}
             </button>

@@ -1,15 +1,14 @@
 import { differenceInDays } from 'date-fns'
 import { z } from 'zod'
 import { recentSchema, recentStore } from './stores/recent'
-import { Snapshot } from './utils'
 
 type RecentSearch = z.infer<typeof recentSchema>
 
-export function groupByDate(recent: Snapshot<RecentSearch[]>): Record<string, { name: string; recent: RecentSearch[] }> {
+export function groupByDate(recents: RecentSearch[]): Record<string, { name: string; recent: RecentSearch[] }> {
   const today: RecentSearch[] = []
   const yesterday: RecentSearch[] = []
   const thisWeek: RecentSearch[] = []
-  recent.forEach((r) => {
+  recents.forEach((r) => {
     const daysPassed = differenceInDays(new Date(), r.date)
     if (daysPassed < 1) {
       today.push(r)
@@ -27,13 +26,15 @@ export function groupByDate(recent: Snapshot<RecentSearch[]>): Record<string, { 
 }
 
 export function addRecent(recent: string) {
-  const todayRecent = recentStore.recent.find((r) => r.search === recent && differenceInDays(Date.now(), r.date) < 1)
-  if (todayRecent) {
-    todayRecent.date = new Date()
+  const todayRecentIndex = recentStore.recent.get().findIndex((r) => r.search === recent && differenceInDays(Date.now(), r.date) < 1)
+  if (todayRecentIndex !== -1) {
+    recentStore.recent[todayRecentIndex].date.set(new Date())
   } else {
-    recentStore.recent.push({
-      search: recent,
-      date: new Date(),
-    })
+    recentStore.recent.set((draft) =>
+      draft.push({
+        search: recent,
+        date: new Date(),
+      }),
+    )
   }
 }

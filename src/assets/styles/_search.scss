@@ -19,9 +19,9 @@
   //   }
   // }
   hr {
-    @apply my-4 border-zinc-800 rounded-full;
+    @apply my-4 rounded-full border-zinc-800;
   }
   a {
-    @apply text-pink-500 md:hover:text-pink-400 max-md:active:text-pink-400 md:hover:border-pink-500/80 max-md:active:border-pink-500/80 duration-100 border-b border-pink-500/20;
+    @apply border-b border-pink-500/20 text-pink-500 duration-100 max-md:active:border-pink-500/80 max-md:active:text-pink-400 md:hover:border-pink-500/80 md:hover:text-pink-400;
   }
 }

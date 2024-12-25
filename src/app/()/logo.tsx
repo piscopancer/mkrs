@@ -1,39 +1,5 @@
 'use client'
 
-// import gif0 from '@/assets/girls/0.gif'
-// import gif1 from '@/assets/girls/1.gif'
-// import gif10 from '@/assets/girls/10.gif'
-// import gif11 from '@/assets/girls/11.gif'
-// import gif12 from '@/assets/girls/12.gif'
-// import gif13 from '@/assets/girls/13.gif'
-// import gif14 from '@/assets/girls/14.gif'
-// import gif15 from '@/assets/girls/15.gif'
-// import gif16 from '@/assets/girls/16.gif'
-// import gif17 from '@/assets/girls/17.gif'
-// import gif18 from '@/assets/girls/18.gif'
-// import gif19 from '@/assets/girls/19.gif'
-// import gif2 from '@/assets/girls/2.gif'
-// import gif20 from '@/assets/girls/20.gif'
-// import gif21 from '@/assets/girls/21.gif'
-// import gif22 from '@/assets/girls/22.gif'
-// import gif23 from '@/assets/girls/23.gif'
-// import gif24 from '@/assets/girls/24.gif'
-// import gif25 from '@/assets/girls/25.gif'
-// import gif26 from '@/assets/girls/26.gif'
-// import gif27 from '@/assets/girls/27.gif'
-// import gif28 from '@/assets/girls/28.gif'
-// import gif29 from '@/assets/girls/29.gif'
-// import gif3 from '@/assets/girls/3.gif'
-// import gif30 from '@/assets/girls/30.gif'
-// import gif31 from '@/assets/girls/31.gif'
-// import gif32 from '@/assets/girls/32.gif'
-// import gif4 from '@/assets/girls/4.gif'
-// import gif5 from '@/assets/girls/5.gif'
-// import gif6 from '@/assets/girls/6.gif'
-// import gif7 from '@/assets/girls/7.gif'
-// import gif8 from '@/assets/girls/8.gif'
-// import gif9 from '@/assets/girls/9.gif'
-
 import useHotkey from '@/hooks/use-hotkey'
 import { searchStore } from '@/search'
 import { randomFromArray } from '@/utils'
@@ -42,9 +8,8 @@ import { motion, useAnimation, useSpring, useTransform } from 'framer-motion'
 import { ComponentProps, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { GiCompactDisc } from 'react-icons/gi'
-import { useSnapshot } from 'valtio'
 
-const gifs = [
+const gifsIds = [
   '4yO6Ss9',
   'YnsEWIg',
   'gqPDi6I',
@@ -73,12 +38,11 @@ const gifs = [
   'uMa4IJy',
   'Tm2KPQ2',
 ]
-// const gifs = [gif0, gif1, gif2, gif3, gif4, gif5, gif6, gif7, gif8, gif9, gif10, gif11, gif12, gif13, gif14, gif15, gif16, gif17, gif18, gif19, gif20, gif21, gif22, gif23, gif24, gif25, gif26, gif27, gif28, gif29, gif30, gif31, gif32]
 
 export default function Logo(props: ComponentProps<'div'>) {
   const [full, setFull] = useState(false)
   const [gif, setGif] = useState<null | string>(null!)
-  const searchSnap = useSnapshot(searchStore)
+  const searchFocusedSnap = searchStore.focused.use()
   const smallGifRef = useRef<HTMLDivElement | null>(null)
   const bigGifRef = useRef<HTMLDivElement | null>(null)
 
@@ -97,7 +61,7 @@ export default function Logo(props: ComponentProps<'div'>) {
   useHotkey(['Escape'] as const, () => full && setFull(false))
 
   useEffect(() => {
-    const randomGifId = randomFromArray(gifs)
+    const randomGifId = randomFromArray(gifsIds)
     const gifUrl = `https://i.imgur.com/${randomGifId}.gif`
     setGif(gifUrl)
     function onMouseMove(e: MouseEvent) {
@@ -113,7 +77,7 @@ export default function Logo(props: ComponentProps<'div'>) {
 
   useEffect(() => {
     if (searchStore.focused) setFull(false)
-  }, [searchSnap.focused])
+  }, [searchFocusedSnap])
 
   return (
     <div {...props} className={clsx(props.className)}>

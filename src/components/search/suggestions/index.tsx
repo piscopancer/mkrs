@@ -3,11 +3,10 @@ import useHotkey from '@/hooks/use-hotkey'
 import { findSuggestions, Response, searchStore } from '@/search'
 import { useRouter } from 'next/navigation'
 import { ReactNode } from 'react'
-import { useSnapshot } from 'valtio'
 import { selectSuggestion } from '../utils'
 
 export default function Suggestions<Res extends Response, Display extends unknown>(props: { suggestions: number; res: Res; display: (res: Res) => Display[]; button: (props: React.ComponentProps<'button'> & { isSelected: boolean; i: number; display: Display }) => ReactNode }) {
-  const searchSnap = useSnapshot(searchStore)
+  const selectedSuggestionSnap = searchStore.selectedSuggestion.use()
   const router = useRouter()
   // const selfAnim = useAnimation()
 
@@ -19,32 +18,34 @@ export default function Suggestions<Res extends Response, Display extends unknow
   const suggestions = findSuggestions(props.res)?.slice(0, props.suggestions) ?? undefined
   // console.log(suggestions)
   if (suggestions) {
-    if (searchStore.selectedSuggestion > suggestions.length - 1) searchStore.selectedSuggestion = 0
+    if (selectedSuggestionSnap > suggestions.length - 1) {
+      searchStore.selectedSuggestion.set(0)
+    }
   } else {
-    searchStore.selectedSuggestion = -1
+    searchStore.selectedSuggestion.set(-1)
   }
 
   const display = props.display(props.res)
 
-  useHotkey(['ArrowUp'], () => suggestions && suggestions.length > 0 && moveSelection(suggestions, -1), { prevent: true })
-  useHotkey(['ArrowDown'], () => suggestions && suggestions.length > 0 && moveSelection(suggestions, 1), { prevent: true })
+  useHotkey(['ArrowUp'], () => suggestions && suggestions.length > 0 && moveSelection(suggestions, -1), { preventDefault: true })
+  useHotkey(['ArrowDown'], () => suggestions && suggestions.length > 0 && moveSelection(suggestions, 1), { preventDefault: true })
   useHotkey(['Enter'], () => {
-    if (suggestions && searchSnap.selectedSuggestion !== -1) {
-      selectSuggestion(router, suggestions[searchSnap.selectedSuggestion])
+    if (suggestions && selectedSuggestionSnap !== -1) {
+      selectSuggestion(router, suggestions[selectedSuggestionSnap])
     }
   })
 
   function moveSelection(suggestions: string[], by: -1 | 1) {
-    const current = searchStore.selectedSuggestion
+    const current = searchStore.selectedSuggestion.get()
     switch (current) {
       case suggestions.length - 1:
-        by > 0 ? (searchStore.selectedSuggestion = -1) : (searchStore.selectedSuggestion += by)
+        by > 0 ? searchStore.selectedSuggestion.set(-1) : searchStore.selectedSuggestion.set((prev) => prev + by)
         break
       case -1:
-        by > 0 ? (searchStore.selectedSuggestion = 0) : (searchStore.selectedSuggestion = suggestions.length - 1)
+        by > 0 ? searchStore.selectedSuggestion.set(0) : searchStore.selectedSuggestion.set(suggestions.length - 1)
         break
       default:
-        searchStore.selectedSuggestion += by
+        searchStore.selectedSuggestion.set((prev) => prev + by)
         break
     }
   }
@@ -56,7 +57,7 @@ export default function Suggestions<Res extends Response, Display extends unknow
       <h1 className='mx-4 mb-2 mt-3 block font-mono text-xs text-zinc-500 max-md:mb-2'>{responsesDescriptions[props.res.type]}</h1>
       <ul>
         {suggestions.map((suggestion, i) => {
-          const isSelected = searchSnap.selectedSuggestion === i
+          const isSelected = selectedSuggestionSnap === i
           return props.button({
             i,
             isSelected,

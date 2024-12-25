@@ -5,10 +5,10 @@ import { AnimatePresence, motion, useAnimation } from 'framer-motion'
 import Link from 'next/link'
 import { useEffect } from 'react'
 import { TbX } from 'react-icons/tb'
-import { useSnapshot } from 'valtio'
 
 export default function SavedPage() {
-  const savedSnap = useSnapshot(savedStore)
+  // const savedSnap = useSnapshot(savedStore)
+  const savedSnap = savedStore.use()
   const selfAnim = useAnimation()
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function SavedPage() {
             >
               <button
                 onClick={() => {
-                  savedStore.saved = savedStore.saved.filter((s) => s !== saved)
+                  savedStore.saved.set(savedStore.saved.get().filter((s) => s !== saved))
                 }}
                 className='-ml-2 rounded-full text-zinc-500 duration-100 max-md:active:text-zinc-200 md:hover:text-zinc-200'
               >
