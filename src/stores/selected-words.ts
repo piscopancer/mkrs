@@ -17,3 +17,18 @@ export const lastSelectedStore = proxy({
 })
 
 export const selectedWordsStore = store(defaultSelectedWordsStore)
+  .actions((store) => ({
+    clearWords() {
+      store.words.set((draft) => {
+        draft.length = 0
+      })
+    },
+  }))
+  .computed((store) => ({
+    selectedText() {
+      return store.words
+        .get()
+        .map((w) => w.word)
+        .join('')
+    },
+  }))

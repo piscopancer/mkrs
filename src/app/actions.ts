@@ -35,12 +35,21 @@ async function _queryBkrs(search: string): Promise<BkrsResponses | undefined> {
   try {
     const html = await fetch(`https://bkrs.info/slovo.php?ch=${search}`).then((res) => res.text())
     const bodyEl = new JSDOM(html).window.document.body
-    bodyEl.querySelectorAll('a').forEach((el) => {
-      const span = new JSDOM(html).window.document.createElement('span')
-      span.innerHTML = el.innerHTML
-      span.setAttribute('href', el.textContent ?? '/')
-      el.replaceWith(span)
+
+    // TODO: BUG, running out of memory when used woth bodyEl!!!
+
+    ;['.ch_ru', '.ru'].forEach((elClass) => {
+      const el = bodyEl.querySelector(`.margin_left > ${elClass}`)
+      if (el) {
+        el.querySelectorAll('a').forEach((el) => {
+          const span = new JSDOM(html).window.document.createElement('span')
+          span.innerHTML = el.innerHTML
+          span.setAttribute('href', el.textContent ?? '/')
+          el.replaceWith(span)
+        })
+      }
     })
+
     bodyEl.querySelectorAll('img').forEach((i) => i.remove())
     const res = parseBkrsPage(bodyEl, determineBkrsSearchType(bodyEl))
     bodyEl.remove()

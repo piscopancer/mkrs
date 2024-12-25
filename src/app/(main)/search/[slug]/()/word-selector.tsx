@@ -53,10 +53,10 @@ export default function WordSelector({ word, wordId, ...props }: WordSelectorPro
       onPointerDown={interact}
       className={clsx('group relative inline-block duration-100', wordSnap ? 'text-zinc-200' : '')}
     >
-      <div className={clsx('duration-100', 'group-hover:-translate-y-1')}>{props.children}</div>
+      <div className={clsx('duration-100 ease-in-out', 'group-hover:-translate-y-0.5')}>{props.children}</div>
       {index !== null && (
         <div className='hopper pointer-events-none absolute inset-0'>
-          <div className='motion-preset-pop absolute aspect-square w-[calc(100%+1rem)] self-center justify-self-center rounded-lg bg-zinc-200/10' />
+          <div className='motion-preset-pop absolute aspect-square w-[calc(100%+1rem)] self-center justify-self-center rounded-full bg-zinc-200/10' />
           <span className='motion-preset-blur-down-sm motion-translate-y-loop-[-2px]/mirror motion-ease-in-out-cubic/translate motion-duration-1000/translate -mt-4 self-start justify-self-center rounded-md border-2 border-zinc-800 bg-zinc-200 px-1 font-mono text-xs font-bold text-zinc-800'>
             {index + 1}
           </span>
