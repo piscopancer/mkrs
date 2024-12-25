@@ -29,7 +29,7 @@ export default function SelectedWordMenu() {
 
   return (
     <FloatingPortal>
-      <article ref={refs.setFloating} style={floatingStyles} className='flex max-w-64 items-center rounded-xl border-2 border-zinc-800 bg-zinc-900 p-1 outline outline-4 outline-zinc-900/50 max-md:max-w-[calc(100vw-theme(spacing.4))]'>
+      <article ref={refs.setFloating} style={floatingStyles} className='flex max-w-64 items-center rounded-xl border-2 border-zinc-800/80 bg-zinc-900/80 p-1 outline outline-4 outline-zinc-900/50 max-md:max-w-[calc(100vw-theme(spacing.4))]'>
         <p className='px-3'>{selectedTextSnap}</p>
         <menu className='flex self-start'>
           <button
@@ -37,7 +37,7 @@ export default function SelectedWordMenu() {
               navigator.clipboard.writeText(selectedWordsStore.selectedText.get())
               selectedWordsStore.clearWords()
             }}
-            className='flex aspect-square size-8 items-center justify-center rounded-md text-zinc-200 hover:bg-zinc-800'
+            className='flex aspect-square size-8 items-center justify-center rounded-md text-zinc-200'
           >
             <TbCopy />
           </button>
@@ -49,7 +49,7 @@ export default function SelectedWordMenu() {
               searchStore.focused.set(false)
               searchStore.showSuggestions.set(false)
             }}
-            className='flex aspect-square size-8 items-center justify-center rounded-md text-zinc-200 hover:bg-zinc-800'
+            className='flex aspect-square size-8 items-center justify-center rounded-md text-zinc-200'
           >
             <TbSearch />
           </button>
@@ -59,7 +59,7 @@ export default function SelectedWordMenu() {
                 draft.length = 0
               })
             }}
-            className='flex aspect-square size-8 items-center justify-center rounded-md text-zinc-200 hover:bg-zinc-800'
+            className='flex aspect-square size-8 items-center justify-center rounded-md text-zinc-200'
           >
             <TbX />
           </button>

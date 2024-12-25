@@ -1,11 +1,12 @@
 'use client'
 
+import { lastSelectedStore, selectedWordsStore } from '@/stores/selected-words'
 import { stringToReact } from '@/utils'
 import clsx from 'clsx'
 import { DOMNode, domToReact, Element } from 'html-react-parser'
 import { Route } from 'next'
 import Link from 'next/link'
-import { ComponentProps } from 'react'
+import { ComponentProps, useEffect } from 'react'
 import WordSelector from './word-selector'
 
 const chineseCharactersStringMatcher = /(\p{Script=Han}+)/gmu
@@ -35,6 +36,13 @@ function changeChineseToAnchors(chinese: string) {
 
 export default function Tr({ tr, ...props }: ComponentProps<'div'> & { tr: string }) {
   let modTr = changeChineseToAnchors(tr)
+
+  useEffect(() => {
+    return () => {
+      selectedWordsStore.clearWords()
+      lastSelectedStore.buttonRef = null
+    }
+  }, [])
 
   // TODO: prequery all words from modTr for their info to be quickly shown
 
