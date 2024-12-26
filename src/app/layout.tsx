@@ -22,6 +22,7 @@ import Vibrator from '../components/vibrator'
 import Logo from './()/logo'
 import PageSelector from './()/page-selector'
 import Settings from './()/settings'
+import { layoutStore } from './()/store'
 import SelectedWordMenu from './(main)/search/[slug]/()/selected-words-menu'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -33,7 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const containerRef = useRef<HTMLDivElement>(null!)
 
   useEffect(() => {
-    // layoutStore.mainContainer.set(containerRef)
+    layoutStore.mainContainer.set(containerRef)
   }, [containerRef.current])
 
   return (

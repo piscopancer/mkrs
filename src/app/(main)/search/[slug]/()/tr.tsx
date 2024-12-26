@@ -1,6 +1,6 @@
 'use client'
 
-import { lastSelectedStore, selectedWordsStore } from '@/stores/selected-words'
+import { lastWordSelectorStore, selectedWordsStore } from '@/stores/selected-words'
 import { stringToReact } from '@/utils'
 import clsx from 'clsx'
 import { DOMNode, domToReact, Element } from 'html-react-parser'
@@ -40,7 +40,7 @@ export default function Tr({ tr, ...props }: ComponentProps<'div'> & { tr: strin
   useEffect(() => {
     return () => {
       selectedWordsStore.clearWords()
-      lastSelectedStore.buttonRef = null
+      lastWordSelectorStore.ref.current.set(null)
     }
   }, [])
 

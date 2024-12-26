@@ -1,17 +1,16 @@
 'use client'
 
 import { searchStore } from '@/search'
-import { lastSelectedStore, selectedWordsStore } from '@/stores/selected-words'
+import { lastWordSelectorStore, selectedWordsStore } from '@/stores/selected-words'
 import { autoUpdate, flip, FloatingPortal, offset, useFloating } from '@floating-ui/react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { TbCopy, TbSearch, TbX } from 'react-icons/tb'
-import { useSnapshot } from 'valtio'
 
 export default function SelectedWordMenu() {
   const selectedWordsSnap = selectedWordsStore.use()
   const selectedTextSnap = selectedWordsStore.selectedText.use()
-  const lastSelectedSnap = useSnapshot(lastSelectedStore)
+  const lastWordSelectorSnap = lastWordSelectorStore.ref.current.use()
   const { refs, floatingStyles } = useFloating({
     whileElementsMounted: autoUpdate,
     placement: 'top',
@@ -19,9 +18,17 @@ export default function SelectedWordMenu() {
   })
   const router = useRouter()
 
+  // useEffect(() => {
+  //   const unsub = lastWordSelectorStore.ref.current.onChange((btn, prev) => {
+  //     console.log('prev', prev, 'new', btn?.outerHTML)
+  //     refs.setReference(btn)
+  //   })
+  //   return unsub
+  // }, [])
+
   useEffect(() => {
-    refs.setReference(lastSelectedStore.buttonRef ?? null)
-  }, [lastSelectedSnap.buttonRef])
+    refs.setReference(lastWordSelectorSnap)
+  }, [lastWordSelectorSnap])
 
   if (!selectedWordsSnap.words.length) {
     return null

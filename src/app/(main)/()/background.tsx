@@ -48,7 +48,9 @@ export default function Background(props: ComponentProps<'div'>) {
   const autoChangeBgSnap = generalStore.autoChangeBackground.use()
   const bgSnap = generalStore.background.use()
   const [mobile, setMobile] = useState(true)
-  const { scrollY } = useScroll({ container: mainContainerSnap ?? undefined })
+  const { scrollY } = useScroll({
+    container: mainContainerSnap,
+  })
   const Bg = backgroundsInfo[autoChangeBgSnap ? getShuffledArray(backgrounds, getDayOfYear(new Date()))[0] : bgSnap].component
 
   useEffect(() => {
@@ -69,7 +71,7 @@ export default function Background(props: ComponentProps<'div'>) {
       >
         <Bg />
       </motion.div>
-      <div className='absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-zinc-900' />
+      <div className='absolute inset-0 bg-gradient-to-b from-transparent via-zinc-900/60 to-zinc-900' />
     </div>
   )
 }

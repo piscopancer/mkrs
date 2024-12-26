@@ -1,9 +1,8 @@
 'use client'
 
-import { lastSelectedStore, selectedWordsStore } from '@/stores/selected-words'
+import { lastWordSelectorStore, selectedWordsStore } from '@/stores/selected-words'
 import clsx from 'clsx'
 import { ComponentProps, useRef } from 'react'
-import { ref } from 'valtio'
 
 type WordSelectorProps = ComponentProps<'button'> & {
   wordId: number
@@ -26,7 +25,7 @@ export default function WordSelector({ word, wordId, ...props }: WordSelectorPro
     selectedWordsStore.words.set((draft) => {
       if (index === null) {
         draft.push({ word, id: wordId })
-        lastSelectedStore.buttonRef = ref(selfRef.current)
+        lastWordSelectorStore.ref.current.set(selfRef.current)
       } else {
         if (index === 0) {
           while (draft.length) {
@@ -35,7 +34,7 @@ export default function WordSelector({ word, wordId, ...props }: WordSelectorPro
         } else {
           draft.splice(index, draft.length - 1)
           const lastBtn = document.querySelector(`#${createId(index - 1)}`) as HTMLButtonElement
-          lastSelectedStore.buttonRef = ref(lastBtn)
+          lastWordSelectorStore.ref.current.set(lastBtn)
         }
       }
     })
@@ -57,7 +56,7 @@ export default function WordSelector({ word, wordId, ...props }: WordSelectorPro
       {index !== null && (
         <div className='hopper pointer-events-none absolute inset-0'>
           <div className='motion-preset-pop absolute aspect-square w-[calc(100%+1rem)] self-center justify-self-center rounded-full bg-zinc-200/10' />
-          <span className='motion-preset-blur-down-sm motion-translate-y-loop-[-2px]/mirror motion-ease-in-out-cubic/translate motion-duration-1000/translate -mt-4 self-start justify-self-center rounded-md border-2 border-zinc-800 bg-zinc-200 px-1 font-mono text-xs font-bold text-zinc-800'>
+          <span className='motion-preset-blur-down-sm -mt-4 self-start justify-self-center rounded-md border-2 border-zinc-800 bg-zinc-200 px-1 font-mono text-xs font-bold text-zinc-800 motion-translate-y-loop-[-2px]/mirror motion-duration-1000/translate motion-ease-in-out-cubic/translate'>
             {index + 1}
           </span>
         </div>
