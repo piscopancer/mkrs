@@ -49,7 +49,14 @@ export default function WordSelector({ word, wordId, ...props }: WordSelectorPro
           interact()
         }
       }}
-      onPointerDown={interact}
+      onTouchStart={(e) => {
+        interact()
+      }}
+      onPointerDown={(e) => {
+        if (e.button === 0) {
+          interact()
+        }
+      }}
       className={clsx('group relative inline-block duration-100', wordSnap ? 'text-zinc-200' : '')}
     >
       <div className={clsx('duration-100 ease-in-out', 'group-hover:-translate-y-0.5')}>{props.children}</div>

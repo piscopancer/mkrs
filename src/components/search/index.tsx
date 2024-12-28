@@ -12,7 +12,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { GiCat } from 'react-icons/gi'
-import { TbApps, TbLoader, TbSearch } from 'react-icons/tb'
+import { TbArrowUp, TbSearch, TbTools, TbX } from 'react-icons/tb'
 import { Tooltip } from '../tooltip'
 import ExactFound from './exact-found'
 import ChSuggestions from './suggestions/ch'
@@ -35,6 +35,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
   const [querying, setQuerying] = useState(false)
   const [showCat, setShowCat] = useState(false)
   const searchTimer = useRef<NodeJS.Timeout | null>(null)
+  const [copiedText, setCopiedText] = useState<string | null>(null)
 
   useHotkey(
     hotkeys.focus.keys,
@@ -44,7 +45,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
         searchStore.showSuggestions.set(true)
       }
     },
-    { preventDefault: !searchStore.focused.get() || undefined },
+    { preventDefault: !searchStore.focused.get() },
   )
 
   useHotkey(['Escape'], () => {
@@ -54,20 +55,26 @@ export default function Search(props: React.ComponentProps<'search'>) {
   })
 
   useHotkey(hotkeys.search.keys, () => {
-    if (searchStore.search && searchStore.selectedSuggestion.get() === -1) {
+    if (searchStore.search.get() && searchStore.selectedSuggestion.get() === -1) {
       selectSuggestion(router, searchStore.search.get())
     }
   })
 
+  function toggleTools() {
+    searchStore.showTools.set(!searchStore.showTools.get())
+  }
+
+  useHotkey(hotkeys.tools.keys, toggleTools, { preventDefault: !searchStore.focused.get() })
+
   useHotkey(
-    hotkeys.tools.keys,
+    hotkeys.clear.keys,
     () => {
       if (!searchStore.focused.get()) {
-        searchStore.showTools.set(!searchStore.showTools.get())
-        searchStore.focused.set(!searchStore.showTools.get())
+        searchStore.search.set('')
+        searchStore.focused.set(true)
       }
     },
-    { preventDefault: !searchStore.focused.get() || undefined },
+    { preventDefault: !searchStore.focused.get() },
   )
 
   useHotkey(['v', 'м'], async (_, e) => {
@@ -92,9 +99,30 @@ export default function Search(props: React.ComponentProps<'search'>) {
         searchStore.showTools.set(false)
       }
     }
+    function onCopy() {
+      const selection = getSelection()
+      if (!selection) return
+      const text = selection.toString().trim()
+      if (text.length) {
+        setCopiedText(text)
+      }
+    }
+    async function trySetLastClipboardItem() {
+      const last = await navigator.clipboard.read()
+      try {
+        const s = await last[0].getType('text/plain')
+        setCopiedText((await s.text()).trim())
+      } catch (error) {
+        setCopiedText(null)
+      }
+    }
     addEventListener('click', hideOnClickOutside)
+    addEventListener('copy', onCopy)
+    addEventListener('focus', trySetLastClipboardItem)
     return () => {
       removeEventListener('click', hideOnClickOutside)
+      removeEventListener('copy', onCopy)
+      removeEventListener('focus', trySetLastClipboardItem)
     }
   }, [])
 
@@ -140,7 +168,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
 
   return (
     <search {...props} ref={selfRef} className={clsx(props.className, 'relative block')}>
-      <div className='hopper relative mb-4 rounded-full'>
+      <div className='hopper relative mb-4 h-14 rounded-full'>
         <input
           ref={inputRef}
           onFocus={() => {
@@ -148,21 +176,59 @@ export default function Search(props: React.ComponentProps<'search'>) {
             if (searchStore.response) searchStore.showSuggestions.set(true)
           }}
           onBlur={() => searchStore.focused.set(false)}
+          autoComplete='off'
           spellCheck={false}
           type='text'
           onChange={(e) => {
             const input = e.target.value.trim()
             searchStore.search.set(input)
           }}
-          className='w-full rounded-full bg-zinc-700/50 py-4 pl-6 pr-32 outline-pink-500/70 duration-100 focus-visible:outline-4 max-md:pr-20'
+          className='w-full rounded-full bg-zinc-700/50 py-4 pl-6 pr-[5.25rem] outline-pink-500/70 duration-100 focus-visible:outline-4'
         />
+        <div className={clsx('hopper pointer-events-none size-full duration-200', querying ? '' : 'opacity-0 saturate-0')}>
+          <div className='mx-auto h-[2px] w-1/2 animate-pulse self-start bg-gradient-to-r from-transparent via-zinc-500 to-transparent' />
+          <div className='mx-auto h-[2px] w-1/2 animate-pulse self-end bg-gradient-to-r from-transparent via-zinc-500 to-transparent' />
+        </div>
+        <button
+          tabIndex={searchSnap.search ? -1 : undefined}
+          onClick={() => {
+            searchStore.search.set('')
+            searchStore.focused.set(true)
+          }}
+          className={clsx('mr-12 justify-center justify-self-end px-2 text-zinc-200 duration-100 focus-visible:outline-0', searchSnap.search ? 'opacity-100' : 'pointer-events-none opacity-0')}
+        >
+          <TbX className='size-5' />
+        </button>
+        <button disabled={!!!searchSnap.search.trim()} onClick={() => selectSuggestion(router, searchStore.search.get())} className='group flex h-full items-center justify-center justify-self-end rounded-full pl-2 pr-6 text-zinc-200 duration-100 focus-visible:outline-0 disabled:opacity-50'>
+          <TbSearch className='size-4' />
+        </button>
+        {searchSnap.response && searchSnap.showSuggestions && !searchSnap.showTools && <Suggestions response={searchSnap.response} />}
         <AnimatePresence>
-          {querying && (
-            <motion.div initial={querying ? false : { scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }} className='mr-24 animate-spin self-center justify-self-end max-md:mr-14'>
-              <TbLoader className='stroke-zinc-500' />
+          {searchSnap.showTools && (
+            <motion.div initial={{ opacity: 1, y: -2 }} animate={{ y: 0, opacity: 1, transition: { duration: 0.1 } }} key='handwriting' exit={{ opacity: 0, y: -2, transition: { duration: 0.1 } }} className='absolute inset-x-0 top-full z-[1] mt-12 '>
+              <Tools props={{}} />
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
+      {copiedText && (
+        <aside className={clsx('hopper mx-auto w-fit rounded-lg bg-zinc-800 py-1 md:hidden')}>
+          <TbArrowUp className='-mr-1 -mt-2 size-5 self-start justify-self-end rounded-full bg-zinc-800 stroke-zinc-500 p-0.5' />
+          <button
+            onClick={() => {
+              router.push(`/search/${copiedText}`)
+              searchStore.search.set(copiedText)
+              searchStore.focused.set(false)
+              searchStore.showSuggestions.set(false)
+              setCopiedText(null)
+            }}
+            className='line-clamp-1 animate-pulse px-4 text-center text-sm'
+          >
+            {copiedText}
+          </button>
+        </aside>
+      )}
+      <aside className='flex items-center justify-end max-md:hidden'>
         <Tooltip
           content={
             <>
@@ -170,44 +236,19 @@ export default function Search(props: React.ComponentProps<'search'>) {
             </>
           }
         >
-          <button
-            onClick={() => {
-              searchStore.showTools.set(!searchStore.showTools.get())
-              searchStore.focused.set(!searchStore.showTools.get())
-            }}
-            className={clsx(
-              'group mr-12 flex h-full items-center justify-center justify-self-end rounded-full pl-4 pr-2 duration-100  focus-visible:outline-0 disabled:opacity-50 max-md:hidden',
-              searchSnap.showTools ? 'text-pink-500' : 'text-zinc-400 hover:text-pink-500 focus-visible:text-pink-500',
-            )}
-          >
-            <TbApps className='size-5' />
+          <button onClick={toggleTools} className={clsx('mr-4 rounded-md p-1 duration-100', searchSnap.showTools ? 'text-pink-500' : 'text-zinc-500 hover:text-zinc-200')}>
+            <TbTools className='size-5' />
           </button>
         </Tooltip>
-        <button
-          disabled={!!!searchSnap.search.trim()}
-          onClick={() => selectSuggestion(router, searchStore.search.get())}
-          className='group flex h-full items-center justify-center justify-self-end rounded-full pl-2 pr-6 text-zinc-400 duration-100 focus-visible:text-pink-500 focus-visible:outline-0 enabled:hover:text-pink-500 disabled:opacity-50'
-        >
-          <TbSearch className='size-4' />
-        </button>
-        {searchSnap.response && searchSnap.showSuggestions && !searchSnap.showTools && <Suggestions response={searchSnap.response} />}
-        <AnimatePresence>
-          {searchSnap.showTools && (
-            <motion.div initial={{ opacity: 1, y: -2 }} animate={{ y: 0, opacity: 1, transition: { duration: 0.1 } }} key='handwriting' exit={{ opacity: 0, y: -2, transition: { duration: 0.1 } }} className='absolute inset-x-0 top-full z-[1] mt-2 '>
-              <Tools props={{}} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-      <ul className='flex items-center justify-end gap-6 max-md:hidden'>
-        {[hotkeys.focus, hotkeys.search].map(({ name, display }) => (
-          <li key={name} className='flex text-xs'>
-            <Article.kbd className='mx-0 mr-2 text-xs'>{display}</Article.kbd>
-            {/* <kbd className='mr-2 rounded-md px-2 font-mono text-zinc-400 shadow-key'></kbd> */}
-            <span className='font-mono text-zinc-500'>{name}</span>
-          </li>
-        ))}
-      </ul>
+        <ul className='flex items-center gap-6'>
+          {[hotkeys.focus, hotkeys.search].map(({ name, display }) => (
+            <li key={name} className='flex items-center text-xs'>
+              <Article.kbd className='mx-0 mr-3 translate-y-0 text-xs'>{display}</Article.kbd>
+              <span className='translate-y-px font-mono text-zinc-500'>{name}</span>
+            </li>
+          ))}
+        </ul>
+      </aside>
       {showCat && (
         <Tooltip content='💋'>
           <motion.button disabled className='absolute bottom-[90%] left-[10%] max-md:bottom-[85%]'>

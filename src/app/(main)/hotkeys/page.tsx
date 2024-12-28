@@ -1,19 +1,21 @@
 'use client'
 
+import { layoutStore } from '@/app/()/store'
 import * as Article from '@/components/article'
 import { Hotkey, hotkeys } from '@/hotkeys'
 import { objectEntries } from '@/utils'
-import { motion, useAnimation } from 'framer-motion'
+import { motion, useAnimation, useScroll, useTransform } from 'framer-motion'
 import { useEffect } from 'react'
 import { GiMartini, GiPalmTree } from 'react-icons/gi'
 
 const shortcutsGroups: Record<string, (Hotkey & { description?: string })[]> = {
   Поиск: [
     { ...hotkeys.focus, description: 'Фокусируется на строке поиска' },
+    { ...hotkeys.clear, description: 'Очищает строку поиска' },
     { ...hotkeys.search, description: 'Ищет то, что сейчас в поисковой строке' },
     { ...hotkeys.tools, description: 'Открывает панель инструментов под строкой поиска' },
   ],
-  'Взаимодействие со словом': [
+  'Взаимодействие со результатом': [
     { ...hotkeys.save, description: 'Сохраняет слово' },
     { ...hotkeys.copy, description: 'Копирует слово в буфер обмена' },
     { ...hotkeys['to-search'], description: 'Вставляет слово в строку поиска, но не начинает поиск самостоятельно' },
@@ -54,15 +56,21 @@ export default function HotkeysPage() {
     selfAnim.set({ opacity: 0 })
     selfAnim.start({ opacity: 1 })
   }, [selfAnim])
+  const mainContainer = layoutStore.mainContainer.use()
+
+  const { scrollY } = useScroll({ container: mainContainer })
+  const iconsTranslateY = useTransform(scrollY, (s) => s * 0.15)
 
   return (
     <motion.main animate={selfAnim} className='mb-24'>
       <article>
         <h1 className='mb-8 font-display text-lg font-medium text-zinc-200'>Горячие клавиши</h1>
         <div className='relative mb-8 overflow-hidden rounded-lg bg-zinc-800 pb-4 pt-10 max-md:px-3 max-md:py-2'>
-          <GiMartini className='absolute -bottom-6 left-[5%] aspect-square w-[12%] rotate-3 fill-zinc-600 max-md:w-[20%]' />
-          <GiPalmTree className='absolute -bottom-2 right-[30%] aspect-square w-[12%] fill-zinc-700 max-md:w-[20%]' />
-          <GiPalmTree className='absolute -bottom-2 right-[10%] aspect-square w-[10%] -scale-x-100 fill-zinc-700 max-md:w-[16%]' />
+          <motion.div className='absolute inset-0' style={{ y: iconsTranslateY }}>
+            <GiMartini className='absolute -bottom-6 left-[5%] aspect-square w-[12%] rotate-3 fill-zinc-600 stroke-none max-md:w-[20%]' />
+            <GiPalmTree className='absolute -bottom-2 right-[30%] aspect-square w-[12%] fill-zinc-700 stroke-none max-md:w-[20%]' />
+            <GiPalmTree className='absolute -bottom-2 right-[10%] aspect-square w-[10%] -scale-x-100 fill-zinc-700 stroke-none max-md:w-[16%]' />
+          </motion.div>
           <div className='absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-zinc-800' />
           <h2 className='relative ml-[22%] text-lg max-md:ml-0 max-md:text-base'>Постоянно ищете, копируете или вставляете?</h2>
           <p className='relative ml-[22%] text-zinc-400 max-md:ml-0 max-md:text-sm'>Не тянитесь лишний раз за мышкой, делайте все быстрее через горячие клавиши.</p>

@@ -1,23 +1,19 @@
 import { store } from '@davstack/store'
 import { z } from 'zod'
+import { createPersistentStoreProps } from './utils'
 
-export const savedStoreSchema = z.object({
+const savedStoreSchema = z.object({
   saved: z.array(z.string()),
 })
+
 const defaultSavedStore: z.infer<typeof savedStoreSchema> = {
   saved: [],
 }
 
-export const savedStore = store(defaultSavedStore, {
-  persist: {
-    name: 'saved',
-    onRehydrateStorage(persisted) {
-      const parseRes = savedStoreSchema.safeParse(persisted)
-      if (parseRes.error) {
-        savedStore.set(defaultSavedStore)
-      } else {
-        savedStore.set(persisted)
-      }
-    },
-  },
+export const savedStore = store(defaultSavedStore)
+
+export const persistentSavedStoreProps = createPersistentStoreProps({
+  name: 'saved',
+  store: savedStore,
+  schema: savedStoreSchema,
 })

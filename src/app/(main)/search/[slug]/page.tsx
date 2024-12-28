@@ -29,6 +29,7 @@ export async function generateMetadata({ params }: TSearchPage): Promise<Metadat
 
 export default async function SearchPage({ params }: TSearchPage) {
   const response = await queryBkrs(params.slug.trim())
+  console.log(response)
 
   if (!response) {
     return null

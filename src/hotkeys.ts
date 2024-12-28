@@ -5,6 +5,7 @@ export const hotkeys = {
   focus: { name: 'Фокус', keys: ['f', 'а'], display: 'F' },
   reverso: { name: 'Смотреть на Reverso Context', keys: ['r', 'к'], display: 'R' },
   search: { name: 'Поиск', keys: ['Enter'], display: '➥' },
+  clear: { name: 'Очистить', keys: ['Backspace'], display: 'Backspace' },
   'main-page': { name: 'Главная', keys: ['h', 'р'], display: 'H' },
   'saved-page': { name: 'Сохраненные', keys: ['e', 'у'], display: 'E' },
   'recent-page': { name: 'Недавние', keys: ['q', 'й'], display: 'Q' },

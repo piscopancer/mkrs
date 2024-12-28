@@ -120,7 +120,7 @@ export default function Scanner({ props, ...attr }: TComponent<'article', {}>) {
               searchStore.showSuggestions.set(false)
               searchStore.showTools.set(false)
             }}
-            className='flex size-8 items-center justify-center rounded-full hover:bg-zinc-800'
+            className='flex size-8 items-center justify-center rounded-full'
           >
             <TbX className='size-4' />
           </button>
@@ -135,7 +135,7 @@ export default function Scanner({ props, ...attr }: TComponent<'article', {}>) {
                   onClick={() => {
                     searchStore.search.set((prev) => prev + r)
                   }}
-                  className='border-b-2 border-dashed border-zinc-800 px-1 pb-1 text-2xl text-zinc-400 hover:border-zinc-600 hover:text-zinc-200'
+                  className='border-b-2 border-zinc-800 px-1 pb-1 text-2xl text-zinc-400 hover:border-zinc-600 hover:text-zinc-200'
                 >
                   {r}
                 </button>

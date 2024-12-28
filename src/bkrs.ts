@@ -167,18 +167,21 @@ function parseExamples(el: Element): BkrsPageContentBase['examples'] {
 
 function parseInRu(el: Element, _for: 'ch' | 'ru'): Example[] | undefined {
   const id = _for === 'ch' ? '#ruch_fulltext' : '#ruch_fullsearch'
-  return el.querySelector(id)
-    ? Array.from(el.querySelectorAll(`${id} > *`)).map((ch) => {
-        if (Array.from(ch.children).length) {
-          const _ch = ch.cloneNode(true) as Element
-          _ch.querySelector('a')?.remove()
-          return {
-            heading: ch.children[0]?.textContent?.trim() ?? '',
-            innerHtml: _ch.innerHTML,
-          }
-        } else return { innerHtml: '', heading: '' }
-      })
+  const found = el.querySelector(id)
+    ? (Array.from(el.querySelectorAll(`${id} > *`))
+        .map((ch) => {
+          if (Array.from(ch.children).length) {
+            const _ch = ch.cloneNode(true) as Element
+            _ch.querySelector('a')?.remove()
+            return {
+              heading: ch.children[0]?.textContent?.trim() ?? '',
+              innerHtml: _ch.innerHTML,
+            }
+          } else return
+        })
+        .filter(Boolean) as Example[])
     : undefined
+  return found?.length ? found : undefined
 }
 
 export function parseSimilar(el: Element): Similar[] | undefined {

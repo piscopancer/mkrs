@@ -1,5 +1,6 @@
 import { store } from '@davstack/store'
 import { z } from 'zod'
+import { createPersistentStoreProps } from './utils'
 
 export const scannerStoreSchema = z.object({
   imageData: z.string().optional(),
@@ -10,15 +11,10 @@ const defaultScannerStore: z.infer<typeof scannerStoreSchema> = {
   recognitions: [],
 }
 
-export const scannerStore = store(defaultScannerStore, {
-  persist: {
-    onRehydrateStorage(persisted) {
-      const parseRes = scannerStoreSchema.safeParse(persisted)
-      if (parseRes.error) {
-        scannerStore.set(defaultScannerStore)
-      } else {
-        scannerStore.set(persisted)
-      }
-    },
-  },
+export const scannerStore = store(defaultScannerStore)
+
+export const persistentScannerStoreProps = createPersistentStoreProps({
+  name: 'scanner',
+  store: scannerStore,
+  schema: scannerStoreSchema,
 })

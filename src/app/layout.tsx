@@ -9,6 +9,7 @@ import { project } from '@/project'
 import { qc } from '@/query'
 import { searchStore } from '@/search'
 import { generalStore } from '@/stores/general'
+import PersistentStores from '@/stores/persistent-stores'
 import { route } from '@/utils'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Analytics } from '@vercel/analytics/react'
@@ -17,7 +18,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef } from 'react'
 import { IconContext } from 'react-icons'
-import { TbBrandGithub, TbDeviceFloppy, TbHistory, TbKeyboard, TbLineDashed } from 'react-icons/tb'
+import { TbBrandGithub, TbDeviceFloppy, TbHistory, TbKeyboard } from 'react-icons/tb'
 import Vibrator from '../components/vibrator'
 import Logo from './()/logo'
 import PageSelector from './()/page-selector'
@@ -39,7 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang='ru'>
-      <body className={clsx(fontsVars, 'bg-zinc-900 font-sans text-base text-zinc-200')}>
+      <body className={clsx(fontsVars, 'bg-zinc-900 font-sans text-base text-zinc-200 [color-scheme:dark]')}>
         <QueryClientProvider client={qc}>
           <IconContext.Provider value={{ style: { strokeWidth: 1.5 } }}>
             <div
@@ -63,7 +64,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </header>
               <nav className='flex w-20 justify-between overflow-x-hidden py-6 [grid-area:nav] max-md:w-auto max-md:py-2 md:flex-col md:px-3'>
                 <Tooltip content='Главная' side='right' sideOffset={6}>
-                  <Link href={'/'} className='relative flex justify-center rounded-full py-2 active:bg-zinc-800 max-md:order-1 max-md:flex-1 max-md:duration-200 md:hover:bg-zinc-800'>
+                  <Link href={'/'} className='relative flex justify-center rounded-full py-2 active:bg-zinc-800 max-md:order-1 max-md:flex-1 max-md:text-lg max-md:duration-200 md:hover:bg-zinc-800'>
                     <PageSelector route={route('/')} />小
                     <Vibrator />
                   </Link>
@@ -83,7 +84,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                       <Vibrator />
                     </Link>
                   </Tooltip>
-                  <TbLineDashed className='h-8 stroke-zinc-800 max-md:hidden' />
+                  <div className='mx-auto my-2 w-6 border-b-2 border-zinc-800 max-md:hidden' />
                   <Tooltip content='Горячие клавиши' side='right' sideOffset={6}>
                     <Link href={'/hotkeys'} className='relative  flex justify-center rounded-full py-2 hover:bg-zinc-800 max-md:hidden'>
                       <TbKeyboard className='h-6' />
@@ -105,7 +106,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   </a>
                 </Tooltip>
               </nav>
-              <section ref={containerRef} className='relative overflow-y-auto overflow-x-hidden rounded-lg [grid-area:main] max-md:px-4 md:mb-3 md:mr-3 md:border-2 md:border-zinc-800 md:px-4 md:[scrollbar-gutter:stable]'>
+              <section
+                ref={containerRef}
+                className='relative overflow-y-auto overflow-x-hidden rounded-lg [grid-area:main] [scrollbar-gutter:stable] max-md:px-4 max-md:[scrollbar-color:theme(colors.zinc.800)_transparent] max-md:[scrollbar-width:thin] md:mb-3 md:mr-3 md:border-2 md:border-zinc-800 md:px-4'
+              >
                 {children}
               </section>
             </div>
@@ -114,7 +118,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/*  */}
         <SelectedWordMenu />
         <Analytics />
-        {/* <PersistentStores /> */}
+        <PersistentStores />
         {/* {process.env.NODE_ENV !== 'production' && <Debug />} */}
       </body>
     </html>
