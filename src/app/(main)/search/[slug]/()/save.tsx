@@ -12,9 +12,7 @@ import { ComponentProps } from 'react'
 import { TbDeviceFloppy, TbNorthStar } from 'react-icons/tb'
 
 export default function Save({ ch, ...htmlProps }: ComponentProps<'div'> & { ch: string }) {
-  // const savedSnap = useSnapshot(savedStore)
-  // const isSaved = !!savedSnap.saved.some((saved) => saved === ch)
-  const isSaved = savedStore.use((store) => store.saved.some((saved) => saved === ch))
+  const isSaved = savedStore.saved.use((saved) => saved.some((s) => s === ch))
   const savedMV = useSpring(isSaved ? 1 : 0)
   savedMV.set(isSaved ? 1 : 0)
 
@@ -22,7 +20,7 @@ export default function Save({ ch, ...htmlProps }: ComponentProps<'div'> & { ch:
   const star2Anim = useAnimation()
 
   useHotkey(hotkeys.save.keys, () => {
-    if (!searchStore.focused) onClick()
+    if (!searchStore.focused.get()) onClick()
   })
 
   function onClick() {

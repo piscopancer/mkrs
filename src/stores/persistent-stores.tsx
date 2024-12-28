@@ -28,8 +28,9 @@ function PersistentStore(props: PersistentStoreProps) {
       props.store.set(props.modify ? props.modify(parseRes.data) : parseRes.data)
     }
     props.after?.(parseRes)
-    props.store.onChange((s) => localStorage.setItem(props.name, JSON.stringify(s)))
   }, [])
+
+  props.store.onChange((s) => localStorage.setItem(props.name, JSON.stringify(s)))
 
   return null
 }

@@ -3,22 +3,10 @@
 import { layoutStore } from '@/app/()/store'
 import { searchStore } from '@/search'
 import { lastWordSelectorStore, selectedWordsStore } from '@/stores/selected-words'
-import { autoUpdate, detectOverflow, FloatingPortal, Middleware, offset, Placement, shift, useFloating } from '@floating-ui/react'
+import { autoUpdate, FloatingPortal, offset, Placement, shift, useFloating } from '@floating-ui/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { TbChevronDown, TbChevronUp, TbCopy, TbSearch, TbX } from 'react-icons/tb'
-
-const detectMainContainerOverflow: Middleware = {
-  name: 'detect-main-container-overflow',
-  async fn(state) {
-    const overflow = await detectOverflow(state, {
-      rootBoundary: layoutStore.mainContainer.current.get()?.getBoundingClientRect() ?? 'viewport',
-      padding: 4,
-    })
-    console.log(overflow)
-    return {}
-  },
-}
 
 export default function SelectedWordMenu() {
   const selectedWordsSnap = selectedWordsStore.use()
@@ -36,14 +24,15 @@ export default function SelectedWordMenu() {
         mainAxis: true,
         crossAxis: true,
         padding: 16,
-        rootBoundary: mainContainerRect
+        rootBoundary: 'viewport',
+        boundary: mainContainerRect
           ? {
               x: mainContainerRect.x,
               y: mainContainerRect.y,
               height: mainContainerRect.height,
               width: mainContainerRect.width,
             }
-          : 'viewport',
+          : 'clippingAncestors',
       }),
     ],
   })
