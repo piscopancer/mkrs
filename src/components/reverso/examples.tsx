@@ -16,7 +16,7 @@ export default function Examples({ examples, children }: PropsWithChildren & { e
       <AnimatePresence>
         {open && !!examples && (
           <Dialog.Portal forceMount>
-            <motion.div exit={{ opacity: 0, transition: { duration: 0.1 } }} initial={{ opacity: 0 }} animate={{ opacity: 0.5 }}>
+            <motion.div exit={{ opacity: 0, transition: { duration: 0.1 } }} initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} className='relative z-[1]'>
               <Dialog.Overlay className='fixed inset-0 bg-black' />
             </motion.div>
             <Dialog.Content asChild>
@@ -26,7 +26,7 @@ export default function Examples({ examples, children }: PropsWithChildren & { e
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
-                className='fixed inset-0 mx-auto my-4 flex max-w-screen-md grow flex-col rounded-xl bg-zinc-900 max-md:mx-4 max-md:my-4'
+                className='fixed inset-0 z-[1] mx-auto my-4 flex max-w-screen-md grow flex-col bg-zinc-900 max-md:mx-0 max-md:my-0 md:rounded-xl'
               >
                 <header className='flex items-center'>
                   <h1 className='ml-8 mr-auto font-display text-lg max-md:ml-4'>Примеры</h1>

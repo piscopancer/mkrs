@@ -106,7 +106,7 @@ export default function Logo(props: ComponentProps<'div'>) {
         </motion.div>
       ) : (
         createPortal(
-          <div onClick={() => setFull(false)} className={clsx(!full && 'pointer-events-none', 'fixed inset-0 flex items-center justify-evenly')}>
+          <div onClick={() => setFull(false)} className={clsx(!full && 'pointer-events-none', 'fixed inset-0 z-[1] flex items-center justify-evenly')}>
             <motion.div key='bg' initial={{ opacity: 0 }} animate={{ opacity: 0.8 }} className='absolute inset-0 bg-zinc-950' exit={{ opacity: 0, transition: { duration: 1 } }} />
             <Disc side='left' />
             <motion.div layout layoutId='logo' ref={bigGifRef} className='aspect-square h-[80vh] max-md:h-[80vw] '>

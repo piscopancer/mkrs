@@ -64,7 +64,13 @@ export default function Search(props: React.ComponentProps<'search'>) {
     searchStore.showTools.set(!searchStore.showTools.get())
   }
 
-  useHotkey(hotkeys.tools.keys, toggleTools, { preventDefault: !searchStore.focused.get() })
+  useHotkey(
+    hotkeys.tools.keys,
+    () => {
+      if (!searchStore.focused.get()) toggleTools()
+    },
+    { preventDefault: !searchStore.focused.get() },
+  )
 
   useHotkey(
     hotkeys.clear.keys,
