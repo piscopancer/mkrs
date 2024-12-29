@@ -98,7 +98,7 @@ export default function Logo(props: ComponentProps<'div'>) {
           }}
           transition={{ layout: { duration: 0.3 } }}
           onClick={() => setFull(true)}
-          className='relative h-12 w-12 overflow-hidden rounded-full bg-zinc-800'
+          className='relative h-12 w-12 overflow-hidden rounded-full'
         >
           <motion.div initial={{ x: gif ? 0 : -4 + 'rem' }} animate={{ x: 0 }}>
             {gif && <img fetchPriority='low' draggable={false} src={gif} alt='девчуля танцует' className='aspect-square w-12 rounded-full object-cover saturate-0 duration-100 hover:saturate-100' />}

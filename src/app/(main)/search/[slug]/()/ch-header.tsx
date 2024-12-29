@@ -41,7 +41,9 @@ export default function ChHeader(props: BkrsResponseProps<'ch'>) {
 
   function copy() {
     if (!props.response.ch) return
-    navigator.clipboard.writeText(props.response.ch)
+    try {
+      navigator.clipboard.writeText(props.response.ch)
+    } catch (error) {}
     ch2Anim.set({ scale: 1, y: 0 })
     ch2Anim
       .start({

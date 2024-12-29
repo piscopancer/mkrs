@@ -59,6 +59,10 @@ export function route<R extends string>(route: Route<R>, searchParams?: Record<s
   }
 }
 
+export type VirtualKeyboard = {
+  overlaysContent: boolean
+}
+
 export const ease = [0.3, 1, 0, 1] as const
 
 export const { theme } = resolveConfig(twConfig)

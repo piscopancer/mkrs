@@ -59,7 +59,7 @@ export default function Background(props: ComponentProps<'div'>) {
   }, [])
 
   return (
-    <div {...props} about='background' className={clsx(props.className)}>
+    <div {...props} about='background' className={clsx(props.className, 'max-md:bg-black')}>
       <motion.div
         key={bgSnap}
         initial={{ opacity: 0 }}

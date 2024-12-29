@@ -108,14 +108,15 @@ export default function Search(props: React.ComponentProps<'search'>) {
       }
     }
     async function trySetLastClipboardItem() {
-      const last = await navigator.clipboard.read()
       try {
+        const last = await navigator.clipboard.read()
         const s = await last[0].getType('text/plain')
         setCopiedText((await s.text()).trim())
       } catch (error) {
         setCopiedText(null)
       }
     }
+    trySetLastClipboardItem()
     addEventListener('click', hideOnClickOutside)
     addEventListener('copy', onCopy)
     addEventListener('focus', trySetLastClipboardItem)

@@ -14,6 +14,9 @@ export default function Settings() {
 
   return (
     <Dropdown.Root>
+      <Dropdown.Trigger className={clsx('flex items-center justify-center rounded-full px-4 py-2 text-zinc-200 max-md:active:bg-zinc-800 md:hover:bg-zinc-800')}>
+        <TbSettings className='size-6' />
+      </Dropdown.Trigger>
       <Dropdown.Content sideOffset={8} className='z-[1] px-3 max-md:w-screen max-md:px-3 md:w-[40ch]'>
         <>
           <ul className='flex flex-col rounded-xl border-2 border-zinc-800 bg-zinc-900'>
@@ -86,9 +89,6 @@ export default function Settings() {
           <Dropdown.Arrow className='fill-zinc-800' />
         </>
       </Dropdown.Content>
-      <Dropdown.Trigger className={clsx('flex items-center justify-center rounded-full px-4 py-2 text-zinc-200 max-md:active:bg-zinc-800 md:hover:bg-zinc-800')}>
-        <TbSettings className='size-6' />
-      </Dropdown.Trigger>
     </Dropdown.Root>
   )
 }

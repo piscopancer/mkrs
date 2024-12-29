@@ -10,7 +10,7 @@ import { qc } from '@/query'
 import { searchStore } from '@/search'
 import { generalStore } from '@/stores/general'
 import PersistentStores from '@/stores/persistent-stores'
-import { route } from '@/utils'
+import { route, VirtualKeyboard } from '@/utils'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Analytics } from '@vercel/analytics/react'
 import clsx from 'clsx'
@@ -35,34 +35,36 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const containerRef = useRef<HTMLDivElement>(null!)
 
   useEffect(() => {
-    layoutStore.mainContainer.set(containerRef)
+    layoutStore.mainContainer.current.set(containerRef.current)
   }, [containerRef.current])
+
+  useEffect(() => {
+    if ('virtualKeyboard' in navigator) {
+      ;(navigator.virtualKeyboard as VirtualKeyboard).overlaysContent = true
+    }
+  }, [])
 
   return (
     <html lang='ru'>
-      <body className={clsx(fontsVars, 'bg-zinc-900 font-sans text-base text-zinc-200 [color-scheme:dark]')}>
+      <body className={clsx(fontsVars, 'min-h-svh bg-zinc-900 font-sans text-base text-zinc-200 [color-scheme:dark]')}>
         <QueryClientProvider client={qc}>
           <IconContext.Provider value={{ style: { strokeWidth: 1.5 } }}>
-            <div
-              className={clsx(
-                'grid h-svh grid-cols-[min-content,1fr] grid-rows-[min-content,1fr] [grid-template-areas:"logo_header"_"nav_main"] max-md:grid-rows-[min-content,1fr,min-content] max-md:[grid-template-areas:"logo_header"_"main_main"_"nav_nav"]',
-                !animeGirlsSnap && 'max-md:[grid-template-areas:"header_header"_"main_main"_"nav_nav"]',
-              )}
-            >
-              {animeGirlsSnap && (
-                <div className={'flex size-20 items-center justify-center [grid-area:logo]'}>
-                  <Logo />
-                </div>
-              )}
-              <header className={clsx('ml-4 mr-4 flex h-20 items-center self-center [grid-area:header] max-md:ml-0', !animeGirlsSnap && 'max-md:ml-4')}>
-                <Link href={'/'} className='mr-auto font-display font-bold'>
-                  <span className='mr-4'>МКРС </span>
-                  <span className='text-xs text-zinc-600 max-md:hidden'>{'//'} БКРС-ИК</span>
-                </Link>
-                {/* <Game /> */}
-                <Settings />
-              </header>
-              <nav className='flex w-20 justify-between overflow-x-hidden py-6 [grid-area:nav] max-md:w-auto max-md:py-2 md:flex-col md:px-3'>
+            <div className={'relative grid h-svh grid-cols-[min-content,1fr] grid-rows-[min-content,1fr] [grid-template-areas:"logo_header"_"nav_main"] max-md:block'}>
+              <div className='max-md:fixed max-md:top-0 max-md:z-[1] max-md:flex max-md:w-full md:contents'>
+                {animeGirlsSnap && (
+                  <div className='flex size-20 items-center justify-center [grid-area:logo] max-md:bg-gradient-to-b max-md:from-black max-md:to-transparent'>
+                    <Logo />
+                  </div>
+                )}
+                <header className={clsx('flex h-20 items-center self-center pl-4 pr-4 [grid-area:header] max-md:flex-1 max-md:bg-gradient-to-b max-md:from-black max-md:to-transparent max-md:pl-0', !animeGirlsSnap && 'max-md:pl-4')}>
+                  <Link href={'/'} className='mr-auto font-display font-bold'>
+                    <span className='mr-4'>МКРС </span>
+                    <span className='text-xs text-zinc-600 max-md:hidden'>{'//'} 小像大</span>
+                  </Link>
+                  <Settings />
+                </header>
+              </div>
+              <nav className='flex w-20 justify-between overflow-x-hidden py-6 [grid-area:nav] max-md:fixed max-md:bottom-0 max-md:z-[1] max-md:w-full max-md:bg-gradient-to-b max-md:from-transparent max-md:to-black max-md:py-2 md:flex-col md:px-3'>
                 <Tooltip content='Главная' side='right' sideOffset={6}>
                   <Link href={'/'} className='relative flex justify-center rounded-full py-2 active:bg-zinc-800 max-md:order-1 max-md:flex-1 max-md:text-lg max-md:duration-200 md:hover:bg-zinc-800'>
                     <PageSelector route={route('/')} />小
@@ -108,7 +110,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </nav>
               <section
                 ref={containerRef}
-                className='relative overflow-y-auto overflow-x-hidden rounded-lg [grid-area:main] [scrollbar-gutter:stable] max-md:px-4 max-md:[scrollbar-color:theme(colors.zinc.800)_transparent] max-md:[scrollbar-width:thin] md:mb-3 md:mr-3 md:border-2 md:border-zinc-800 md:px-4'
+                className='relative overflow-y-auto overflow-x-hidden [grid-area:main] [scrollbar-gutter:stable] max-md:h-full max-md:px-4 max-md:pb-[3.75rem] max-md:pt-20 max-md:[grid-area:header/main/nav] max-md:[scrollbar-color:theme(colors.zinc.800)_transparent] max-md:[scrollbar-width:thin] md:mb-3 md:mr-3 md:rounded-lg md:border-2 md:border-zinc-800 md:px-4'
               >
                 {children}
               </section>
