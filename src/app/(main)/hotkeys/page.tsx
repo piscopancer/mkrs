@@ -78,13 +78,13 @@ export default function HotkeysPage() {
         <ul className=''>
           {objectEntries(shortcutsGroups).map(([groupName, hotkeys]) => (
             <li key={groupName}>
-              <h2 className='mb-2 font-display font-medium'>{groupName}</h2>
-              <ul className='mb-8 grid w-full grid-cols-[3fr,2fr,2fr] items-center gap-y-2'>
+              <h2 className='mb-6 font-display font-medium'>{groupName}</h2>
+              <ul className='mb-12 grid w-full grid-cols-[3fr,2fr,2fr] items-center divide-y divide-zinc-800'>
                 {hotkeys.map((hotkey, i) => (
                   <li key={i} className='col-span-full grid grid-cols-subgrid items-start'>
-                    <span className='text-zinc-400'>{hotkey.name}</span>
-                    <Article.kbd className='mx-0 text-sm'>{hotkey.display}</Article.kbd>
-                    {hotkey.description && <span className='text-sm text-zinc-400'>{hotkey.description}</span>}
+                    <span className='my-3 text-zinc-200'>{hotkey.name}</span>
+                    <Article.kbd className='mx-0 my-3 text-sm'>{hotkey.display}</Article.kbd>
+                    {hotkey.description && <span className='my-3 text-sm text-zinc-400'>{hotkey.description}</span>}
                   </li>
                 ))}
               </ul>

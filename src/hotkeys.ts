@@ -8,7 +8,7 @@ export const hotkeys = {
   clear: { name: 'Очистить', keys: ['Backspace'], display: 'Backspace' },
   'main-page': { name: 'Главная', keys: ['h', 'р'], display: 'H' },
   'saved-page': { name: 'Сохраненные', keys: ['e', 'у'], display: 'E' },
-  'recent-page': { name: 'Недавние', keys: ['q', 'й'], display: 'Q' },
+  'recent-page': { name: 'История', keys: ['q', 'й'], display: 'Q' },
   copy: { name: 'Скопировать', keys: ['c', 'с'], display: 'C' },
   'to-search': { name: 'Скопировать в поиск', keys: ['w', 'ц'], display: 'W' },
   bkrs: { name: 'Смотреть на 大БКРС', keys: ['b', 'и'], display: 'B' },

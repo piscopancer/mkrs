@@ -45,7 +45,7 @@ export default function SavedPage() {
                 onClick={() => {
                   savedStore.saved.set(savedStore.saved.get().filter((s) => s !== saved))
                 }}
-                className='group mr-4 flex aspect-square items-center justify-center rounded-full border-2 border-transparent p-1.5'
+                className='group mr-4 aspect-square rounded-full p-1.5 hover:bg-zinc-900'
               >
                 <TbX className='size-5' />
               </button>

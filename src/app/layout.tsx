@@ -79,7 +79,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                       <Vibrator />
                     </Link>
                   </Tooltip>
-                  <Tooltip content='Недавние' side='right' sideOffset={6}>
+                  <Tooltip content='История' side='right' sideOffset={6}>
                     <Link href={'/recent'} className='max-md:order-0 relative flex justify-center rounded-full py-2 active:bg-zinc-800 max-md:flex-1 max-md:duration-200 md:hover:bg-zinc-800'>
                       <PageSelector route={route('/recent')} />
                       <TbHistory className='h-6' />

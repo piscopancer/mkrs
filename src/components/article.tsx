@@ -34,7 +34,7 @@ export function p(props: ComponentProps<'p'>) {
 
 export function kbd(props: ComponentProps<'kbd'>) {
   return (
-    <kbd className={clsx(props.className, 'mx-1 inline-block w-fit origin-bottom -translate-y-[2px] cursor-pointer select-none rounded-md bg-zinc-800/50 px-2 text-base text-zinc-300 shadow-key duration-200 active:translate-y-px active:scale-y-95 active:text-zinc-500 max-md:text-sm')}>
+    <kbd className={clsx(props.className, 'mx-1 inline-block w-fit origin-bottom -translate-y-px cursor-pointer select-none rounded-md bg-zinc-800/50 px-2 text-base text-zinc-300 shadow-key duration-200 active:translate-y-[2px] active:scale-y-95 active:text-zinc-500 max-md:text-sm')}>
       {props.children}
     </kbd>
   )
