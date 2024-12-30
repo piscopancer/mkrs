@@ -25,18 +25,18 @@ export default function RecentPage() {
 
   return (
     <motion.main animate={selfAnim} className='mb-48'>
-      <h1 className='mb-8 font-display text-lg font-medium text-zinc-200'>Недавние</h1>
+      <h1 className='mb-8 font-display text-xl font-medium text-zinc-200'>Недавние</h1>
       {objectEntries(groupByDate(recentSnap.recent)).map(([id, { name, recent }]) =>
         recent.length ? (
           <Fragment key={id}>
-            <h2 className='ext-lg mb-6 font-medium text-zinc-300'>{name}</h2>
+            <h2 className='mb-6 font-medium text-zinc-300'>{name}</h2>
             <ul className='mb-10'>
               {recent
                 .toSorted((a, b) => compareDesc(a.date, b.date))
                 .map((r, i) => {
                   const saved = savedSnap.saved.find((s) => s === r.search)
                   return (
-                    <li key={r.search + '_' + i} className='flex items-center'>
+                    <li key={r.search + '_' + i} className='group/li -mx-2 flex items-center rounded-md px-2 hover:bg-zinc-800/50'>
                       <button
                         onClick={() => {
                           if (saved) {
@@ -47,13 +47,13 @@ export default function RecentPage() {
                             })
                           }
                         }}
-                        className={clsx(saved ? 'text-pink-500 max-md:active:text-pink-300 md:hover:text-pink-300' : 'text-zinc-600 max-md:active:text-zinc-400 md:hover:text-zinc-400', 'group -ml-2 mr-2 flex h-8 w-8 items-center justify-center py-0.5')}
+                        className={clsx('group mr-4 flex aspect-square items-center justify-center rounded-full border-2 border-transparent p-1.5', saved ? 'bg-pink-500/10 text-pink-500' : 'border-zinc-800 text-zinc-200')}
                       >
-                        <TbDeviceFloppy className='duration-100 group-hover:scale-110' />
+                        <TbDeviceFloppy className='size-5 duration-100' />
                         <Vibrator />
                       </button>
-                      <Link prefetch={false} href={`/search/${r.search}`} className='group flex min-w-0 flex-1 items-center py-0.5'>
-                        <span className='overflow-hidden text-ellipsis text-nowrap text-lg text-pink-500 duration-100 max-md:group-active:text-pink-300 md:text-lg md:group-hover:text-pink-300'>{r.search}</span>
+                      <Link prefetch={false} href={`/search/${r.search}`} className='group flex min-w-0 flex-1 items-center border-b border-zinc-800 py-3 group-last/li:border-0 max-md:py-4'>
+                        <span className='line-clamp-1 text-zinc-200 duration-100 md:text-lg'>{r.search}</span>
                         <span className='ml-auto text-nowrap rounded-full text-xs text-zinc-400 duration-100 max-md:group-active:text-zinc-200 md:group-hover:text-zinc-200'>{formatDistanceToNowStrict(r.date, { locale: ru, roundingMethod: 'floor' })}</span>
                       </Link>
                     </li>

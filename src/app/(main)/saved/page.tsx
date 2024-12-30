@@ -18,7 +18,7 @@ export default function SavedPage() {
 
   return (
     <motion.main animate={selfAnim} className='mb-48'>
-      <h1 className='mb-8 font-display text-lg font-medium text-zinc-200'>Сохраненные</h1>
+      <h1 className='mb-8 font-display text-xl font-medium text-zinc-200'>Сохраненные</h1>
       <ul>
         <AnimatePresence mode='popLayout'>
           {savedSnap.saved.toReversed().map((saved) => (
@@ -33,7 +33,7 @@ export default function SavedPage() {
                 scaleY: 0,
                 transition: { duration: 0.1 },
               }}
-              className='group flex items-center gap-2'
+              className='group/li -mx-2 flex items-center rounded-md px-2 hover:bg-zinc-800/50'
               layout='position'
               transition={{
                 layout: {
@@ -45,11 +45,11 @@ export default function SavedPage() {
                 onClick={() => {
                   savedStore.saved.set(savedStore.saved.get().filter((s) => s !== saved))
                 }}
-                className='-ml-2 rounded-full text-zinc-500 duration-100 max-md:active:text-zinc-200 md:hover:text-zinc-200'
+                className='group mr-4 flex aspect-square items-center justify-center rounded-full border-2 border-transparent p-1.5'
               >
-                <TbX className='size-8 p-2' />
+                <TbX className='size-5' />
               </button>
-              <Link prefetch={false} href={`/search/${saved}`} className='text-lg text-pink-500 duration-100 max-md:active:text-pink-300 md:hover:text-pink-300'>
+              <Link prefetch={false} href={`/search/${saved}`} className='flex min-w-0 flex-1 items-center border-b border-zinc-800 py-3 group-last/li:border-0 max-md:py-4 md:text-lg'>
                 {saved}
               </Link>
             </motion.li>

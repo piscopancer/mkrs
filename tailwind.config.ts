@@ -15,18 +15,27 @@ const config: Config = {
   },
   plugins: [
     require('tailwindcss-motion'),
-    plugin(({ addComponents, matchVariant, theme }) => {
-      addComponents({
-        '.bg-halftone': {
-          background: `radial-gradient(${theme('colors.zinc.700')} 20%, transparent 20%) 0 0`,
-          backgroundSize: '1vmin 1vmin',
-          animation: 'slide infinite 5s linear',
-          '@keyframes slide': {
-            to: {
-              backgroundPosition: '2vmin 1vmin',
+    plugin(({ matchUtilities, addComponents, matchVariant, addVariant, theme }) => {
+      matchUtilities(
+        {
+          'bg-halftone': (color) => ({
+            background: `radial-gradient(${color} 20%, transparent 20%) 0 0`,
+            backgroundSize: '1vmin 1vmin',
+            animation: 'slide infinite 5s linear',
+            '@keyframes slide': {
+              to: {
+                backgroundPosition: '2vmin 1vmin',
+              },
             },
+          }),
+        },
+        {
+          values: {
+            DEFAULT: theme('colors.zinc.700'),
           },
         },
+      )
+      addComponents({
         '.hopper': {
           display: 'grid',
           gridTemplateAreas: '"hopper"',
@@ -35,7 +44,8 @@ const config: Config = {
           },
         },
       }),
-        matchVariant('not', (v) => `&:not(${v})`)
+        // matchVariant('not', (v) => `&:not(${v})`)
+        addVariant('not', '&:not')
     }),
     // Container queries plugin modified for "@max-*", source: https://github.com/tailwindlabs/tailwindcss-container-queries.
     plugin(

@@ -31,16 +31,17 @@ export default function Reverso({ search, mode, ...htmlProps }: ComponentProps<'
   return (
     <>
       <article {...htmlProps} className={clsx(htmlProps.className)}>
-        <header className='bg-halftone mb-4 flex h-10 items-center rounded-t-2xl border-x-2 border-t-2 border-zinc-800 max-md:-mx-4'>
+        <header className='mb-4 flex h-10 items-center rounded-t-2xl border-x-2 border-t-2 border-zinc-800 max-md:-mx-4'>
           <button onClick={() => setCollapsed((prev) => !prev)} className='flex h-full flex-1 cursor-default items-center rounded-tl-[calc(theme(borderRadius.2xl)-2px)] pl-3 pr-4 text-zinc-200'>
             <CollapsedIcon className='mr-4 text-lg' />
             <ReversoLogo className='h-4' />
           </button>
           <Examples examples={reversoQuery.data?.type === 'error' ? [] : reversoQuery.data?.examples ?? []}>
-            <Dialog.Trigger disabled={reversoQuery.data?.type === 'error' || !!!reversoQuery.data?.examples?.length} className={clsx('flex h-full items-center border-r-2 border-zinc-900 bg-zinc-800 px-4 duration-100 enabled:hover:bg-zinc-700 disabled:hidden')}>
+            <Dialog.Trigger disabled={reversoQuery.data?.type === 'error' || !!!reversoQuery.data?.examples?.length} className='flex h-full items-center px-4 text-sm disabled:hidden'>
               Примеры
             </Dialog.Trigger>
           </Examples>
+          <div className='h-1/2 border-r-2 border-zinc-800' />
           <Tooltip
             content={
               <>
@@ -48,7 +49,7 @@ export default function Reverso({ search, mode, ...htmlProps }: ComponentProps<'
               </>
             }
           >
-            <a href={`https://context.reverso.net/translation/chinese-english/${search}`} target='_blank' className='flex aspect-square h-full items-center justify-center rounded-tr-[calc(theme(borderRadius.2xl)-2px)] bg-zinc-800 pl-2 pr-2.5 duration-100 hover:bg-zinc-700'>
+            <a href={`https://context.reverso.net/translation/chinese-english/${search}`} target='_blank' className='flex h-full items-center justify-center px-3 duration-100'>
               <TbExternalLink className='size-5' />
             </a>
           </Tooltip>
