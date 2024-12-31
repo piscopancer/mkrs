@@ -21,9 +21,9 @@ export default function ExactFound({ props, ...htmlProps }: TMotionComponent<'as
       initial={{ y: 2, opacity: 0 }}
       onClick={() => selectSuggestion(router, props.ch)}
       className={clsx(
-        htmlProps.className,
-        selectedSuggestionSnap === -1 ? ' border-pink-200/50 from-pink-500 to-pink-400' : ' border-zinc-700 from-zinc-800 to-zinc-800',
         'flex items-center rounded-full border-2 border-transparent bg-gradient-to-r px-6 py-2 text-zinc-200 transition-[scale,background] duration-500 max-md:px-4 max-md:py-1',
+        selectedSuggestionSnap === -1 ? ' border-pink-200/50 from-pink-500 to-pink-400' : ' border-zinc-700 from-zinc-800 to-zinc-800',
+        htmlProps.className,
       )}
     >
       <span className='mr-auto overflow-hidden text-ellipsis text-nowrap pr-6 font-bold opacity-80 max-md:pr-3 max-md:text-sm'>{tr}</span>

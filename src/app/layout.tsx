@@ -10,7 +10,7 @@ import { qc } from '@/query'
 import { searchStore } from '@/search'
 import { generalStore } from '@/stores/general'
 import PersistentStores from '@/stores/persistent-stores'
-import { route, VirtualKeyboard } from '@/utils'
+import { route } from '@/utils'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Analytics } from '@vercel/analytics/react'
 import clsx from 'clsx'
@@ -37,12 +37,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   useEffect(() => {
     layoutStore.mainContainer.current.set(containerRef.current)
   }, [containerRef.current])
-
-  useEffect(() => {
-    if ('virtualKeyboard' in navigator) {
-      ;(navigator.virtualKeyboard as VirtualKeyboard).overlaysContent = true
-    }
-  }, [])
 
   return (
     <html lang='ru'>

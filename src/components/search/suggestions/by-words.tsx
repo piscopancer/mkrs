@@ -44,13 +44,10 @@ export default function ByWords(props: { words: Word[] }) {
   return (
     <aside className='absolute inset-x-0 top-full z-[1] mt-2 rounded-xl border-2 border-zinc-800 bg-zinc-900/90 pb-4'>
       <h1 className='mx-4 mb-2 mt-3 block font-mono text-xs text-zinc-500 max-md:mb-2'>{responsesDescriptions['ch-long']}</h1>
-      <ul className='mx-4 flex flex-wrap gap-1'>
+      <ul className='mx-4 flex flex-wrap'>
         {props.words.map((word, i) => (
           <li key={i}>
-            <button
-              onMouseDown={() => word.ch && selectSuggestion(router, word.ch)}
-              className={clsx(selectedSuggestionSnap === i ? 'border-zinc-600 text-zinc-200' : 'border-zinc-800 text-zinc-400', 'text-md block border-b-2 border-dashed px-2 py-1 text-xl hover:border-zinc-600 hover:text-zinc-200')}
-            >
+            <button onMouseDown={() => word.ch && selectSuggestion(router, word.ch)} className={clsx(selectedSuggestionSnap === i ? 'border-zinc-600 text-zinc-200' : 'border-zinc-800 text-zinc-400', 'text-md block border-b-2 px-2 py-1 text-xl hover:border-zinc-600 hover:text-zinc-200')}>
               {word.ch}
             </button>
           </li>

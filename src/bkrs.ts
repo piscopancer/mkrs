@@ -1,4 +1,20 @@
+import { queryOptions, useQuery } from '@tanstack/react-query'
+import { queryBkrs } from './app/actions'
+import { queryKeys } from './query'
 import { ResponseType } from './search'
+
+export function createBkrsQueryOptions(search: string) {
+  return queryOptions({
+    queryKey: queryKeys.bkrs(search),
+    queryFn() {
+      return queryBkrs(search)
+    },
+  })
+}
+
+export function useBkrsQuery(search: string) {
+  return useQuery(createBkrsQueryOptions(search))
+}
 
 export type Word = Partial<{
   ch: string

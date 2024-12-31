@@ -6,7 +6,7 @@ import { ComponentProps, ReactHTML } from 'react'
 import resolveConfig from 'tailwindcss/resolveConfig'
 // import { useSnapshot } from 'valtio'
 
-export type TNextPage<ParamsAlias extends string | never = never, SearchParams extends string[] = []> = {
+export type NextPage<ParamsAlias extends string | never = never, SearchParams extends string[] = []> = {
   params: ParamsAlias extends never ? never : Record<ParamsAlias, string>
   searchParams: Record<SearchParams[number], string | null>
 }
@@ -15,7 +15,7 @@ export function objectEntries<O extends object>(obj?: O) {
   return Object.entries(obj ?? {}) as [keyof O, O[keyof O]][]
 }
 
-export type TOmit<T extends { [K in string]: unknown }, K extends keyof T> = Omit<T, K>
+export type StrictOmit<T extends { [K in string]: unknown }, K extends keyof T> = Omit<T, K>
 
 export async function wait(seconds: number) {
   return new Promise((res) => setTimeout(res, seconds * 1000))

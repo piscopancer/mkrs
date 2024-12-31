@@ -15,7 +15,7 @@ export const tools = {
 export const searchStore = store({
   focused: false,
   search: '',
-  response: undefined as BkrsResponses | ReversoResponses | undefined,
+  // response: undefined as BkrsResponses | ReversoResponses | undefined,
   showSuggestions: false,
   selectedSuggestion: -1,
   showTools: false as boolean,

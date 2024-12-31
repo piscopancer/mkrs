@@ -1,6 +1,6 @@
 'use client'
 
-import Searchbar from '@/components/search'
+import BaseSearch from '@/components/search'
 import { ease } from '@/utils'
 import { motion } from 'framer-motion'
 import { usePathname } from 'next/navigation'
@@ -17,7 +17,7 @@ export default function Search() {
         animate={{ marginTop: pathname === '/' ? 'var(--mt)' : 'var(--mt-high)', transition: { duration: 0.8, ease } }}
         className='max-md:[--mt-high:3rem] max-md:[--mt:5rem] md:[--mt-high:5rem] md:[--mt:8rem]'
       >
-        <Searchbar className='mb-12' />
+        <BaseSearch className='mb-12' />
       </motion.div>
     </div>
   )

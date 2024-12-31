@@ -2,25 +2,42 @@
 
 import { queryBkrs } from '@/app/actions'
 import { Tooltip } from '@/components/tooltip'
+import { queryKeys } from '@/query'
 import { stringToReact } from '@/utils'
+import { useQuery } from '@tanstack/react-query'
 import clsx from 'clsx'
 import Link from 'next/link'
 import { useRef, useState } from 'react'
 
 export default function ChLink({ search, ...attrs }: React.ComponentProps<'a'> & { search: string }) {
-  const [translation, setTranslation] = useState<null | { py: string | undefined; ru: string | undefined }>()
+  const [queryEnabled, setQueryEnabled] = useState(false)
+  const { data: translationQuery } = useQuery({
+    enabled: queryEnabled,
+    queryKey: queryKeys.bkrs(search),
+    queryFn() {
+      return queryBkrs(search)
+    },
+    select(res) {
+      if (res?.type === 'ch') {
+        return {
+          py: res.py !== '_' ? res.py : undefined,
+          ru: res.tr,
+        }
+      } else return null
+    },
+  })
   const [tooltipOpen, setTooltipOpen] = useState(false)
   const timer = useRef<NodeJS.Timeout>()
 
   return (
     <Tooltip
-      open={tooltipOpen && !!translation}
+      open={tooltipOpen && !!translationQuery}
       onOpenChange={setTooltipOpen}
       content={
-        translation && (
+        translationQuery && (
           <>
-            {translation.py && <p className='mb-0.5 font-mono text-zinc-400'>{translation.py}</p>}
-            {translation.ru && <div className='line-clamp-5'>{stringToReact(translation.ru)}</div>}
+            {translationQuery.py && <p className='mb-0.5 font-mono text-zinc-400'>{translationQuery.py}</p>}
+            {translationQuery.ru && <div className='line-clamp-5'>{stringToReact(translationQuery.ru)}</div>}
           </>
         )
       }
@@ -30,15 +47,9 @@ export default function ChLink({ search, ...attrs }: React.ComponentProps<'a'> &
         {...attrs}
         prefetch={false}
         onPointerEnter={() => {
-          if (!timer.current && !translation) {
-            timer.current = setTimeout(async () => {
-              const res = await queryBkrs(search)
-              if (res?.type === 'ch') {
-                setTranslation({
-                  py: res.py !== '_' ? res.py : undefined,
-                  ru: res.tr,
-                })
-              }
+          if (!timer.current && !translationQuery) {
+            timer.current = setTimeout(() => {
+              setQueryEnabled(true)
             }, 500)
           }
         }}
