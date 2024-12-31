@@ -44,8 +44,6 @@ export default function Tr({ tr, ...props }: ComponentProps<'div'> & { tr: strin
     }
   }, [])
 
-  // TODO: prequery all words from modTr for their info to be quickly shown
-
   return (
     <>
       <div {...props} data-search className={clsx('text-xl max-md:text-base', props.className)}>

@@ -13,9 +13,6 @@ function createId(index: number) {
   return `word-selector-${index}`
 }
 
-// TODO: use virual from floating-ui on the last index to show the popover. Esc closes the popover and clears the words
-// Add tooltip with translation from react query
-
 export default function WordSelector({ word, wordId, ...props }: WordSelectorProps) {
   const wordSnap = selectedWordsStore.words.use().find((w) => w.id === wordId)
   const index = wordSnap ? selectedWordsStore.words.get().indexOf(wordSnap) : null

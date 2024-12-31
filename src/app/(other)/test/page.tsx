@@ -1,28 +1,37 @@
 'use client'
 
-import { useRef } from 'react'
-import { TbChevronDown } from 'react-icons/tb'
+import { store } from '@davstack/store'
+
+let timer: NodeJS.Timeout | null = null
+
+const searchStore = store({
+  search: '',
+  debouncedSearch: '',
+}).effects((store) => ({
+  debounce() {
+    return store.search.onChange((v) => {
+      if (timer) {
+        clearTimeout(timer)
+      }
+      timer = setTimeout(() => {
+        searchStore.debouncedSearch.set(v.trim())
+      }, 1000)
+    })
+  },
+}))
 
 export default function TestPage() {
-  const infoRef = useRef<HTMLParagraphElement>(null!)
+  const searchSnap = searchStore.use()
 
   return (
-    <div className='my-[100vh] grid w-full grid-cols-[1fr,minmax(max-content,theme(screens.md)),1fr]'>
-      <div className='hopper overflow-hidden rounded-r-md bg-gradient-to-r from-transparent to-zinc-800'>
-        <div className='mr-12 flex size-px items-center self-center justify-self-end overflow-visible'>
-          <button className='text-6xl text-zinc-900 duration-100 hover:text-zinc-200'>#</button>
-        </div>
-      </div>
-      <div className='relative bg-zinc-800 '>
-        <h2 className='bg-halftone col-start-2 bg-zinc-900 px-4 py-2 font-display'>
-          <div className='absolute inset-0 bg-gradient-to-b from-zinc-900 via-transparent to-zinc-900' />
-          <button className='relative flex items-center'>
-            <TbChevronDown className='mr-3 size-5' />
-            <span className=''>Заголовок</span>
-          </button>
-        </h2>
-      </div>
-      <div className='hopper rounded-l-md bg-gradient-to-l from-transparent to-zinc-800'></div>
+    <div className='mt-24 text-zinc-200'>
+      <pre className='text-zinc-500'>{JSON.stringify(searchSnap, null, 2)}</pre>
+      <p>{searchSnap.search}</p>
+      <input
+        onChange={(e) => {
+          searchStore.search.set(e.target.value)
+        }}
+      />
     </div>
   )
 }

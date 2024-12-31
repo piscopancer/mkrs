@@ -35,9 +35,6 @@ async function _queryBkrs(search: string): Promise<BkrsResponses | undefined> {
   try {
     const html = await fetch(`https://bkrs.info/slovo.php?ch=${search}`).then((res) => res.text())
     const bodyEl = new JSDOM(html).window.document.body
-
-    // TODO: BUG, running out of memory when used woth bodyEl!!!
-
     ;['.ch_ru', '.ru'].forEach((elClass) => {
       const el = bodyEl.querySelector(`.margin_left > ${elClass}`)
       if (el) {

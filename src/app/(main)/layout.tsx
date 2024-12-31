@@ -1,9 +1,10 @@
 import { project } from '@/project'
+import { qc } from '@/query'
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import type { Metadata } from 'next'
 import { rootMetadata } from '../()'
 import Background from './()/background'
 import Search from './()/search'
-import { getRandomDictionaryWords } from './actions'
 
 export const metadata: Metadata = {
   ...rootMetadata,
@@ -12,16 +13,13 @@ export const metadata: Metadata = {
 }
 
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
-  const randomDictionaryWords = await getRandomDictionaryWords()
-
   return (
-    <>
+    <HydrationBoundary state={dehydrate(qc)}>
       <Background className='absolute inset-0 overflow-hidden' />
       <div className='relative mx-auto max-w-screen-lg'>
-        <p>{randomDictionaryWords.join(', ')}</p>
         <Search />
         {children}
       </div>
-    </>
+    </HydrationBoundary>
   )
 }

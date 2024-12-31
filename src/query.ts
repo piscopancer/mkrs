@@ -12,6 +12,7 @@ export const qc = new QueryClient({
 })
 
 export const queryKeys = {
+  dictionary: ['dictionary'],
   search: (search: string) => ['search', search],
   reverso: (word: string) => ['reverso', word],
   bkrs: (word: string) => ['bkrs', word],

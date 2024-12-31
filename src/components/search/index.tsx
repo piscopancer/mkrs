@@ -7,7 +7,7 @@ import useHotkey from '@/hooks/use-hotkey'
 import { hotkeys } from '@/hotkeys'
 import { queryKeys } from '@/query'
 import { ReversoResponseProps, ReversoResponseType } from '@/reverso'
-import { findSuggestions, ResponseProps, searchStore } from '@/search'
+import { findSuggestions, ResponseProps, sanitizeSearch, searchStore } from '@/search'
 import { useQuery } from '@tanstack/react-query'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -16,6 +16,7 @@ import { ReactNode, useEffect, useRef, useState } from 'react'
 import { GiCat } from 'react-icons/gi'
 import { TbArrowUp, TbSearch, TbTools, TbX } from 'react-icons/tb'
 import { Tooltip } from '../tooltip'
+import DictWord from './dict-word'
 import ExactFound from './exact-found'
 import ChSuggestions from './suggestions/ch'
 import ChLongSuggestions from './suggestions/ch-long'
@@ -27,7 +28,6 @@ import Tools from './tools'
 import { findExact, selectSuggestion } from './utils'
 
 const catChance = 0.01
-const searchTimeout = 0.5
 
 export default function Search(props: React.ComponentProps<'search'>) {
   const searchSnap = searchStore.use()
@@ -36,17 +36,16 @@ export default function Search(props: React.ComponentProps<'search'>) {
   const [copiedText, setCopiedText] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const selfRef = useRef<HTMLElement>(null!)
-  const searchTimer = useRef<NodeJS.Timeout | null>(null)
   const responseQuery = useQuery({
-    queryKey: queryKeys.search(searchSnap.search),
+    queryKey: queryKeys.search(searchSnap.debouncedSearch),
     async queryFn() {
-      if (!searchSnap.search) {
+      if (!searchSnap.debouncedSearch) {
         return null
       }
       return Promise.all([
         //
-        queryBkrs(searchSnap.search),
-        queryReverso(searchSnap.search, 'en-ch'),
+        queryBkrs(searchSnap.debouncedSearch),
+        queryReverso(searchSnap.debouncedSearch, 'en-ch'),
       ]).then(([bkrsRes, reversoRes]) => {
         let res = bkrsRes ?? reversoRes ?? undefined
         if (res?.type === 'english') res = reversoRes
@@ -73,9 +72,9 @@ export default function Search(props: React.ComponentProps<'search'>) {
   })
 
   useHotkey(hotkeys.search.keys, () => {
-    const search = inputRef.current?.value
-    if (search && searchStore.selectedSuggestion.get() === -1) {
-      selectSuggestion(router, search)
+    const sanitizedSearch = sanitizeSearch(searchStore.search.get())
+    if (sanitizedSearch && searchStore.selectedSuggestion.get() === -1) {
+      selectSuggestion(router, sanitizedSearch)
     }
   })
 
@@ -104,14 +103,17 @@ export default function Search(props: React.ComponentProps<'search'>) {
 
   useHotkey(['v', 'м'], async (_, e) => {
     if (e.ctrlKey && !searchStore.focused.get()) {
-      const text = await navigator.clipboard.readText().then((t) => t.trim())
+      const text = await navigator.clipboard.readText()
       if (!text || text === searchStore.search.get()) return
       searchStore.search.set(text)
+      searchStore.completeDebounce()
+      const sanitizedSearch = sanitizeSearch(text)
+      searchStore.debouncedSearch.set(sanitizedSearch)
       searchStore.focused.set(false)
       searchStore.showTools.set(false)
       searchStore.selectedSuggestion.set(-1)
       searchStore.showSuggestions.set(false)
-      router.push(`/search/${text}`)
+      router.push(`/search/${sanitizedSearch}`)
     }
   })
 
@@ -189,19 +191,15 @@ export default function Search(props: React.ComponentProps<'search'>) {
           spellCheck={false}
           type='text'
           onChange={(e) => {
-            searchTimer.current && clearTimeout(searchTimer.current)
             const rawText = e.target.value
             if (!rawText) {
               searchStore.showSuggestions.set(false)
-              searchStore.search.set(rawText)
-              return
             }
-            searchTimer.current = setTimeout(() => {
-              searchStore.search.set(rawText)
-            }, searchTimeout * 1000)
+            searchStore.search.set(rawText)
           }}
           className={clsx('w-full rounded-full bg-zinc-700/50 py-4 pl-6 pr-[5.25rem] duration-100 focus-visible:outline-4', searchSnap.selectedSuggestion === -1 ? 'outline-pink-500/70' : 'outline-zinc-700/50')}
         />
+        <DictWord searchInputRef={inputRef} className={clsx(searchSnap.search ? 'hidden' : '')} />
         <div className={clsx('hopper pointer-events-none size-full duration-200', responseQuery.isLoading ? '' : 'opacity-0 saturate-0')}>
           <div className='mx-auto h-[2px] w-1/2 animate-pulse self-start bg-gradient-to-r from-transparent via-zinc-500 to-transparent' />
           <div className='mx-auto h-[2px] w-1/2 animate-pulse self-end bg-gradient-to-r from-transparent via-zinc-500 to-transparent' />
@@ -216,7 +214,11 @@ export default function Search(props: React.ComponentProps<'search'>) {
         >
           <TbX className='size-5' />
         </button>
-        <button disabled={!!!searchSnap.search.trim()} onClick={() => selectSuggestion(router, searchStore.search.get())} className='group flex h-full items-center justify-center justify-self-end rounded-full pl-2 pr-6 text-zinc-200 duration-100 focus-visible:outline-0 disabled:opacity-50'>
+        <button
+          disabled={!!!searchSnap.search.trim()}
+          onClick={() => selectSuggestion(router, sanitizeSearch(searchStore.search.get()))}
+          className='group flex h-full items-center justify-center justify-self-end rounded-full pl-2 pr-6 text-zinc-200 duration-100 focus-visible:outline-0 disabled:opacity-50'
+        >
           <TbSearch className='size-4' />
         </button>
         {responseQuery.data && searchSnap.showSuggestions && !searchSnap.showTools && <Suggestions response={responseQuery.data} />}

@@ -12,7 +12,7 @@ const shortcutsGroups: Record<string, (Hotkey & { description?: string })[]> = {
   Поиск: [
     { ...hotkeys.focus, description: 'Фокусируется на строке поиска' },
     { ...hotkeys.clear, description: 'Очищает строку поиска' },
-    { ...hotkeys.search, description: 'Ищет то, что сейчас в поисковой строке' },
+    { ...hotkeys.search, description: 'Ищет то, что сейчас в поисковой строке или предложенную идею в ней' },
     { ...hotkeys.tools, description: 'Открывает панель инструментов под строкой поиска' },
   ],
   'Взаимодействие со результатом': [
