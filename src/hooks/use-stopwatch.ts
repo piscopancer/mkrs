@@ -4,56 +4,71 @@ import { useEffect, useRef } from 'react'
 
 type UseStopwatchProps = {
   interval: number
-  onInterval?: (time: number) => void
+  onInterval: (time: number) => void
   initial?: number
+  startImmediately?: boolean
 }
 
 export default function useStopwatch(args: UseStopwatchProps) {
-  const time = useRef(args.initial ?? 0)
-  const stopwatchRef = useRef<NodeJS.Timeout>(undefined!)
+  const timeRef = useRef(args.initial ?? 0)
+  const stopwatchRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
-    return () => {
-      clearInterval(stopwatchRef.current)
+    if (args.startImmediately) {
+      start()
     }
-  }, [])
+    return () => {
+      if (stopwatchRef.current) {
+        clearInterval(stopwatchRef.current)
+        stopwatchRef.current = null
+      }
+    }
+  }, [args.startImmediately])
 
-  function resume() {
+  function startInterval() {
+    args.onInterval(timeRef.current)
     stopwatchRef.current = setInterval(() => {
-      time.current += args.interval
-      args.onInterval?.(time.current)
+      timeRef.current += args.interval
+      args.onInterval?.(timeRef.current)
     }, args.interval)
   }
 
   function start() {
-    time.current = 0
-    clearInterval(stopwatchRef.current)
-    args.onInterval?.(time.current)
-    resume()
-  }
-
-  function pause() {
-    clearInterval(stopwatchRef.current)
-    args.onInterval?.(time.current)
+    args.onInterval(timeRef.current)
+    if (stopwatchRef.current) {
+      clearInterval(stopwatchRef.current)
+      stopwatchRef.current = null
+    }
+    startInterval()
   }
 
   function stop() {
-    pause()
-    time.current = 0
-    args.onInterval?.(0)
+    args.onInterval(timeRef.current)
+    if (stopwatchRef.current) {
+      clearInterval(stopwatchRef.current)
+      stopwatchRef.current = null
+    }
   }
 
-  function travel(by: number) {
-    time.current += by
-    args.onInterval?.(time.current)
+  function set(setter: number | ((prev: number) => number)) {
+    let to: number | null = null
+    if (typeof setter === 'function') {
+      to = setter(timeRef.current)
+    } else {
+      to = setter
+    }
+    args.onInterval(to)
+    timeRef.current = to
+    if (stopwatchRef.current) {
+      clearInterval(stopwatchRef.current)
+      stopwatchRef.current = null
+      startInterval()
+    }
   }
 
-  function set(to: number) {
-    time.current = to
-    clearInterval(stopwatchRef.current)
-    args.onInterval?.(to)
-    resume()
+  function get() {
+    return timeRef.current
   }
 
-  return { start, resume, pause, travel, stop, set }
+  return { get, set, start, stop }
 }

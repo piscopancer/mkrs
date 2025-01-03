@@ -1,26 +1,22 @@
 'use client'
 
+import useStopwatch from '@/hooks/use-stopwatch'
 import clsx from 'clsx'
-import { motion, useAnimationFrame, useSpring, useTransform } from 'framer-motion'
+import { animateValue, motion, useMotionValue, useTransform } from 'framer-motion'
 import Link from 'next/link'
-import { Dispatch, SetStateAction, useLayoutEffect, useRef, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 function FrequentWords({ frequent, hoveredWord, setHoveredWord }: { frequent: string[]; hoveredWord: string | null; setHoveredWord: Dispatch<SetStateAction<string | null>> }) {
   return frequent.map((f, i) => (
     <motion.div
       onHoverStart={() => {
         setHoveredWord(f)
-        // if (!qc.getQueryData(queryKeys.bkrs(f))) {
-        //   qc.fetchQuery({
-        //     queryKey: queryKeys.bkrs(f),
-        //     queryFn() {
-        //       return queryBkrs(f)
-        //     },
-        //   })
-        // }
       }}
       onHoverEnd={() => {
         setHoveredWord(null)
+      }}
+      onClick={() => {
+        setHoveredWord(f)
       }}
       key={i}
       className={clsx('text-nowrap px-2 duration-100', hoveredWord && (f === hoveredWord ? 'scale-110' : 'opacity-50'))}
@@ -36,17 +32,43 @@ export default function Frequent({ frequent, ...compProps }: React.ComponentProp
   const [selfWidth, setSelfWidth] = useState(0)
   const [marqueeWidth, setMarqueeWidth] = useState(0)
   const [hoveredWord, setHoveredWord] = useState<string | null>(null)
+  const pxPerSec = 32
   const shouldScroll = marqueeWidth - selfWidth > 0
-  const progress = useSpring(0, { stiffness: 300 })
-  const pxPerSec = 64
-  const clampedProgress = useTransform(progress, (p) => p % marqueeWidth)
-  const x = useTransform(clampedProgress, (p) => -p)
+  const xBase = useMotionValue(0)
+  const xClamped = useTransform(xBase, (v) => v % marqueeWidth)
+  const x = useTransform(xClamped, (v) => -v)
+  const animation = useRef<ReturnType<typeof animateValue<number>> | null>(null)
 
-  useAnimationFrame((_, delta) => {
-    if (!hoveredWord) {
-      progress.set(progress.get() + delta * 0.001 * pxPerSec)
-    }
+  const stopwatch = useStopwatch({
+    interval: 1000,
+    onInterval(time) {
+      console.log('interval')
+      animation.current = animateValue({
+        keyframes: [xBase.get(), (time / 1000) * pxPerSec],
+        onUpdate(latest) {
+          xBase.set(latest)
+        },
+        duration: 1000,
+        ease: (v) => v,
+      })
+    },
   })
+
+  useEffect(() => {
+    if (hoveredWord) {
+      stopwatch.stop()
+      stopwatch.set((xBase.get() / pxPerSec) * 1000)
+      if (animation.current) {
+        animation.current.pause()
+      }
+    } else {
+      stopwatch.set((prev) => prev + 1000)
+      stopwatch.start()
+      if (animation.current) {
+        animation.current.play()
+      }
+    }
+  }, [hoveredWord])
 
   useLayoutEffect(() => {
     setMarqueeWidth(marquee1Ref.current.clientWidth)
