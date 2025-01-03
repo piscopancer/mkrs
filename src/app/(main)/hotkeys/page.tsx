@@ -73,7 +73,7 @@ export default function HotkeysPage() {
           </motion.div>
           <div className='absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-zinc-800' />
           <h2 className='relative ml-[22%] text-lg max-md:ml-0 max-md:text-base'>Постоянно ищете, копируете или вставляете?</h2>
-          <p className='relative ml-[22%] text-zinc-400 max-md:ml-0 max-md:text-sm'>Не тянитесь лишний раз за мышкой, делайте все быстрее через горячие клавиши.</p>
+          <p className='relative ml-[22%] text-zinc-400 max-md:ml-0 max-md:text-sm'>Не тянитесь лишний раз за мышкой, делайте все быстрее через горячие клавиши</p>
         </div>
         <ul className=''>
           {objectEntries(shortcutsGroups).map(([groupName, hotkeys]) => (

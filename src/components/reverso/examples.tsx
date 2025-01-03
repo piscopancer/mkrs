@@ -35,7 +35,7 @@ export default function Examples({ examples, children }: PropsWithChildren & { e
                   </Dialog.Trigger>
                 </header>
                 <div className='overflow-y-auto px-8 pb-16 max-md:px-4'>
-                  <ul className='grid grid-cols-2 gap-x-4'>
+                  <ul className='grid grid-cols-2 gap-x-4 divide-y divide-zinc-800'>
                     {examples.map((ex, i) => (
                       <li key={i} className='col-span-full grid grid-cols-subgrid border-zinc-800 py-2 text-zinc-400 not-[:last-child]:border-b [&_em]:not-italic [&_em]:text-zinc-200'>
                         <span>{stringToReact(ex.original)}</span>

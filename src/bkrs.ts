@@ -35,7 +35,6 @@ type BkrsPageContentBase = Partial<{
   startWith: string[] // #ru_from | #ch_from
   wordsWith: string[] // #words_start_with | #starting_container, #frequency_words_here
   inRu: Example[] // #ruch_fulltext
-  inCh: string[] // #xinsheng_fullsearch
   synonyms: string[] // #synonyms_ru | #synonyms
   examples: Example[] // #examples
   found: true // #no-such-word | a[href*=add]
@@ -51,6 +50,7 @@ export type BkrsResponses =
           byWords: Word[] // .tbl_bywords
           backlinks: string[] // #backlinks
           similar: Similar[] // #ch_from_inside
+          frequent: string[] // #frequency_words_here
         }>
     >
   | BkrsResponseBase<
@@ -58,6 +58,7 @@ export type BkrsResponses =
       BkrsPageContentBase &
         Partial<{
           ru: string // #ru_ru
+          inCh: Example[] // #xinsheng_fullsearch
         }>
     >
   | BkrsResponseBase<'py', Partial<{ found: true; words: Word[] } | { found: false }>>
@@ -96,6 +97,7 @@ export function parseBkrsPage(el: HTMLElement, type: BkrsResponseType): BkrsResp
         examples: parseExamples(el),
         similar: parseSimilar(el),
         found: el.querySelector('a[href*=add]') ? undefined : true,
+        frequent: parseFrequent(el),
       },
       ru: {
         type: 'ru',
@@ -105,6 +107,7 @@ export function parseBkrsPage(el: HTMLElement, type: BkrsResponseType): BkrsResp
         startWith: el.querySelector('#ru_from') ? Array.from(el.querySelectorAll('#ru_from a')).map((a) => a.textContent?.trim() ?? '') : undefined,
         wordsWith: el.querySelector('#words_start_with') ? Array.from(el.querySelectorAll('#words_start_with a')).map((a) => a.textContent?.trim() ?? '') : undefined,
         inRu: parseInRu(el, 'ru'),
+        inCh: parseInCh(el),
         examples: parseExamples(el),
       },
       py: {
@@ -200,6 +203,23 @@ function parseInRu(el: Element, _for: 'ch' | 'ru'): Example[] | undefined {
   return found?.length ? found : undefined
 }
 
+function parseInCh(el: Element): Example[] | undefined {
+  const id = '#xinsheng_fullsearch'
+  const found = el.querySelector(id)
+    ? (Array.from(el.querySelectorAll(`${id} > *`))
+        .map((ch) => {
+          if (Array.from(ch.children).length) {
+            return {
+              heading: ch.children[0] ? ch.children[0].textContent?.trim() ?? '' : '',
+              innerHtml: ch.children[1] ? ch.children[1].innerHTML : '',
+            } satisfies Example
+          } else return
+        })
+        .filter(Boolean) as Example[])
+    : undefined
+  return found?.length ? found : undefined
+}
+
 export function parseSimilar(el: Element): Similar[] | undefined {
   return el.querySelector('#ch_from_inside')
     ? Array.from(el.querySelectorAll('#ch_from_inside a')).map((a) => ({
@@ -207,4 +227,11 @@ export function parseSimilar(el: Element): Similar[] | undefined {
         search: a.textContent ?? '-',
       }))
     : undefined
+}
+
+export function parseFrequent(el: Element): string[] | undefined {
+  const frequentEl = el.querySelector('#frequency_words_here')
+  if (!frequentEl) return undefined
+  const frequent = Array.from(frequentEl.querySelectorAll('.freq_word')).map((f) => f.textContent?.trim() ?? '')
+  return frequent
 }

@@ -23,8 +23,11 @@ export const persistentRecentStoreProps = createPersistentStoreProps({
   store: recentStore,
   schema: recentStoreSchema,
   after(parseRes) {
-    if (parseRes.error) {
-      recentStore.recent.set((prev) => prev.filter((r) => differenceInDays(Date.now(), r.date) < 7))
+    if (parseRes.data) {
+      const tooOldStripped = parseRes.data.recent.filter((r) => {
+        return differenceInDays(Date.now(), r.date) < 7
+      })
+      recentStore.recent.set(tooOldStripped)
     }
   },
 })

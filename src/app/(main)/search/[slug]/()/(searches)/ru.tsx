@@ -1,9 +1,10 @@
 import { BkrsResponseProps } from '@/bkrs'
 import Copyer from '../copyer'
 import Examples from '../examples'
+import InCh from '../in-ch'
+import InRu from '../in-ru'
 import NotFound from '../not-found'
 import RecentWriter from '../recent-writer'
-import RuchFulltext from '../ruch-fulltext'
 import Save from '../save'
 import StartWith from '../start-with'
 import Tr from '../tr'
@@ -24,7 +25,8 @@ export default function Ru({ response }: BkrsResponseProps<'ru'>) {
         </header>
         {!response.found && <NotFound />}
         {response.tr && <Tr tr={response.tr} className='mb-12' />}
-        {response.inRu && <RuchFulltext examples={response.inRu} className='mb-12' />}
+        {response.inRu && <InRu examples={response.inRu} className='mb-12' />}
+        {response.inCh && <InCh ch={response.inCh} className='mb-12' />}
         {response.startWith && <StartWith words={response.startWith} className='mb-12' />}
         {response.examples && <Examples examples={response.examples} className='mb-12' />}
       </article>

@@ -53,7 +53,7 @@ export default function Suggestions<Res extends Response, Display extends unknow
   if (!suggestions) return
 
   return (
-    <aside className='absolute inset-x-0 top-full z-[1] mt-2 rounded-xl border-2 border-zinc-800 bg-zinc-900/90 pb-2.5'>
+    <aside className='absolute inset-x-0 top-full z-[1] mt-2 rounded-xl border-2 border-zinc-800 bg-zinc-900/90 pb-2.5 md:backdrop-blur-[2px]'>
       <h1 className='mx-4 mb-2 mt-3 block font-mono text-xs text-zinc-500 max-md:mb-2'>{responsesDescriptions[props.res.type]}</h1>
       <ul>
         {suggestions.map((suggestion, i) => {

@@ -7,22 +7,21 @@ import Link from 'next/link'
 import { useState } from 'react'
 import Header from './header'
 
-export default function RuchFulltext(props: React.ComponentProps<'section'> & { examples: Example[] }) {
-  const { examples, ...htmlProps } = props
+export default function InCh({ ch, ...compProps }: React.ComponentProps<'section'> & { ch: Example[] }) {
   const [collapsed, setCollapsed] = useState(false)
 
   return (
-    <section {...htmlProps} className={clsx(htmlProps.className)}>
+    <section {...compProps} className={clsx(compProps.className)}>
       <button onClick={() => setCollapsed((prev) => !prev)} className={clsx('w-full cursor-default text-left', collapsed ? '' : 'mb-6')}>
-        <Header text='В русских словах' collapsed={collapsed} />
+        <Header text='В китайских словах' collapsed={collapsed} />
       </button>
       <ul className={clsx('grid grid-cols-[1fr_1fr] gap-2 gap-x-8 gap-y-2 max-md:flex max-md:flex-col max-md:gap-x-4', collapsed && 'hidden max-md:hidden')} data-search>
-        {examples.map((ex, i) => (
+        {ch.map((ch, i) => (
           <li key={i} className='contents rounded-lg py-2 text-lg text-zinc-400 max-md:block max-md:py-1 max-md:text-sm'>
-            <Link prefetch={false} href={`/search/${ex.heading}`} className='w-fit self-start max-md:mb-1' data-custom>
-              {ex.heading}
+            <Link href={`/search/${ch.heading}`} className='w-fit self-start max-md:mb-1' data-custom>
+              {ch.heading}
             </Link>
-            <div>{ex.innerHtml && stringToReact(ex.innerHtml)}</div>
+            <div>{ch.innerHtml && stringToReact(ch.innerHtml)}</div>
           </li>
         ))}
       </ul>

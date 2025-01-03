@@ -27,7 +27,7 @@ export default function ByWords({ words, ...htmlProps }: React.ComponentProps<'s
                 {word.ru && stringToReact(word.ru)}
               </div>
             </article>
-            <Link prefetch={false} href={`/search/${word.ch}`} className='block h-full'></Link>
+            <Link href={`/search/${word.ch}`} className='block h-full'></Link>
           </li>
         ))}
       </ul>

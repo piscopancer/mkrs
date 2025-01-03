@@ -25,7 +25,7 @@ export default function DictWord({ searchInputRef, ...props }: { searchInputRef:
   const dictWord = dictQuery.data && dictWordIndex !== null ? dictQuery.data[dictWordIndex] : null
 
   const wordStopwatch = useStopwatch({
-    interval: 5000,
+    interval: 3000,
     onInterval() {
       if (dictQuery.data) {
         setDictWordIndex((prev) => {
@@ -55,7 +55,7 @@ export default function DictWord({ searchInputRef, ...props }: { searchInputRef:
   })
 
   return (
-    <aside {...props} className={clsx('pointer-events-none py-4 pl-6', props.className)}>
+    <aside {...props} className={clsx('pointer-events-none flex h-14 items-center pl-6', props.className)}>
       <AnimatePresence mode='popLayout'>
         <motion.p
           exit={{
@@ -77,7 +77,7 @@ export default function DictWord({ searchInputRef, ...props }: { searchInputRef:
             },
           }}
           key={dictWord}
-          className='italic text-zinc-500'
+          className='absolute italic text-zinc-500'
         >
           {dictWord}
         </motion.p>

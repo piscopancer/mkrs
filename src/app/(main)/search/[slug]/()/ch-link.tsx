@@ -45,7 +45,6 @@ export default function ChLink({ search, ...attrs }: React.ComponentProps<'a'> &
     >
       <Link
         {...attrs}
-        prefetch={false}
         onPointerEnter={() => {
           if (!timer.current && !translationQuery) {
             timer.current = setTimeout(() => {
