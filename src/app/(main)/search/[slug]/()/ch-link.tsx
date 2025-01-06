@@ -1,6 +1,7 @@
 'use client'
 
 import { queryBkrs } from '@/app/actions'
+import { modifyTr } from '@/bkrs'
 import { Tooltip } from '@/components/tooltip'
 import { queryKeys } from '@/query'
 import { stringToReact } from '@/utils'
@@ -20,8 +21,8 @@ export default function ChLink({ search, ...attrs }: React.ComponentProps<'a'> &
     select(res) {
       if (res?.type === 'ch') {
         return {
-          py: res.py !== '_' ? res.py : undefined,
-          ru: res.tr,
+          py: res.py !== '_' ? res.py : null,
+          ru: res.tr ? modifyTr(res.tr) : null,
         }
       } else return null
     },

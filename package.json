@@ -5,9 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "_start": "next start -H 192.168.1.192",
-    "lint": "next lint"
+    "start": "next start"
   },
   "dependencies": {
     "@davstack/store": "^1.4.6",

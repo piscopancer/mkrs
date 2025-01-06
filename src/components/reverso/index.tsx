@@ -75,13 +75,23 @@ export default function Reverso({ search, mode, ...htmlProps }: ComponentProps<'
             )}
             {reversoQuery.data.type === 'many' && (
               <>
-                {reversoQuery.data.translations && <span className='mb-2 block text-zinc-400 max-md:max-h-[3lh] max-md:overflow-hidden'>{reversoQuery.data.translations.join(', ')}</span>}
+                {reversoQuery.data.translations && (
+                  <ul className='-mx-2 mb-2 flex flex-wrap'>
+                    {reversoQuery.data.translations.map((tr, i) => (
+                      <Link href={`/search/${tr}`} key={i} className='rounded-md px-2 py-1 text-lg hover:bg-zinc-800'>
+                        {tr}
+                      </Link>
+                    ))}
+                  </ul>
+                )}
                 <ul className={clsx('grid grid-cols-[auto,1fr] gap-y-2', mode === 'en-ch' ? 'gap-x-5' : 'gap-x-4')}>
                   {reversoQuery.data.groups.map((group, i) => (
                     <li key={i} className='col-span-full grid grid-cols-subgrid'>
-                      <button className={clsx('rounded-full border-2 border-zinc-800 px-3 py-1 duration-100 hover:border-zinc-700', mode === 'en-ch' && 'translate-y-1.5 max-md:translate-y-1')}>{group.original}</button>
+                      <Link href={`/search/${group.original}`} className={clsx('rounded-full border-2 border-zinc-800 px-3 py-1 text-center duration-100 hover:border-zinc-700')}>
+                        {group.original}
+                      </Link>
                       <ul className='-mx-2 mt-1 flex flex-wrap'>
-                        {group.translations.map((tr, i, arr) => (
+                        {group.translations.map((tr, i) => (
                           <li key={i}>
                             <Link href={`/search/${tr}`} className={clsx('rounded-md px-2 py-1 hover:bg-zinc-800', mode === 'en-ch' ? 'text-lg' : '')} key={i}>
                               {tr}

@@ -170,6 +170,8 @@ export default function Search(props: React.ComponentProps<'search'>) {
   useEffect(() => {
     if (searchStore.focused.get()) {
       inputRef.current?.focus()
+      const lastChIndex = searchStore.search.get().length
+      inputRef.current?.setSelectionRange(lastChIndex, lastChIndex)
     } else {
       inputRef.current?.blur()
     }

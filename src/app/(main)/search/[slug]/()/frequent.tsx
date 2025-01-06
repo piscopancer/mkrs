@@ -26,6 +26,8 @@ function FrequentWords({ frequent, hoveredWord, setHoveredWord }: { frequent: st
   ))
 }
 
+const interval = 1000
+
 export default function Frequent({ frequent, ...compProps }: React.ComponentProps<'div'> & { frequent: string[] }) {
   const selfRef = useRef<HTMLUListElement>(null!)
   const marquee1Ref = useRef<HTMLUListElement>(null!)
@@ -40,15 +42,12 @@ export default function Frequent({ frequent, ...compProps }: React.ComponentProp
   const animation = useRef<ReturnType<typeof animateValue<number>> | null>(null)
 
   const stopwatch = useStopwatch({
-    interval: 1000,
+    interval,
     onInterval(time) {
-      console.log('interval')
       animation.current = animateValue({
-        keyframes: [xBase.get(), (time / 1000) * pxPerSec],
-        onUpdate(latest) {
-          xBase.set(latest)
-        },
-        duration: 1000,
+        keyframes: [xBase.get(), (time / interval) * pxPerSec],
+        onUpdate: xBase.set,
+        duration: interval,
         ease: (v) => v,
       })
     },
@@ -57,12 +56,12 @@ export default function Frequent({ frequent, ...compProps }: React.ComponentProp
   useEffect(() => {
     if (hoveredWord) {
       stopwatch.stop()
-      stopwatch.set((xBase.get() / pxPerSec) * 1000)
+      stopwatch.set((xBase.get() / pxPerSec) * interval)
       if (animation.current) {
         animation.current.pause()
       }
     } else {
-      stopwatch.set((prev) => prev + 1000)
+      stopwatch.set((prev) => prev + interval)
       stopwatch.start()
       if (animation.current) {
         animation.current.play()

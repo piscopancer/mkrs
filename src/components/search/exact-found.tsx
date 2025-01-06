@@ -1,17 +1,18 @@
 'use client'
 
+import { modifyTr } from '@/bkrs'
 import { searchStore } from '@/search'
 import { TMotionComponent } from '@/utils'
 import clsx from 'clsx'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { TbArrowBadgeRightFilled } from 'react-icons/tb'
-import { TExact, selectSuggestion } from './utils'
+import { selectSuggestion, TExact } from './utils'
 
 export default function ExactFound({ props, ...htmlProps }: TMotionComponent<'aside', NonNullable<TExact>>) {
   const selectedSuggestionSnap = searchStore.selectedSuggestion.use()
   const router = useRouter()
-  const tr = new DOMParser().parseFromString(props.tr, 'text/html').body.textContent
+  const modTr = new DOMParser().parseFromString(modifyTr(props.tr), 'text/html').body.textContent
 
   return (
     <motion.button
@@ -21,12 +22,12 @@ export default function ExactFound({ props, ...htmlProps }: TMotionComponent<'as
       initial={{ y: 2, opacity: 0 }}
       onClick={() => selectSuggestion(router, props.ch)}
       className={clsx(
-        'flex items-center rounded-full border-2 border-transparent bg-gradient-to-r px-6 py-2 text-zinc-200 transition-[scale,background] duration-500 max-md:px-4 max-md:py-1',
+        'flex items-center rounded-full border-2 border-transparent bg-gradient-to-r px-[22px] py-2 text-zinc-200 transition-[scale,background] duration-500 max-md:py-1',
         selectedSuggestionSnap === -1 ? ' border-pink-200/50 from-pink-500 to-pink-400' : ' border-zinc-700 from-zinc-800 to-zinc-800',
         htmlProps.className,
       )}
     >
-      <span className='mr-auto overflow-hidden text-ellipsis text-nowrap pr-6 font-bold opacity-80 max-md:pr-3 max-md:text-sm'>{tr}</span>
+      <span className='mr-auto overflow-hidden text-ellipsis text-nowrap pr-6 font-bold opacity-80 max-md:pr-3 max-md:text-sm'>{modTr}</span>
       <ul className='flex items-center md:mr-6'>
         {Array.from({ length: 3 }).map((_, i) => (
           <motion.div

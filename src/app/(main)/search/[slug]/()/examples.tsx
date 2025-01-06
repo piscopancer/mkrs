@@ -16,12 +16,14 @@ export default function Examples(props: React.ComponentProps<'section'> & { exam
         <Header text='Примеры' collapsed={collapsed} />
       </button>
       <ul className={clsx('divide-y divide-zinc-800', collapsed && 'hidden')} data-search>
-        {examples.map((ex, i) => (
-          <li key={i} className='grid grid-cols-2 gap-x-8 py-3 text-zinc-400 max-md:block max-md:py-1'>
-            {ex.innerHtml && <div className='max-md:mb-1 max-md:text-sm'>{stringToReact(ex.innerHtml)}</div>}
-            <p className='self-start text-lg text-zinc-300'>{ex.heading}</p>
-          </li>
-        ))}
+        {examples.map((ex, i) => {
+          return (
+            <li key={i} className='grid grid-cols-2 gap-x-8 py-3 max-md:block max-md:py-1'>
+              <p className='self-start text-lg'>{stringToReact(ex.heading)}</p>
+              <div className='text-zinc-400 max-md:mb-1 max-md:text-sm'>{stringToReact(ex.innerHtml)}</div>
+            </li>
+          )
+        })}
       </ul>
     </section>
   )

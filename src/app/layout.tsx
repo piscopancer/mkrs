@@ -88,15 +88,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     </Link>
                   </Tooltip>
                 </ul>
-                <Tooltip
-                  content={
-                    <>
-                      Поддержите проект на <span className='font-bold text-pink-500'>Github</span>
-                    </>
-                  }
-                  side='right'
-                  sideOffset={6}
-                >
+                <Tooltip content={'Github'} side='right' sideOffset={6}>
                   <a href={project.links.github} target='_blank' className='flex justify-center rounded-full py-2 hover:bg-zinc-800 max-md:hidden'>
                     <TbBrandGithub className='h-6' />
                   </a>
