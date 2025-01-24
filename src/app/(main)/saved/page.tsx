@@ -49,7 +49,7 @@ export default function SavedPage() {
               >
                 <TbX className='size-5' />
               </button>
-              <Link href={`/search/${saved}`} className='flex min-w-0 flex-1 items-center border-b border-zinc-800 py-3 group-last/li:border-0 max-md:py-4 md:text-lg'>
+              <Link prefetch={false} href={`/search/${saved}`} className='flex min-w-0 flex-1 items-center border-b border-zinc-800 py-3 group-last/li:border-0 max-md:py-4 md:text-lg'>
                 {saved}
               </Link>
             </motion.li>

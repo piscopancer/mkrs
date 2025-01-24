@@ -21,7 +21,9 @@ function FrequentWords({ frequent, hoveredWord, setHoveredWord }: { frequent: st
       key={i}
       className={clsx('text-nowrap px-2 duration-100', hoveredWord && (f === hoveredWord ? 'scale-110' : 'opacity-50'))}
     >
-      <Link href={`/search/${f}`}>{f}</Link>
+      <Link prefetch={false} href={`/search/${f}`}>
+        {f}
+      </Link>
     </motion.div>
   ))
 }

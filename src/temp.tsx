@@ -6,7 +6,11 @@ import Link from 'next/link'
 export const replaceButtonsWithWordsSelectors: HTMLReactParserOptions['replace'] = (domNode) => {
   if (domNode instanceof Element) {
     if ('href' in domNode.attribs) {
-      return <Link href={(domNode.attribs as { href: Route }).href}>{domToReact(domNode.children as DOMNode[])}</Link>
+      return (
+        <Link prefetch={false} href={(domNode.attribs as { href: Route }).href}>
+          {domToReact(domNode.children as DOMNode[])}
+        </Link>
+      )
     }
     if ('data-select-id' in domNode.attribs) {
       const wordId = Number(domNode.attribs['data-select-id'])

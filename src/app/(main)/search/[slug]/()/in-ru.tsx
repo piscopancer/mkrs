@@ -19,7 +19,7 @@ export default function InRu(props: React.ComponentProps<'section'> & { examples
       <ul className={clsx('grid grid-cols-[1fr_1fr] gap-2 gap-x-8 gap-y-2 max-md:flex max-md:flex-col max-md:gap-x-4', collapsed && 'hidden max-md:hidden')} data-search>
         {examples.map((ex, i) => (
           <li key={i} className='contents rounded-lg py-2 text-lg text-zinc-400 max-md:block max-md:py-1 max-md:text-sm'>
-            <Link href={`/search/${ex.heading}`} className='w-fit self-start max-md:mb-1' data-custom>
+            <Link prefetch={false} href={`/search/${ex.heading}`} className='w-fit self-start max-md:mb-1' data-custom>
               {ex.heading}
             </Link>
             <div>{ex.innerHtml && stringToReact(ex.innerHtml)}</div>

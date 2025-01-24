@@ -52,7 +52,7 @@ export default function RecentPage() {
                         <TbDeviceFloppy className='size-5 duration-100' />
                         <Vibrator />
                       </button>
-                      <Link href={`/search/${r.search}`} className='group flex min-w-0 flex-1 items-center border-b border-zinc-800 py-3 group-last/li:border-0 max-md:py-4'>
+                      <Link prefetch={false} href={`/search/${r.search}`} className='group flex min-w-0 flex-1 items-center border-b border-zinc-800 py-3 group-last/li:border-0 max-md:py-4'>
                         <span className='line-clamp-1 text-zinc-200 duration-100 md:text-lg'>{r.search}</span>
                         <span className='ml-auto text-nowrap rounded-full text-xs text-zinc-400 duration-100 max-md:group-active:text-zinc-200 md:group-hover:text-zinc-200'>{formatDistanceToNowStrict(r.date, { locale: ru, roundingMethod: 'floor' })}</span>
                       </Link>
