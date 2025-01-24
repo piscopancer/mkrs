@@ -2,9 +2,9 @@
 
 import { headers } from 'next/headers'
 
-type ip = string
+type Ip = string
 
-function getIp(): ip | Error {
+function getIp(): Ip | Error {
   const forwardedFor = headers().get('x-forwarded-for')
   const realIp = headers().get('x-real-ip')
   if (forwardedFor) {
@@ -22,9 +22,9 @@ type Tracker = {
 }
 
 // lives while the server is up
-const trackers = new Map<ip, Tracker>()
+const trackers = new Map<Ip, Tracker>()
 
-export async function limitRate(rate = 10, perMs = 10000): Promise<Tracker | Error> {
+export async function limitRate(rate = 50, perMs = 60000): Promise<{ ip: Ip; tracker: Tracker } | Error> {
   const ip = getIp()
   if (ip instanceof Error) {
     return ip
@@ -44,6 +44,6 @@ export async function limitRate(rate = 10, perMs = 10000): Promise<Tracker | Err
   if (tracker.count > rate) {
     return new Error('Rate limit exceeded')
   } else {
-    return tracker
+    return { ip, tracker }
   }
 }
