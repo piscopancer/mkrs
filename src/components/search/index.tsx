@@ -14,7 +14,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { GiCat } from 'react-icons/gi'
-import { TbArrowUp, TbSearch, TbTools, TbX } from 'react-icons/tb'
+import { TbSearch, TbTools, TbX } from 'react-icons/tb'
 import { Tooltip } from '../tooltip'
 import DictWord from './dict-word'
 import ExactFound from './exact-found'
@@ -33,7 +33,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
   const searchSnap = searchStore.use()
   const router = useRouter()
   const [showCat, setShowCat] = useState(false)
-  const [copiedText, setCopiedText] = useState<string | null>(null)
+  // const [copiedText, setCopiedText] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const selfRef = useRef<HTMLElement>(null!)
   const responseQuery = useQuery({
@@ -126,31 +126,31 @@ export default function Search(props: React.ComponentProps<'search'>) {
         searchStore.showTools.set(false)
       }
     }
-    function onCopy() {
-      const selection = getSelection()
-      if (!selection) return
-      const text = selection.toString().trim()
-      if (text.length) {
-        setCopiedText(text)
-      }
-    }
-    async function trySetLastClipboardItem() {
-      try {
-        const last = await navigator.clipboard.read()
-        const s = await last[0].getType('text/plain')
-        setCopiedText((await s.text()).trim())
-      } catch (error) {
-        setCopiedText(null)
-      }
-    }
-    trySetLastClipboardItem()
+    // function onCopy() {
+    //   const selection = getSelection()
+    //   if (!selection) return
+    //   const text = selection.toString().trim()
+    //   if (text.length) {
+    //     setCopiedText(text)
+    //   }
+    // }
+    // async function trySetLastClipboardItem() {
+    //   try {
+    //     const last = await navigator.clipboard.read()
+    //     const s = await last[0].getType('text/plain')
+    //     setCopiedText((await s.text()).trim())
+    //   } catch (error) {
+    //     setCopiedText(null)
+    //   }
+    // }
+    // trySetLastClipboardItem()
     addEventListener('click', hideOnClickOutside)
-    addEventListener('copy', onCopy)
-    addEventListener('focus', trySetLastClipboardItem)
+    // addEventListener('copy', onCopy)
+    // addEventListener('focus', trySetLastClipboardItem)
     return () => {
       removeEventListener('click', hideOnClickOutside)
-      removeEventListener('copy', onCopy)
-      removeEventListener('focus', trySetLastClipboardItem)
+      // removeEventListener('copy', onCopy)
+      // removeEventListener('focus', trySetLastClipboardItem)
     }
   }, [])
 
@@ -232,7 +232,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
           )}
         </AnimatePresence>
       </div>
-      {copiedText && (
+      {/* {copiedText && (
         <aside className={clsx('hopper mx-auto w-fit rounded-lg bg-zinc-800 py-1 md:hidden')}>
           <TbArrowUp className='-mr-1 -mt-2 size-5 self-start justify-self-end rounded-full bg-zinc-800 stroke-zinc-500 p-0.5' />
           <button
@@ -248,7 +248,7 @@ export default function Search(props: React.ComponentProps<'search'>) {
             {copiedText}
           </button>
         </aside>
-      )}
+      )} */}
       <aside className='flex items-center justify-end max-md:hidden'>
         <Tooltip
           content={

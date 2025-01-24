@@ -84,21 +84,23 @@ export default function Reverso({ search, mode, ...htmlProps }: ComponentProps<'
                     ))}
                   </ul>
                 )}
-                <ul className={clsx('grid grid-cols-[auto,1fr] gap-y-2', mode === 'en-ch' ? 'gap-x-5' : 'gap-x-4')}>
+                <ul className={clsx('grid grid-cols-[auto,1fr]', mode === 'en-ch' ? 'gap-x-5' : 'gap-x-4')}>
                   {reversoQuery.data.groups.map((group, i) => (
-                    <li key={i} className='col-span-full grid grid-cols-subgrid'>
-                      <Link prefetch={false} href={`/search/${group.original}`} className={clsx('rounded-full border-2 border-zinc-800 px-3 py-1 text-center duration-100 hover:border-zinc-700')}>
+                    <li key={i} className='group col-span-full grid grid-cols-subgrid pt-2 first:pt-0'>
+                      <Link prefetch={false} href={`/search/${group.original}`} className='h-fit rounded-full border-2 border-zinc-800 px-3 py-1 text-center duration-100 hover:border-zinc-700'>
                         {group.original}
                       </Link>
-                      <ul className='-mx-2 mt-1 flex flex-wrap'>
-                        {group.translations.map((tr, i) => (
-                          <li key={i}>
-                            <Link prefetch={false} href={`/search/${tr}`} className={clsx('rounded-md px-2 py-1 hover:bg-zinc-800', mode === 'en-ch' ? 'text-lg' : '')} key={i}>
-                              {tr}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
+                      <div className='border-b border-zinc-800 pb-2 group-last:border-none group-last:pb-0 max-md:mt-0.5'>
+                        <ul className='-mx-2 flex flex-wrap'>
+                          {group.translations.map((tr, i) => (
+                            <li key={i} className='contents'>
+                              <Link prefetch={false} href={`/search/${tr}`} className={clsx('rounded-md px-2 py-1 hover:bg-zinc-800', mode === 'en-ch' ? 'text-lg' : '')} key={i}>
+                                {tr}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </li>
                   ))}
                 </ul>
