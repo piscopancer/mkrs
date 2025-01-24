@@ -7,6 +7,8 @@ import { Metadata } from 'next'
 import { ReactNode } from 'react'
 import { type SearchLayout } from './()/utils'
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({ params }: SearchLayout): Promise<Metadata> {
   const slug = decodeURI(params.slug)
   const title = `${slug} — ${project.name}`
