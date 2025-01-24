@@ -32,7 +32,7 @@ export default function Reverso({ search, mode, ...htmlProps }: ComponentProps<'
     <article {...htmlProps} className={clsx(htmlProps.className)}>
       <header className='mb-4 flex h-10 items-center rounded-t-2xl border-x-2 border-t-2 border-zinc-800 max-md:-mx-4'>
         <button onClick={() => setCollapsed((prev) => !prev)} className='flex h-full flex-1 cursor-default items-center rounded-tl-[calc(theme(borderRadius.2xl)-2px)] pl-3 pr-4 text-zinc-200'>
-          <CollapsedIcon className='mr-4 text-lg' />
+          <CollapsedIcon className='mr-4 size-5' />
           <ReversoLogo className='h-4' />
         </button>
         <Examples examples={reversoQuery.data?.type === 'error' ? [] : reversoQuery.data?.examples ?? []}>
