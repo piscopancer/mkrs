@@ -1,10 +1,12 @@
 'use client'
 
-import { type BkrsResponseProps } from '@/bkrs'
+import { buildBkrsUrl, modifyTr, type BkrsResponseProps } from '@/bkrs'
 import { Tooltip } from '@/components/tooltip'
+import * as copying from '@/copying'
 import useHotkey from '@/hooks/use-hotkey'
 import { hotkeys } from '@/hotkeys'
 import { searchStore } from '@/search'
+import { generalStore } from '@/stores/general'
 import { motion, useAnimation } from 'framer-motion'
 import { TbArrowUp, TbCopy } from 'react-icons/tb'
 import colors from 'tailwindcss/colors'
@@ -12,7 +14,8 @@ import Save from './save'
 
 export default function ChHeader(props: BkrsResponseProps<'ch'>) {
   const searchFocusedSnap = searchStore.focused.use()
-  const bkrsUrl = `https://bkrs.info/slovo.php?ch=${props.response.ch}`
+  const copyModeSnap = generalStore.copyMode.use()
+  const bkrsUrl = buildBkrsUrl(props.response.ch ?? '')
 
   const chAnim = useAnimation()
   const ch2Anim = useAnimation()
@@ -42,7 +45,18 @@ export default function ChHeader(props: BkrsResponseProps<'ch'>) {
   function copy() {
     if (!props.response.ch) return
     try {
-      navigator.clipboard.writeText(props.response.ch)
+      const modTr = props.response.tr ? modifyTr(props.response.tr) : ''
+      const ruTextContent = new DOMParser().parseFromString(modTr, 'text/html').body.textContent ?? ''
+      copying.copy(copyModeSnap, {
+        ch: {
+          ch: props.response.ch,
+        },
+        full: {
+          ch: props.response.ch,
+          py: props.response.py ?? '',
+          ru: ruTextContent,
+        },
+      })
     } catch (error) {}
     ch2Anim.set({ scale: 1, y: 0 })
     ch2Anim

@@ -3,6 +3,10 @@ import { queryBkrs } from './app/actions'
 import { queryKeys } from './query'
 import { ResponseType } from './search'
 
+export function buildBkrsUrl(search: string) {
+  return `https://bkrs.info/slovo.php?ch=${search}`
+}
+
 export function createBkrsQueryOptions(search: string) {
   return queryOptions({
     queryKey: queryKeys.bkrs(search),
@@ -40,6 +44,23 @@ type BkrsPageContentBase = Partial<{
   found: true // #no-such-word | a[href*=add]
 }>
 
+type ChLongRef = {
+  ch: string
+  forCards: number[]
+}
+
+export type ChLongCard = {
+  ch: string
+  py: string
+  ru: string
+  pos: number[]
+}
+
+export type ChLongSegments = {
+  refs: ChLongRef[]
+  cards: ChLongCard[]
+}
+
 export type BkrsResponses =
   | BkrsResponseBase<
       'ch',
@@ -47,7 +68,7 @@ export type BkrsResponses =
         Partial<{
           ch: string // #ch
           py: string // .py
-          byWords: Word[] // .tbl_bywords
+          segments: ChLongSegments // .tbl_bywords
           backlinks: string[] // #backlinks
           similar: Similar[] // #ch_from_inside
           frequent: string[] // #frequency_words_here
@@ -62,7 +83,7 @@ export type BkrsResponses =
         }>
     >
   | BkrsResponseBase<'py', Partial<{ found: true; words: Word[] } | { found: false }>>
-  | BkrsResponseBase<'ch-long', Partial<{ ch: string; byWords: Word[] }>>
+  | BkrsResponseBase<'ch-long', { segments: ChLongSegments }>
   | BkrsResponseBase<'english', { ch: string | null }>
 
 export type BkrsResponse<T extends BkrsResponseType> = BkrsResponses & { type: T }
@@ -74,7 +95,7 @@ export function determineBkrsSearchType(el: Element): BkrsResponseType {
   if (el.querySelector('#py_search_py') && !el.querySelector('#no-such-word')) return 'py'
   if (el.querySelector('#ru_ru') && hasCyrillic) return 'ru'
   if (el.querySelector('#ch')) return 'ch'
-  if (el.querySelector('#ch_long')) return 'ch-long'
+  if (el.querySelector('#ch_long') && el.querySelectorAll('.tbl_bywords')) return 'ch-long'
   return 'english'
 }
 
@@ -93,7 +114,7 @@ export function parseBkrsPage(el: HTMLElement, type: BkrsResponseType): BkrsResp
             ? Array.from(el.querySelectorAll('#frequency_words_here a')).map((a) => a.textContent?.trim() ?? '')
             : undefined,
         inRu: parseInRu(el, 'ch'),
-        byWords: (el.querySelector('.tbl_bywords') && parseWords(el)) ?? undefined,
+        segments: (el.querySelector('.tbl_bywords') && parseSegments(el)) ?? undefined,
         examples: parseExamples(el),
         similar: parseSimilar(el),
         found: el.querySelector('a[href*=add]') ? undefined : true,
@@ -117,7 +138,7 @@ export function parseBkrsPage(el: HTMLElement, type: BkrsResponseType): BkrsResp
       },
       'ch-long': {
         type: 'ch-long',
-        byWords: (el.querySelector('.tbl_bywords') && parseWords(el)) ?? undefined,
+        segments: parseSegments(el),
       },
       english: {
         type: 'english',
@@ -138,21 +159,7 @@ export const responsesDescriptions: Record<ResponseType, string> = {
   many: 'Поиск по тексту',
 }
 
-export function parseWords(el: Element) {
-  return Array.from(el.querySelectorAll('.tbl_bywords'))
-    .map((table) => {
-      const words: Word[] = []
-      for (let i = 0; i < 4; i++) {
-        words.push({
-          ch: table.querySelector(`tr:nth-child(1) td:nth-child(${i + 1})`)?.textContent?.trim() ?? '',
-          py: table.querySelector(`tr:nth-child(2) td:nth-child(${i + 1}) > :nth-child(1)`)?.textContent?.trim() ?? '',
-          ru: parseRu(table, i),
-        })
-      }
-      return words.filter((w) => w.ch && w.py)
-    })
-    .flat(1)
-
+function parseSegments(el: HTMLElement): ChLongSegments {
   function parseRu(table: Element, i: number) {
     const _ru = table.querySelector(`tr:nth-child(2) td:nth-child(${i + 1})`)
     if (_ru) {
@@ -160,6 +167,45 @@ export function parseWords(el: Element) {
       ru.querySelector('center:nth-child(1)')?.remove()
       return ru.innerHTML
     }
+  }
+  const cards = Array.from(el.querySelectorAll('.tbl_bywords'))
+    .map((table) => {
+      const cards: ChLongCard[] = []
+      for (let i = 0; i < 4; i++) {
+        const rawIAttr = table.querySelector(`tr:nth-child(1) td:nth-child(${i + 1})`)?.getAttribute('i')
+        const range = rawIAttr?.split(',').map(Number)
+        const length = range && range[1] - range[0]
+        const pos: number[] | undefined = length ? Array.from({ length }).map((_, i) => range[0] + i) : undefined
+
+        cards.push({
+          ch: table.querySelector(`tr:nth-child(1) td:nth-child(${i + 1})`)?.textContent?.trim() ?? '',
+          py: table.querySelector(`tr:nth-child(2) td:nth-child(${i + 1}) > :nth-child(1)`)?.textContent?.trim() ?? '',
+          ru: parseRu(table, i) ?? '',
+          pos: pos ?? [],
+        })
+      }
+      return cards
+    })
+    .flat(1)
+    .filter((s) => s.ch || s.py)
+
+  const refs: ChLongRef[] = []
+
+  cards.forEach((card, i) => {
+    card.pos!.forEach((pos, k) => {
+      const ch = card.ch?.[k]
+      if (ch === undefined) return
+      refs[pos] = {
+        ch,
+        forCards: refs[pos]?.forCards ?? [],
+      }
+      refs[pos].forCards?.push(i)
+    })
+  })
+
+  return {
+    cards,
+    refs,
   }
 }
 

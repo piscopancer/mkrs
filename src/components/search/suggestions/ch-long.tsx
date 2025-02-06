@@ -1,6 +1,6 @@
 import { BkrsResponseProps } from '@/bkrs'
-import ByWords from './by-words'
+import Segments from './by-words'
 
 export default function ChLongSuggestions(props: BkrsResponseProps<'ch-long'>) {
-  return props.response.byWords && <ByWords words={props.response.byWords} />
+  return props.response.segments && <Segments cards={props.response.segments.cards} />
 }

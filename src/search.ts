@@ -59,7 +59,7 @@ const _findSuggestions: { [T in BkrsResponseType]: (search: BkrsResponse<T>) => 
   ch: (res) => res.startWith ?? res.wordsWith,
   ru: (res) => res.startWith ?? res.wordsWith,
   py: (res) => (res.found ? res.words && res.words.map((w) => w.ch?.trim() ?? '') : undefined),
-  'ch-long': (res) => res.byWords?.map((w) => w.ch?.trim() ?? '') ?? undefined,
+  'ch-long': (res) => res.segments.cards?.map((c) => c.ch?.trim() ?? '') ?? undefined,
   english: () => undefined,
   error: () => undefined,
   many: (res) => res.translations ?? undefined,
