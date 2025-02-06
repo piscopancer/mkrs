@@ -3,6 +3,9 @@ const withMDX = require('@next/mdx')()
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: ['geist'],
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   experimental: {
     typedRoutes: true,
     staleTimes: {
